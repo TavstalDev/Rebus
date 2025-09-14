@@ -6,7 +6,7 @@ prefix: Rebus
 authors: [ Zoltan 'Tavstal' Solymosi ]
 website: https://tavstaldev.github.io/
 
-depend: [Citizens, Vault, ProtocolLib]
+depend: [Citizens, Vault, ProtocolLib, BanyaszLib]
 
 commands:
     rebus:

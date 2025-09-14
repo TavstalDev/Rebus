@@ -49,8 +49,10 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        // TODO: Add player chest placing duplicate check
-        // Chests.AlreadyOpening
+        if (Rebus.Chests().playersUnlocking.contains(player.getUniqueId())) {
+            Rebus.Instance.sendLocalizedMsg(player, "Chests.AlreadyOpening");
+            return;
+        }
 
         event.setCancelled(true);
         if (!PermissionUtils.checkPermission(player, chest.getPermission())) {

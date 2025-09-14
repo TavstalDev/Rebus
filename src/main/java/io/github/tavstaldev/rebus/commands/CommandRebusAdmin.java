@@ -140,6 +140,8 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
 
+                    // TODO
+
                     return  true;
                 }
                 case "reset": {
@@ -148,6 +150,8 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
 
+                    // TODO
+
                     return  true;
                 }
                 case "stats": {
@@ -155,6 +159,8 @@ public class CommandRebusAdmin implements CommandExecutor {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
                         return true;
                     }
+
+                    // TODO
 
                     return  true;
                 }

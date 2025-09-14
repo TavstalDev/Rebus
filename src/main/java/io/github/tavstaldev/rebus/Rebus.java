@@ -3,6 +3,7 @@ package io.github.tavstaldev.rebus;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.samjakob.spigui.SpiGUI;
+import io.github.tavstaldev.banyaszLib.api.BanyaszApi;
 import io.github.tavstaldev.minecorelib.PluginBase;
 import io.github.tavstaldev.minecorelib.core.PluginLogger;
 import io.github.tavstaldev.minecorelib.core.PluginTranslator;
@@ -30,6 +31,7 @@ public final class Rebus extends PluginBase {
     private SpiGUI _spiGUI;
     private ProtocolManager _protocolManager;
     private IDatabase _database;
+    private BanyaszApi _banyaszApi;
 
     public static PluginLogger Logger() {
         return Instance.getCustomLogger();
@@ -56,6 +58,7 @@ public final class Rebus extends PluginBase {
         return Instance._protocolManager;
     }
     public static IDatabase Database() { return Instance._database; }
+    public static BanyaszApi BanyaszApi() { return Instance._banyaszApi; }
 
     public Rebus() {
         super(true, "https://github.com/TavstalDev/Rebus/releases/latest");
@@ -103,6 +106,17 @@ public final class Rebus extends PluginBase {
             _logger.Info("Economy plugin found and hooked into Vault.");
         } else {
             _logger.Warn("Economy plugin not found. Unloading...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // Check BanyaszLib Plugin
+        _logger.Debug("Hooking into BanyaszLib...");
+        if (Bukkit.getPluginManager().isPluginEnabled("BanyaszLib")) {
+            _banyaszApi = BanyaszApi.getInstance();
+            _logger.Info("BanyaszLib found and hooked into it.");
+        } else {
+            _logger.Warn("BanyaszLib not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }

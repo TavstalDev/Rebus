@@ -1,0 +1,377 @@
+items:
+  - id: 1
+    material: BLAZE_ROD
+    amount: 3
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true
+
+  - id: 2
+    material: DIAMOND_CHESTPLATE
+    name: "&e&lBûvölt Mellvért"
+    lore:
+      - "&8Ritkaság: &e&lEmlékezetes"
+      - "&7A legendás páncélzat, amit a"
+      - "&7leghatalmasabb varázslók viseltek."
+    enchantments:
+      PROTECTION: 4
+      UNBREAKING: 3
+
+  - id: 3
+    material: GOLDEN_APPLE
+    amount: 15
+    name: "&6&lAranyalma"
+    lore:
+      - "&8Ritkaság: &6&lKülönleges"
+      - "&7Gyorsan regenerál, egy csata során"
+      - "&7sorsdöntő lehet."
+
+  - id: 4
+    material: DIAMOND_SWORD
+    amount: 2
+    name: "&4&lVégzet Csapása"
+    lore:
+      - "&8Ritkaság: &4&lLegendás"
+      - "&7Aki kézbe veszi, az ismeri a halál ízét."
+    enchantments:
+      SHARPNESS: 5
+      UNBREAKING: 3
+
+  - id: 5
+    material: DIAMOND_AXE
+    amount: 2
+    name: "&c&lRedFox Foga"
+    lore:
+      - "&8Ritkaság: &c&lMisztikus"
+      - "&7Egy róka erejével és ravaszságával."
+    enchantments:
+      SHARPNESS: 4
+      UNBREAKING: 3
+
+  - id: 6
+    material: DIAMOND_SWORD
+    amount: 2
+    name: "&5&lVégtelen Penge"
+    lore:
+      - "&8Ritkaság: &5&lVégtelen"
+      - "&7Sosem törődés, ami örökké tart."
+    enchantments:
+      MENDING: 1
+      SHARPNESS: 5
+      UNBREAKING: 3
+
+  - id: 7
+    material: EXPERIENCE_BOTTLE
+    amount: 10
+    name: "&a&lFejlődés Itala"
+    lore:
+      - "&8Ritkaság: &a&lKözönséges"
+      - "&7Segít, hogy szintet lépj a csata közben."
+
+  - id: 8
+    material: BOW
+    name: "&b&lReflex Íj"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Gyorsabb lövések, amik az ellenségedet"
+      - "&7messze elrepítik."
+    enchantments:
+      PUNCH: 2
+      POWER: 3
+
+  - id: 9
+    material: GOLDEN_LEGGINGS
+    name: "&6&lArany Lábszárvédő"
+    lore:
+      - "&8Ritkaság: &6&lKülönleges"
+      - "&7Könnyű és gyors mozgást tesz lehetővé."
+    enchantments:
+      PROTECTION: 2
+
+  - id: 10
+    material: GOLDEN_BOOTS
+    name: "&6&lArany Csizma"
+    lore:
+      - "&8Ritkaság: &6&lKülönleges"
+      - "&7A sebesség és a stílus jegyében."
+    enchantments:
+      PROTECTION: 2
+
+  - id: 11
+    material: BOW
+    name: "&c&lElfek Haragja"
+    lore:
+      - "&8Ritkaság: &c&lMisztikus"
+      - "&7Egy tündék által készített fegyver."
+    enchantments:
+      FLAME: 1
+      POWER: 4
+      PUNCH: 1
+
+  - id: 12
+    material: BOW
+    name: "&4&lTüzes Íj"
+    lore:
+      - "&8Ritkaság: &4&lLegendás"
+      - "&7A lövések tüzet gyújtanak az ellenségen."
+    enchantments:
+      FLAME: 1
+      POWER: 5
+
+  - id: 13
+    material: IRON_CHESTPLATE
+    name: "&f&lVas Mellvért"
+    lore:
+      - "&8Ritkaság: &f&lKözönséges"
+      - "&7Alapvető védelem egy harcos számára."
+    enchantments:
+      PROTECTION: 2
+
+  - id: 14
+    material: IRON_LEGGINGS
+    name: "&f&lVas Lábszárvédő"
+    lore:
+      - "&8Ritkaság: &f&lKözönséges"
+      - "&7Megbízható védelem."
+    enchantments:
+      PROTECTION: 2
+
+  - id: 15
+    material: IRON_SWORD
+    name: "&5&lÓriásölő"
+    lore:
+      - "&8Ritkaság: &5&lVégtelen"
+      - "&7Hatalmas szörnyek ellen is hatásos."
+    enchantments:
+      SMITE: 5
+      UNBREAKING: 3
+
+  - id: 16
+    material: LEATHER_BOOTS
+    name: "&b&lZuhanás Cipője"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7A zuhanás nem fog kárt tenni benned."
+    enchantments:
+      FEATHER_FALLING: 4
+
+  - id: 17
+    material: DIAMOND_CHESTPLATE
+    name: "&c&lLéleklopó Páncél"
+    lore:
+      - "&8Ritkaság: &c&lMisztikus"
+      - "&7Lopd el az ellenség lelkének egy részét."
+      - "&7Csak a legerősebbek viselhetik."
+    enchantments:
+      PROTECTION: 4
+      THORNS: 3
+      UNBREAKING: 3
+
+  - id: 18
+    material: BLAZE_ROD
+    amount: 7
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+
+  - id: 19
+    material: TRIDENT
+    name: "&4&lMennydörgés"
+    lore:
+      - "&8Ritkaság: &4&lLegendás"
+      - "&7Ahol a dolog becsapódik, ott a mennydörgés"
+      - "&7és a villámok ereje szabadul el."
+    enchantments:
+      CHANNELING: 1
+      UNBREAKING: 3
+
+  - id: 20
+    material: SHIELD
+    name: "&5&lFal"
+    lore:
+      - "&8Ritkaság: &5&lVégtelen"
+      - "&7Egy megállíthatatlan fal, ami"
+      - "&7minden támadást kivéd."
+    enchantments:
+      UNBREAKING: 3
+
+  - id: 21
+    material: DIAMOND_LEGGINGS
+    amount: 7
+    name: "&e&lMasszív Lábszárvédő"
+    lore:
+      - "&8Ritkaság: &e&lEmlékezetes"
+      - "&7A nehéz védelmet keresők kedvence."
+    enchantments:
+      PROTECTION: 4
+      UNBREAKING: 3
+
+  - id: 22
+    material: DIAMOND_BOOTS
+    amount: 7
+    name: "&5&lTörhetetlen Bakancs"
+    lore:
+      - "&8Ritkaság: &5&lVégtelen"
+      - "&7Sosem fog szétesni a csata hevében."
+    enchantments:
+      UNBREAKING: 3
+
+  - id: 23
+    material: ELYTRA
+    amount: 3
+    name: "&a&lFlappy"
+    lore:
+      - "&8Ritkaság: &a&lKözönséges"
+      - "&7Segít elrepülni a harcmezőről."
+    enchantments:
+      UNBREAKING: 3
+
+  - id: 24
+    material: DIAMOND_HELMET
+    amount: 6
+    name: "&4&lHadúr Sisakja"
+    lore:
+      - "&8Ritkaság: &4&lLegendás"
+      - "&7A háború isteneinek adománya."
+    enchantments:
+      PROTECTION: 4
+      RESPIRATION: 3
+      UNBREAKING: 3
+
+  - id: 25
+    material: IRON_HELMET
+    name: "&f&lGladiátor Sisak"
+    lore:
+      - "&8Ritkaság: &f&lKözönséges"
+      - "&7Egy egyszerű harcos sisakja."
+    enchantments:
+      PROTECTION: 2
+
+  - id: 26
+    material: DIAMOND_SWORD
+    name: "&e&lSzikrázó Penge"
+    lore:
+      - "&8Ritkaság: &e&lEmlékezetes"
+      - "&7Egy villámgyors és halálos fegyver."
+    enchantments:
+      SHARPNESS: 4
+      UNBREAKING: 3
+
+  - id: 27
+    material: POTION
+    amount: 2
+    name: "&c&lHihetetlen Erő Itala"
+    lore:
+      - "&8Ritkaság: &c&lMisztikus"
+      - "&7A gyógyító elixírek anyja."
+      - "&7Nagyobb erőt ad."
+    potion_effects:
+      - type: STRENGTH
+        duration: 300
+        level: 2
+
+  - id: 28
+    material: DIAMOND_LEGGINGS
+    name: "&4&lHősök Nadrágja"
+    lore:
+      - "&8Ritkaság: &4&lLegendás"
+      - "&7Egy valódi hős által viselt nadrág."
+    enchantments:
+      PROTECTION: 4
+      UNBREAKING: 3
+
+  - id: 29
+    material: POTION
+    name: "&b&lAdrenalin II"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Fokozza a harci képességeket."
+    potion_effects:
+      - type: SPEED
+        duration: 300
+        level: 2
+
+  - id: 30
+    material: DIAMOND_AXE
+    name: "&5&lPusztító"
+    lore:
+      - "&8Ritkaság: &5&lVégtelen"
+      - "&7Egy hatalmas erejű fejsze."
+    enchantments:
+      SHARPNESS: 5
+      EFFICIENCY: 5
+      UNBREAKING: 3
+
+  - id: 31
+    material: DIAMOND_SWORD
+    name: "&e&lKétségbeesés Pengéje"
+    lore:
+      - "&8Ritkaság: &e&lEmlékezetes"
+      - "&7Minden csapás a kétségbeesés szelét"
+      - "&7hozza el az ellenfélre."
+    enchantments:
+      SHARPNESS: 4
+      UNBREAKING: 3
+      KNOCKBACK: 2
+
+  - id: 32
+    material: BLAZE_ROD
+    amount: 1
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true
+  - id: 33
+    material: BLAZE_ROD
+    amount: 4
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true
+  - id: 34
+    material: BLAZE_ROD
+    amount: 10
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true
+  - id: 35
+    material: BLAZE_ROD
+    amount: 7
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true
+  - id: 36
+    material: BLAZE_ROD
+    amount: 16
+    name: "&b&lMentőrúd"
+    lore:
+      - "&8Ritkaság: &b&lRitka"
+      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true

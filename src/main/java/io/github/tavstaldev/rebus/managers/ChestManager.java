@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.cryptomorin.xseries.XSound;
+import io.github.tavstaldev.minecorelib.utils.TypeUtils;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.models.RebusChest;
 import org.bukkit.*;
@@ -18,7 +19,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -26,7 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class ChestManager {
-    private final String[] chestResources = new String[] { "daily", "bronze", "silver", "gold", "diamond", "netherite", "mythic" };
+    private final String[] chestResources = new String[] { "daily", "default", "pandora", "choosen" };
     private final NamespacedKey _chestKey = new NamespacedKey(Rebus.Instance, "rebus_chest");
     public NamespacedKey getChestKey() {
         return _chestKey;
@@ -35,7 +39,12 @@ public class ChestManager {
     public Set<RebusChest> getChests() {
         return chests;
     }
+    private final HashMap<Integer, ItemStack> itemTable = new HashMap<>();
+    public HashMap<Integer, ItemStack> getItemTable() {
+        return itemTable;
+    }
 
+    public final Set<UUID> playersUnlocking = new HashSet<>();
     public final Set<Location> chestsUnderUnlocking = new HashSet<>();
 
     public void load() {
@@ -65,6 +74,50 @@ public class ChestManager {
                 return;
             }
         }
+
+        // Copy items .yml from resources if it doesn't exist
+        File itemsFile = Paths.get(Rebus.Instance.getDataFolder().getPath(), "items.yml").toFile();
+        if (!itemsFile.exists()) {
+            try (InputStream inputStream = Rebus.Instance.getResource("items.yml")) {
+                if (inputStream != null) {
+                    Files.copy(inputStream, itemsFile.toPath());
+                } else {
+                    Rebus.Logger().Warn("Failed to get resource file for items.yml.");
+                }
+            } catch (IOException ex) {
+                Rebus.Logger().Warn("Failed to create items.yml file.");
+                Rebus.Logger().Error(ex.getMessage());
+            }
+        }
+
+        // Load items from items.yml
+        try (FileInputStream stream = new FileInputStream(itemsFile)) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> yamlMap = yaml.load(stream);
+
+            if (yamlMap == null || !yamlMap.containsKey("items")) {
+                Rebus.Logger().Warn("Invalid items data.");
+                return;
+            }
+
+            List<Map<String, Object>> itemsList = TypeUtils.castAsListOfMaps(yamlMap.get("items"), Rebus.Logger());
+            if (itemsList == null) {
+                Rebus.Logger().Warn("Invalid items section in items.yml.");
+                return;
+            }
+
+            for (Map<String, Object> itemData : itemsList) {
+                int id = itemData.containsKey("id") ? ((Number) itemData.get("id")).intValue() : -1;
+                var itemStack = Rebus.ItemSerializer().deserializeItemStack(itemData);
+                itemTable.put(id, itemStack);
+            }
+
+        }
+        catch (Exception ex) {
+            Rebus.Logger().Warn("Error loading items.yml: " + ex.getMessage());
+            return;
+        }
+
 
         // Load chests from configuration
         var chestsSection = Rebus.Config().getConfigurationSection("chests");
@@ -105,6 +158,7 @@ public class ChestManager {
     public void handlePlaceChest(final Player player, final RebusChest chest, final ItemStack item, final Block block) {
         final Location location = block.getLocation();
         chestsUnderUnlocking.add(location);
+        playersUnlocking.add(player.getUniqueId());
         if (item.getAmount() <= 1) {
             player.getInventory().remove(item);
         } else {
@@ -160,6 +214,7 @@ public class ChestManager {
 
                         public void run() {
                             chestsUnderUnlocking.remove(location);
+                            playersUnlocking.remove(player.getUniqueId());
                             playCompletionEffects(player, location, chest);
                             chest.reward(player);
                         }

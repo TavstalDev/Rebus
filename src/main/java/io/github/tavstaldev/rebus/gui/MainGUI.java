@@ -107,8 +107,9 @@ public class MainGUI {
                         return;
                     }
 
-                    if (!EconomyUtils.has(player, chest.getCost())) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NotEnoughMoney");
+                    var balance = Rebus.BanyaszApi().getBalance(playerId);
+                    if (balance < chest.getCost()) {
+                        Rebus.Instance.sendLocalizedMsg(player, "General.NotEnoughMoney", Map.of("balance", balance));
                         return;
                     }
 
@@ -118,7 +119,8 @@ public class MainGUI {
                         return;
                     }
 
-                    EconomyUtils.withdraw(player, chest.getCost());
+                    if (chest.getCost() > 0)
+                        Rebus.BanyaszApi().decreaseBalance(player.getUniqueId(), (int)chest.getCost());
                     chest.give(player, 1);
                     Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
                 });

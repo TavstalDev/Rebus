@@ -62,6 +62,8 @@ dependencies {
         exclude(group = "*", module = "*")
     }
     compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
+    // BanyaszApi
+    compileOnly(files("libs/BanyaszApi-1.0.0.jar"))
 
     // HikariCP for database connection pooling
     implementation("com.zaxxer:HikariCP:${hikariCpVersion}")

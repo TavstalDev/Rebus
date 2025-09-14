@@ -1,0 +1,46 @@
+data:
+  common:
+    chance: 40
+    items: [ 32, 7, 23 ]
+  common_2:
+    chance: 20
+    items: [ 32, 13, 14 ]
+  rare:
+    chance: 15
+    items: [ 32, 1, 18 ]
+  rare_2:
+    chance: 10
+    items: [ 32, 10, 16 ]
+  memorable:
+    chance: 5
+    items: [ 32, 2, 21 ]
+  mystic:
+    chance: 4
+    items: [ 32, 5, 17 ]
+  legendary:
+    chance: 3
+    items: [ 32, 4, 6 ]
+  legendary_2:
+    chance: 2
+    items: [ 32, 12, 19 ]
+  legendary_3:
+    chance: 1
+    items: [ 32, 24, 28 ]
+  legendary_4:
+    chance: 0.8
+    items: [ 32, 30, 31 ]
+  special:
+    chance: 0.5
+    items: [ 32, 3, 27 ]
+  special_2:
+    chance: 0.4
+    items: [ 32, 8, 11 ]
+  special_3:
+    chance: 0.3
+    items: [ 32, 9, 29 ]
+  special_4:
+    chance: 0.2
+    items: [ 32, 15, 20 ]
+  special_5:
+    chance: 0.1
+    items: [ 32, 22, 26 ]

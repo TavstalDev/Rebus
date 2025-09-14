@@ -86,7 +86,7 @@ public class RebusChest {
             if (randomValue < cumulativeChance) {
                 boolean inventoryFullMessageSent = false;
                 var location = player.getLocation();
-                for (ItemStack item : reward.getItems()) {
+                for (ItemStack item : reward.getItemStacks()) {
                     if (player.getInventory().firstEmpty() == -1) {
                         location.getWorld().dropItemNaturally(location, item);
                         if (!inventoryFullMessageSent) {
@@ -147,10 +147,11 @@ public class RebusChest {
                     if (dataEntry == null) continue;
 
                     int chance = dataEntry.containsKey("chance") ? ((Number) dataEntry.get("chance")).intValue() : 25;
-                    List<Map<String, Object>> itemsRaw = TypeUtils.castAsListOfMaps(dataEntry.get("items"), Rebus.Logger());
+                    List<Integer> itemsRaw = TypeUtils.castAsList(dataEntry.get("items"), Rebus.Logger());
                     if (itemsRaw == null) return null;
+                    Set<Integer> items = new HashSet<>(itemsRaw);
 
-                    rewards.add(new Reward(chance, Rebus.ItemSerializer().deserializeItemStackList(itemsRaw)));
+                    rewards.add(new Reward(chance, items));
                 }
             } catch (Exception ex) {
                 Rebus.Logger().Warn("Error loading reward file for chest: " + key);
