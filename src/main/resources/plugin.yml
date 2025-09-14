@@ -1,0 +1,82 @@
+main: io.github.tavstaldev.rebus.Rebus
+version: '1.0.0'
+name: Rebus
+api-version: '1.21'
+prefix: Rebus
+authors: [ Zoltan 'Tavstal' Solymosi ]
+website: https://tavstaldev.github.io/
+
+depend: [Citizens, Vault, ProtocolLib]
+
+commands:
+    rebus:
+        description: Main command for Rebus plugin.
+        usage: |-
+          /<command> help - Show help information
+          /<command> menu - Open the Rebus menu
+          /<command> info - Show plugin information
+        aliases: [rb, jutalom]
+        permission: rebus.use
+        permission-message: You do not have permission to use this command.
+    rebusadmin:
+        description: Administrative command for Rebus plugin.
+        usage: |-
+            /<command> reload - Reload the plugin configuration
+            /<command> npc - Spawn the Rebus NPC
+            /<command> give <player> <reward> - Give a reward to a player
+            /<command> reset <player> <data> - Reset player data
+            /<command> stats <player> - Show player statistics
+            /<command> chests - Manage reward chests
+        aliases: [rba, rbadmin, jutalomadmin]
+        permission: rebus.admin
+        permission-message: You do not have permission to use this command.
+
+permissions:
+  rebus.player:
+    description: Allows use of player-specific Rebus commands.
+    default: true
+    children:
+      rebus.use: true
+      rebus.menu: true
+      rebus.info: true
+      rebus.help: true
+  rebus.admin:
+    description: Allows use of the administrative Rebus commands.
+    default: op
+    children:
+      rebus.debug: true
+      rebus.npc: true
+      rebus.give: true
+      rebus.reset: true
+      rebus.chests: true
+      rebus.reload: true
+  rebus.use:
+      description: Allows use of the main Rebus commands.
+      default: true
+  rebus.menu:
+      description: Allows opening the Rebus menu.
+      default: true
+  rebus.info:
+      description: Allows viewing plugin information.
+      default: true
+  rebus.help:
+      description: Allows viewing help information.
+      default: true
+  rebus.debug:
+      description: Allows toggling debug mode for Rebus.
+      default: op
+  rebus.npc:
+      description: Allows spawning the Rebus NPC.
+      default: op
+  rebus.give:
+      description: Allows giving rewards to players.
+      default: op
+  rebus.reset:
+      description: Allows resetting player data.
+      default: op
+  rebus.chests:
+      description: Allows managing reward chests.
+      default: op
+  rebus.reload:
+      description: Allows reloading the Rebus configuration.
+      default: op
