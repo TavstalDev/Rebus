@@ -1,0 +1,73 @@
+data:
+  common:
+    chance: 60
+    items:
+      -
+        material: IRON_SWORD
+        name: "&f&lKezdő Harcos Kardja"
+        lore:
+          - "&8Ritkaság: &f&lKözönséges"
+          - "&7Egy megbízható fegyver"
+        enchantments:
+          SHARPNESS: 1
+      -
+        material: BREAD
+        amount: 8
+        name: "&f&lFriss Kenyér"
+        lore:
+          - "&8Ritkaság: &f&lKözönséges"
+          - "&7Alapvető tápanyag"
+      -
+        material: COOKED_BEEF
+        amount: 6
+        name: "&f&lSült Marha"
+        lore:
+          - "&8Ritkaság: &f&lKözönséges"
+          - "&7Tápláló étel"
+      -
+        material: GOLD_INGOT
+        amount: 3
+        name: "&f&lArany Tömbök"
+        lore:
+          - "&8Ritkaság: &f&lKözönséges"
+          - "&7Értékes arany"
+  rare:
+    chance: 30
+    items:
+      -
+        material: IRON_CHESTPLATE
+        name: "&9&lHarcos Páncélja"
+        lore:
+          - "&8Ritkaság: &9&lRitka"
+          - "&7Védelem a csatában"
+        enchantments:
+          PROTECTION: 2
+      -
+        material: DIAMOND_PICKAXE
+        name: "&9&lBányász Csákánya"
+        lore:
+          - "&8Ritkaság: &9&lRitka"
+          - "&7Gyors bányászat"
+        enchantments:
+          EFFICIENCY: 3
+          UNBREAKING: 2
+      -
+        material: GOLDEN_APPLE
+        amount: 2
+        name: "&9&lArany Alma"
+        lore:
+          - "&8Ritkaság: &9&lRitka"
+          - "&7Gyógyító élelmiszer"
+  legendary:
+    chance: 10
+    items:
+      -
+        material: DIAMOND_SWORD
+        name: "&6&lHősök Pengéje"
+        lore:
+          - "&8Ritkaság: &6&lLegendás"
+          - "&7Legendás hősök fegyvere"
+        enchantments:
+          SHARPNESS: 3
+          UNBREAKING: 2
+          FIRE_ASPECT: 1

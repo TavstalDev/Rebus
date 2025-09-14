@@ -1,0 +1,63 @@
+data:
+  rare:
+    chance: 50
+    items:
+      -
+        material: DIAMOND_SWORD
+        name: "&9&lKirályi Penge"
+        lore:
+          - "&8Ritkaság: &9&lRitka"
+          - "&7Királyi udvar fegyvere"
+        enchantments:
+          SHARPNESS: 4
+          UNBREAKING: 2
+          SWEEPING_EDGE: 2
+      -
+        material: DIAMOND_HELMET
+        name: "&9&lHarcos Sisak"
+        lore:
+          - "&8Ritkaság: &9&lRitka"
+          - "&7Fej védelem"
+        enchantments:
+          PROTECTION: 3
+          UNBREAKING: 2
+      -
+        material: GOLDEN_CARROT
+        amount: 16
+        name: "&9&lArany Répa"
+        lore:
+          - "&8Ritkaság: &9&lRitka"
+          - "&7Érzési növelő"
+  legendary:
+    chance: 35
+    items:
+      -
+        material: DIAMOND_CHESTPLATE
+        name: "&6&lHősök Páncélja"
+        lore:
+          - "&8Ritkaság: &6&lLegendás"
+          - "&7Legendás hősök páncélja"
+        enchantments:
+          PROTECTION: 4
+          UNBREAKING: 3
+      -
+        material: ENCHANTED_GOLDEN_APPLE
+        amount: 1
+        name: "&6&lVarázs Alma"
+        lore:
+          - "&8Ritkaság: &6&lLegendás"
+          - "&7Hatalmas regeneráció"
+  mythic:
+    chance: 15
+    items:
+      -
+        material: DIAMOND_SWORD
+        name: "&5&lMitikus Penge"
+        lore:
+          - "&8Ritkaság: &5&lMitikus"
+          - "&7Ritkaság a fegyverek között"
+        enchantments:
+          SHARPNESS: 4
+          UNBREAKING: 3
+          FIRE_ASPECT: 1
+          LOOTING: 2
