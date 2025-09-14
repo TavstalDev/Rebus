@@ -1,0 +1,78 @@
+General:
+  NoPermission: "%prefix% &cNincs jogosultságod ehhez."
+  NotEnoughMoney: "%prefix% &cNincs elég pénzed."
+  PurchaseSuccessful: "%prefix% &aSikeres vásárlás!"
+
+NPC:
+  Spawned: "%prefix% &aSikeresen létrehoztad a Rebus NPC-t."
+  Removed: "%prefix% &aSikeresen eltávolítottad a Rebus NPC-t."
+
+Chests:
+  RewardReceived: "%prefix% &aSikeresen megkaptad a jutalmadat a(z) &e%chest_name%&a ládából."
+  NoRewards: "%prefix% &cNincsenek jutalmak a ládában."
+  LocationOccupied": "%prefix% &cEzen a helyen már van egy láda."
+  InventoryFull: "%prefix% &cNincs elég hely a tárgyaknak ezért a földre kerültek a tárgyaid."
+  Cooldown: "%prefix% &cKérlek várj még &e%time% &cmielőtt újra kinyitnád ezt a ládát."
+  AlreadyOpening: "%prefix% &cNem nyithatsz ki egyszerre több ládát."
+
+Commands:
+  ConsoleCaller: "%prefix% &cA parancsot csak játékosok használhatják."
+  UnknownError: "%prefix% &cIsmeretlen hiba történt. Kérlek, jelentsd!"
+  InGame: "%prefix% &cEzt a parancsot nem használhatod aktív játék közben."
+  InvalidArguments: "%prefix% &cÉrvénytelen argumentumok."
+  Common:
+    InvalidPage: "%prefix% &cÉrvénytelen oldalszám."
+  Help:
+    Desc: "Információkat mutat a parancsokról."
+    Title: "&e=== &aRebus Súgó &e=== &aOldal &c%current_page%&a/&c%max_page% &e==="
+    Info: "   &c[] &7- &6Kötelező   &c<> &7- &6Opcionális"
+    Line: "&2/rebus %subcommand%&a%syntax% &8» &7%description%"
+    Bottom: "&e====== %previous_btn%&6%current_page%&e/&6%max_page%%next_btn% &e======"
+    PrevBtn: "&a<<< "
+    NextBtn: " &a>>>"
+  Version:
+    Desc: "Megmutatja a plugin verzióját."
+    Current: "%prefix% &aA Rebus '&3%version%&a' verzióját használod."
+    UpToDate: "%prefix% &aA Rebus naprakész."
+    Outdated: "%prefix% &cA Rebus elavult. Itt töltheted le: &e%link%"
+  Reload:
+    Desc: "Újratölti a plugin konfigurációját és üzeneteit."
+    Done: "%prefix% &aA plugin frissítve."
+  Menu:
+    Desc: "Megnyitja a Rebus menüt."
+    NoChests: "%prefix% &cNincsenek elérhető ládák."
+  Npc:
+    Desc: "Létrehozza a Rebus NPC-t."
+  Give:
+    Syntax: " <játékos> <jutalom>"
+    Desc: "Jutalmat ad egy játékosnak."
+  Reset:
+    Syntax: " <játékos> <adat>"
+    Desc: "Visszaállítja egy játékos adatait."
+  Stats:
+    Syntax: " <játékos>"
+    Desc: "Megmutatja egy játékos statisztikáit."
+
+
+GUI:
+  Title: "&8Ládák"
+  Close: "&cBezárás"
+  Back: "&cVissza"
+  PreviousPage: "&7Előző oldal"
+  NextPage: "&7Következő oldal"
+  Page: "&7Oldal: &f%page%"
+  Cancel: "&cMégse"
+  Confirm: "&aMegerősítés"
+  Price: "&eÁr: &6%price% &$"
+  NoPermission: "&c&lNincs jogosultságod ehhez a ládához."
+
+Time:
+  Seconds: "%value% másodperc"
+  Minutes: "%value% perc"
+  Hours: "%value% óra"
+  Days: "%value% nap"
+  Weeks: "%value% hét"
+  Months: "%value% hónap"
+  Years: "%value% év"
+
+FileVersion: 1
