@@ -39,6 +39,7 @@ public class NpcManager {
     private void loadNPCData() {
         if (!this.npcDataFile.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 this.npcDataFile.createNewFile();
             }
             catch (IOException e) {
@@ -61,10 +62,12 @@ public class NpcManager {
     public void loadExistingNPCs() {
         Rebus.Logger().Info("Loading Rebus NPCs...");
         for (NPC npc : this.registry) {
-            if (!this.isRebusNPC(npc)) continue;
+            if (!this.isRebusNPC(npc))
+                continue;
             try {
                 String ownerUUID = (String)npc.data().get(REBUS_OWNER_KEY, (Object)"");
-                if (ownerUUID.isEmpty()) continue;
+                if (ownerUUID.isEmpty())
+                    continue;
                 UUID playerUUID = UUID.fromString(ownerUUID);
                 this.playerNPCs.put(playerUUID, npc);
                 this.npcToPlayerMap.put(npc.getId(), playerUUID);
@@ -213,10 +216,6 @@ public class NpcManager {
         this.npcToPlayerMap.clear();
         this.saveNPCData();
         Rebus.Logger().Info("Removed all Rebus NPCs.");
-    }
-
-    public int getNPCCount() {
-        return this.playerNPCs.size();
     }
 
     public void shutdown() {

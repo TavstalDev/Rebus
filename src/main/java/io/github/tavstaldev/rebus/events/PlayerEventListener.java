@@ -1,7 +1,6 @@
 package io.github.tavstaldev.rebus.events;
 
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.models.PlayerCache;
 import org.bukkit.Bukkit;
@@ -36,7 +35,7 @@ public class PlayerEventListener implements Listener {
             return;
         }
 
-        if (Rebus.Chests().chestsUnderUnlocking.contains(clickedBlock.getLocation()))
+        if (Rebus.ChestManager().chestsUnderUnlocking.contains(clickedBlock.getLocation()))
         {
             event.setCancelled(true);
         }

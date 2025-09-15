@@ -10,11 +10,7 @@ import io.github.tavstaldev.rebus.models.RebusChest;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Lidded;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -167,7 +163,8 @@ public class ChestManager {
         }
 
         //#region Animate
-        setTemporaryBlock(player, chest.getMaterial(), block, 65L);
+
+        setTemporaryBlock(player, chest.getMaterial(), block);
         this.playParticleEffect(location.clone().add(0.5, 1.0, 0.5), chest.getParticle(), 10, 0.3, 0.3, 0.3, 0.1);
         new BukkitRunnable() {
             int phase = 0;
@@ -229,11 +226,7 @@ public class ChestManager {
     private void playParticleEffect(Location location, String particleType, int count, double offsetX, double offsetY, double offsetZ, double speed) {
         try {
             Particle particle = this.getParticleSafely(particleType);
-            if (particle != null) {
-                location.getWorld().spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, speed);
-            } else {
-                location.getWorld().spawnParticle(Particle.ENCHANT, location, count, offsetX, offsetY, offsetZ, speed);
-            }
+            location.getWorld().spawnParticle(Objects.requireNonNullElse(particle, Particle.ENCHANT), location, count, offsetX, offsetY, offsetZ, speed);
         }
         catch (Exception exception) {
             Rebus.Logger().Error("Error playing particle effect: " + exception.getMessage());
@@ -267,7 +260,7 @@ public class ChestManager {
         }.runTaskLater(Rebus.Instance, 5L);
     }
 
-    private void setTemporaryBlock(final Player player, final Material material, final Block block, final long ticks) {
+    private void setTemporaryBlock(final Player player, final Material material, final Block block) {
         new BukkitRunnable(){
             @Override
             public void run() {
@@ -282,7 +275,7 @@ public class ChestManager {
             public void run() {
                 block.setType(Material.AIR);
             }
-        }.runTaskLater(Rebus.Instance, ticks);
+        }.runTaskLater(Rebus.Instance, 65L);
     }
 
     private void rotateChestToPlayer(Block block, Player player) {

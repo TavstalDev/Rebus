@@ -28,29 +28,29 @@ public class BlockEventListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         ItemStack itemInHand = event.getItemInHand();
-        if (itemInHand == null || itemInHand.getType().isAir() || !itemInHand.hasItemMeta()) {
+        if (itemInHand.getType().isAir() || !itemInHand.hasItemMeta()) {
             return;
         }
 
         var meta = itemInHand.getItemMeta();
-        if (!meta.getPersistentDataContainer().has(Rebus.Chests().getChestKey())) {
+        if (!meta.getPersistentDataContainer().has(Rebus.ChestManager().getChestKey())) {
             return;
         }
-        String key = meta.getPersistentDataContainer().get(Rebus.Chests().getChestKey(), PersistentDataType.STRING);
+        String key = meta.getPersistentDataContainer().get(Rebus.ChestManager().getChestKey(), PersistentDataType.STRING);
 
-        RebusChest chest = Rebus.Chests().getByKey(key);
+        RebusChest chest = Rebus.ChestManager().getByKey(key);
         if (chest == null) {
             return;
         }
 
         event.setCancelled(true);
-        if (Rebus.Chests().chestsUnderUnlocking.contains(event.getBlock().getLocation()))
+        if (Rebus.ChestManager().chestsUnderUnlocking.contains(event.getBlock().getLocation()))
         {
             Rebus.Instance.sendLocalizedMsg(player, "Chest.LocationOccupied");
             return;
         }
 
-        if (Rebus.Chests().playersUnlocking.contains(player.getUniqueId())) {
+        if (Rebus.ChestManager().playersUnlocking.contains(player.getUniqueId())) {
             Rebus.Instance.sendLocalizedMsg(player, "Chests.AlreadyOpening");
             return;
         }
@@ -67,7 +67,7 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        Rebus.Chests().handlePlaceChest(player, chest, itemInHand, event.getBlock());
+        Rebus.ChestManager().handlePlaceChest(player, chest, itemInHand, event.getBlock());
     }
 
     @EventHandler
@@ -75,7 +75,7 @@ public class BlockEventListener implements Listener {
         if (event.isCancelled())
             return;
 
-        if (Rebus.Chests().chestsUnderUnlocking.contains(event.getBlock().getLocation()))
+        if (Rebus.ChestManager().chestsUnderUnlocking.contains(event.getBlock().getLocation()))
         {
             event.setCancelled(true);
         }

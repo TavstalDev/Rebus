@@ -45,10 +45,10 @@ public final class Rebus extends PluginBase {
     public static ItemMetaSerializer ItemSerializer() {
         return Instance._itemMetaSerializer;
     }
-    public static ChestManager Chests() {
+    public static ChestManager ChestManager() {
         return Instance._chestManager;
     }
-    public static NpcManager Npcs() {
+    public static NpcManager NpcManager() {
         return Instance._npcManager;
     }
     public static SpiGUI GUI() {

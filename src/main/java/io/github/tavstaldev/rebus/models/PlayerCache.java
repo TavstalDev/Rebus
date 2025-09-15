@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,20 +42,6 @@ public class PlayerCache {
 
     public Set<Cooldown> getCooldowns() {
         return _cooldowns;
-    }
-
-    public Set<Cooldown> getBuyCooldowns() {
-        return _buyCooldowns;
-    }
-
-    public boolean isUnderBuyCooldown(RebusChest chest) {
-        final String context = Rebus.Config().storageContext;
-        for (Cooldown cooldown : _buyCooldowns) {
-            if (cooldown.getContext().equals(context) && !cooldown.isExpired() && cooldown.getChest().equals(chest.getKey())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void addBuyCooldown(RebusChest chest) {

@@ -47,7 +47,6 @@ permissions:
       rebus.debug: true
       rebus.npc: true
       rebus.give: true
-      rebus.reset: true
       rebus.chests: true
       rebus.reload: true
   rebus.use:
@@ -70,9 +69,6 @@ permissions:
       default: op
   rebus.give:
       description: Allows giving rewards to players.
-      default: op
-  rebus.reset:
-      description: Allows resetting player data.
       default: op
   rebus.chests:
       description: Allows managing reward chests.

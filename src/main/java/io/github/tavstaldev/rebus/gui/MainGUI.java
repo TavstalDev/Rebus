@@ -11,7 +11,6 @@ import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.models.RebusChest;
 import io.github.tavstaldev.rebus.util.TimeUtil;
-import io.github.tavstaldev.rebus.util.EconomyUtils;
 import io.github.tavstaldev.rebus.util.PermissionUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -78,7 +77,7 @@ public class MainGUI {
             var menu = playerCache.getMainMenu();
 
             // Daily Quests
-            var chests =  Rebus.Chests().getChests();
+            var chests =  Rebus.ChestManager().getChests();
             for (RebusChest chest : chests) {
                 List<Component> lore = new ArrayList<>();
                 String price = Rebus.Translator().Localize("GUI.Price", Map.of("price", chest.getCost()));

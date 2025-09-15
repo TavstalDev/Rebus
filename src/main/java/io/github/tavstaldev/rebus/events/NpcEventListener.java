@@ -1,7 +1,6 @@
 package io.github.tavstaldev.rebus.events;
 
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.gui.MainGUI;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCClickEvent;
@@ -13,11 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class NpcEventListener implements Listener {
-    private final RebusConfig config;
-
-    public NpcEventListener() {
-        this.config = Rebus.Config();
-    }
 
     public static void init() {
         Rebus.Instance.getServer().getPluginManager().registerEvents(new NpcEventListener(), Rebus.Instance);
@@ -35,16 +29,16 @@ public class NpcEventListener implements Listener {
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked().hasMetadata("NPC")) {
-            try {
-                NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
-                if (npc != null) {
-                    event.setCancelled(this.handleNPCInteraction(npc, event.getPlayer()));
-                }
-            }
-            catch (Exception e) {
-                Rebus.Logger().Warn("Failed to identify NPC: " + e.getMessage());
-            }
+        if (!event.getRightClicked().hasMetadata("NPC"))
+            return;
+
+        try {
+            NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
+            if (npc == null)
+                return;
+            event.setCancelled(this.handleNPCInteraction(npc, event.getPlayer()));
+        } catch (Exception e) {
+            Rebus.Logger().Warn("Failed to identify NPC: " + e.getMessage());
         }
     }
 
@@ -52,7 +46,7 @@ public class NpcEventListener implements Listener {
         if (npc == null) {
             return false;
         }
-        if (!Rebus.Npcs().isRebusNPC(npc)) {
+        if (!Rebus.NpcManager().isRebusNPC(npc)) {
             return false;
         }
         if (!player.hasPermission("rebus.use")) {

@@ -18,13 +18,9 @@ public class Reward {
         return chance;
     }
 
-    public Set<Integer> getItems() {
-        return items;
-    }
-
     public Set<ItemStack> getItemStacks() {
         Set<ItemStack> itemStacks = new java.util.HashSet<>();
-        var itemsTable = Rebus.Chests().getItemTable();
+        var itemsTable = Rebus.ChestManager().getItemTable();
         for (Integer itemId : items) {
             ItemStack itemStack = itemsTable.get(itemId);
             if (itemStack != null) {
