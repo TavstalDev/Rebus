@@ -14,6 +14,7 @@ Chests:
   InventoryFull: "%prefix% &cNincs elég hely a tárgyaknak ezért a földre kerültek a tárgyaid."
   Cooldown: "%prefix% &cKérlek várj még &e%time% &cmielőtt újra kinyitnád ezt a ládát."
   AlreadyOpening: "%prefix% &cNem nyithatsz ki egyszerre több ládát."
+  BuyCooldown: "%prefix% &cMég nem vásárolhatsz új ládát. Kérlek várj még &e%time%&c."
 
 Commands:
   ConsoleCaller: "%prefix% &cA parancsot csak játékosok használhatják."
