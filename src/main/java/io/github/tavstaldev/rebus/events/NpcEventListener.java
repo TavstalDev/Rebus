@@ -39,8 +39,7 @@ public class NpcEventListener implements Listener {
             try {
                 NPC npc = CitizensAPI.getNPCRegistry().getNPC(event.getRightClicked());
                 if (npc != null) {
-                    this.handleNPCInteraction(npc, event.getPlayer());
-                    event.setCancelled(true);
+                    event.setCancelled(this.handleNPCInteraction(npc, event.getPlayer()));
                 }
             }
             catch (Exception e) {
@@ -49,17 +48,18 @@ public class NpcEventListener implements Listener {
         }
     }
 
-    private void handleNPCInteraction(NPC npc, Player player) {
+    private boolean handleNPCInteraction(NPC npc, Player player) {
         if (npc == null) {
-            return;
+            return false;
         }
         if (!Rebus.Npcs().isRebusNPC(npc)) {
-            return;
+            return false;
         }
         if (!player.hasPermission("rebus.use")) {
             Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
-            return;
+            return false;
         }
         MainGUI.open(player);
+        return  true;
     }
 }
