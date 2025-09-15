@@ -127,8 +127,7 @@ public class RebusChest {
 
         Set<Reward> rewards = new HashSet<>();
         File rewardFile = Paths.get(Rebus.Instance.getDataFolder().getPath(), "chests", key + ".yml").toFile();
-
-        if (rewardFile.exists()) {
+        if (!rewardFile.exists()) {
             Rebus.Logger().Warn("Reward file not found for chest: " + key);
             return null;
         }
