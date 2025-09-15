@@ -2,6 +2,7 @@ General:
   NoPermission: "%prefix% &cNincs jogosultságod ehhez."
   NotEnoughMoney: "%prefix% &cNincs elég bányászérméd. Egyenleg: &e%balance% &6BÉ"
   PurchaseSuccessful: "%prefix% &aSikeres vásárlás!"
+  PlayerNotFound: "%prefix% &cA játékos nem található."
 
 NPC:
   Spawned: "%prefix% &aSikeresen létrehoztad a Rebus NPC-t."
@@ -15,6 +16,7 @@ Chests:
   Cooldown: "%prefix% &cKérlek várj még &e%time% &cmielőtt újra kinyitnád ezt a ládát."
   AlreadyOpening: "%prefix% &cNem nyithatsz ki egyszerre több ládát."
   BuyCooldown: "%prefix% &cMég nem vásárolhatsz új ládát. Kérlek várj még &e%time%&c."
+  NotFound: "%prefix% &cA '%chest%' láda nem található."
 
 Commands:
   ConsoleCaller: "%prefix% &cA parancsot csak játékosok használhatják."
@@ -46,13 +48,9 @@ Commands:
     Desc: "Létrehozza a Rebus NPC-t."
   Give:
     Syntax: " <játékos> <jutalom>"
-    Desc: "Jutalmat ad egy játékosnak."
-  Reset:
-    Syntax: " <játékos> <adat>"
-    Desc: "Visszaállítja egy játékos adatait."
-  Stats:
-    Syntax: " <játékos>"
-    Desc: "Megmutatja egy játékos statisztikáit."
+    Desc: "Ládát ad egy játékosnak."
+    Given: "%prefix% &aSikeresen adtál &e%chest% &aládát &e%player%&a-nak."
+    Received: "%prefix% &aKaptál egy &e%chest% &aládát."
 
 
 GUI:

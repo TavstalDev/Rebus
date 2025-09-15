@@ -4,8 +4,10 @@ import io.github.tavstaldev.minecorelib.core.PluginLogger;
 import io.github.tavstaldev.minecorelib.models.command.SubCommandData;
 import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.rebus.Rebus;
+import io.github.tavstaldev.rebus.models.RebusChest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,10 +15,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommandRebusAdmin implements CommandExecutor {
     private final PluginLogger _logger = Rebus.Logger().WithModule(CommandRebusAdmin.class);
@@ -46,16 +45,6 @@ public class CommandRebusAdmin implements CommandExecutor {
             add(new SubCommandData("give", "rebus.give", Map.of(
                     "syntax", "Commands.Give.Syntax",
                     "description", "Commands.Give.Desc"
-            )));
-            // RESET
-            add(new SubCommandData("reset", "rebus.reset", Map.of(
-                    "syntax", "Commands.Reset.Syntax",
-                    "description", "Commands.Reset.Desc"
-            )));
-            // STATS
-            add(new SubCommandData("stats", "rebus.stats", Map.of(
-                    "syntax", "Commands.Stats.Syntax",
-                    "description", "Commands.Stats.Desc"
             )));
         }
     };
@@ -123,7 +112,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
 
-                    Rebus.Npcs().spawnNPC(player);
+                    Rebus.NpcManager().spawnNPC(player);
                     return  true;
                 }
                 case "removenpcs": {
@@ -131,7 +120,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
                         return true;
                     }
-                    Rebus.Npcs().removeAllNPCs();
+                    Rebus.NpcManager().removeAllNPCs();
                     return  true;
                 }
                 case "give": {
@@ -140,28 +129,39 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
 
-                    // TODO
-
-                    return  true;
-                }
-                case "reset": {
-                    if (!player.hasPermission("rebus.reset")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    if (args.length != 3) {
+                        Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
                         return true;
                     }
 
-                    // TODO
-
-                    return  true;
-                }
-                case "stats": {
-                    if (!player.hasPermission("rebus.stats")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        Rebus.Instance.sendLocalizedMsg(player, "General.PlayerNotFound");
                         return true;
                     }
 
-                    // TODO
+                    RebusChest chest = null;
+                    for (RebusChest c : Rebus.ChestManager().getChests()) {
+                        if (Objects.equals(c.getName(), args[2])) {
+                            chest = c;
+                            break;
+                        }
+                    }
 
+                    if (chest == null) {
+                        Rebus.Instance.sendLocalizedMsg(player, "Chests.NotFound", Map.of("chest", args[2]));
+                        return true;
+                    }
+
+                    chest.give(target, 1);
+                    Rebus.Instance.sendLocalizedMsg(player, "Commands.Give.Given", Map.of(
+                            "chest", chest.getName(),
+                            "player", target.getName()
+                    ));
+                    Rebus.Instance.sendLocalizedMsg(target, "Commands.Give.Received", Map.of(
+                            "chest", chest.getName(),
+                            "player", player.getName()
+                    ));
                     return  true;
                 }
             }
