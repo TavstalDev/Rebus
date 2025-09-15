@@ -43,6 +43,7 @@ public class BlockEventListener implements Listener {
             return;
         }
 
+        event.setCancelled(true);
         if (Rebus.Chests().chestsUnderUnlocking.contains(event.getBlock().getLocation()))
         {
             Rebus.Instance.sendLocalizedMsg(player, "Chest.LocationOccupied");
@@ -54,7 +55,6 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        event.setCancelled(true);
         if (!PermissionUtils.checkPermission(player, chest.getPermission())) {
             Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
             return;
@@ -62,7 +62,7 @@ public class BlockEventListener implements Listener {
 
         PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
         long remainingTime = cache.getCooldown(chest);
-        if (remainingTime > 0) {
+        if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.cooldown")) {
             Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
             return;
         }

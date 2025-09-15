@@ -114,14 +114,21 @@ public class MainGUI {
                     }
 
                     long remainingTime = playerCache.getCooldown(chest);
-                    if (remainingTime > 0) {
+                    if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.cooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
+                        return;
+                    }
+
+                    remainingTime = playerCache.getBuyCooldown(chest);
+                    if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.buycooldown")) {
+                        Rebus.Instance.sendLocalizedMsg(player, "Chests.BuyCooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
                     }
 
                     if (chest.getCost() > 0)
                         Rebus.BanyaszApi().decreaseBalance(player.getUniqueId(), (int)chest.getCost());
                     chest.give(player, 1);
+                    playerCache.addBuyCooldown(chest);
                     Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
                 });
 
