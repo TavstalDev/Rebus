@@ -72,6 +72,7 @@ public final class Rebus extends PluginBase {
     @Override
     public void onEnable() {
         Instance = this;
+        super.onEnable(); // call parent method
         _config = new RebusConfig();
         _config.load(); // Fixes a potential issue with config not being loaded before usage
         _translator = new PluginTranslator(this, new String[]{"eng", "hun"});
@@ -206,6 +207,7 @@ public final class Rebus extends PluginBase {
 
     @Override
     public void onDisable() {
+        super.onDisable();
         if (this._npcManager != null) {
             this._npcManager.shutdown();
         }
