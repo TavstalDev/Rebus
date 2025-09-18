@@ -1,13 +1,11 @@
 package io.github.tavstaldev.rebus;
 
-import com.cryptomorin.xseries.particles.XParticle;
 import io.github.tavstaldev.minecorelib.config.ConfigurationBase;
 import io.github.tavstaldev.rebus.util.IconUtils;
 import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RebusConfig extends ConfigurationBase {
@@ -77,59 +75,93 @@ public class RebusConfig extends ConfigurationBase {
         dailyChest.put("completionSound", "ENTITY_PLAYER_LEVELUP");
         dailyChest.put("isHighTier", false);
         //#endregion
-        //#region Default chest
-        Map<String, Object> bronzeChest = new HashMap<>();
-        bronzeChest.put("name", "&6Alap láda");
-        bronzeChest.put("description", Arrays.asList("&7Kezdő kalandozók számára."));
-        bronzeChest.put("material", "TRAPPED_CHEST");
-        bronzeChest.put("cost", 100);
-        bronzeChest.put("cooldown", 86400);
-        bronzeChest.put("permission", "rebus.chest.default");
-        bronzeChest.put("slot", 2);
-        bronzeChest.put("particle", "HAPPY_VILLAGER");
-        bronzeChest.put("particleCount", 35);
-        bronzeChest.put("openSound", "BLOCK_CHEST_OPEN");
-        bronzeChest.put("closeSound", "BLOCK_CHEST_CLOSE");
-        bronzeChest.put("completionSound", "ENTITY_PLAYER_LEVELUP");
-        bronzeChest.put("isHighTier", false);
+        //#region common chest
+        Map<String, Object> commonChest = new HashMap<>();
+        commonChest.put("name", "&6Alap láda");
+        commonChest.put("description", Arrays.asList("&7Kezdő kalandozók számára."));
+        commonChest.put("material", "TRAPPED_CHEST");
+        commonChest.put("cost", 100);
+        commonChest.put("cooldown", 86400);
+        commonChest.put("permission", "rebus.chest.default");
+        commonChest.put("slot", 2);
+        commonChest.put("particle", "HAPPY_VILLAGER");
+        commonChest.put("particleCount", 35);
+        commonChest.put("openSound", "BLOCK_CHEST_OPEN");
+        commonChest.put("closeSound", "BLOCK_CHEST_CLOSE");
+        commonChest.put("completionSound", "ENTITY_PLAYER_LEVELUP");
+        commonChest.put("isHighTier", false);
         //#endregion
-        //#region Pandora chest
-        Map<String, Object> silverChest = new HashMap<>();
-        silverChest.put("name", "&5Pandora szelencéje");
-        silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára."));
-        silverChest.put("material", "ENDER_CHEST");
-        silverChest.put("cost", 250);
-        silverChest.put("cooldown", 86400);
-        silverChest.put("permission", "rebus.chest.pandora");
-        silverChest.put("slot", 4);
-        silverChest.put("particle", "FIREWORK");
-        silverChest.put("particleCount", 40);
-        silverChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
-        silverChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
-        silverChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
-        silverChest.put("isHighTier", true);
+        //#region uncommon chest
+        Map<String, Object> uncommonChest = new HashMap<>();
+        uncommonChest.put("name", "&5Pandora szelencéje");
+        uncommonChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára."));
+        uncommonChest.put("material", "ENDER_CHEST");
+        uncommonChest.put("cost", 250);
+        uncommonChest.put("cooldown", 86400);
+        uncommonChest.put("permission", "rebus.chest.pandora");
+        uncommonChest.put("slot", 4);
+        uncommonChest.put("particle", "FIREWORK");
+        uncommonChest.put("particleCount", 40);
+        uncommonChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
+        uncommonChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
+        uncommonChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
+        uncommonChest.put("isHighTier", true);
         //#endregion
-        //#region Choosen chest
-        Map<String, Object> goldChest = new HashMap<>();
-        goldChest.put("name", "&cKiválasztottak ládája");
-        goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára"));
-        goldChest.put("material", "BEACON");
-        goldChest.put("cost", 500);
-        goldChest.put("cooldown", 86400);
-        goldChest.put("permission", "rebus.chest.choosen");
-        goldChest.put("slot", 6);
-        goldChest.put("particle", "ENCHANTED_HIT");
-        goldChest.put("particleCount", 50);
-        goldChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
-        goldChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
-        goldChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
-        goldChest.put("isHighTier", true);
+        //#region rare chest
+        Map<String, Object> rareChest = new HashMap<>();
+        rareChest.put("name", "&cKiválasztottak ládája");
+        rareChest.put("description", Arrays.asList("&7Veterán kalandorok számára"));
+        rareChest.put("material", "BEACON");
+        rareChest.put("cost", 500);
+        rareChest.put("cooldown", 86400);
+        rareChest.put("permission", "rebus.chest.choosen");
+        rareChest.put("slot", 6);
+        rareChest.put("particle", "ENCHANTED_HIT");
+        rareChest.put("particleCount", 50);
+        rareChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
+        rareChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
+        rareChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
+        rareChest.put("isHighTier", true);
+        //#endregion
+        //#region epic chest
+        Map<String, Object> epicChest = new HashMap<>();
+        epicChest.put("name", "&6Alap láda");
+        epicChest.put("description", Arrays.asList("&7Kezdő kalandozók számára."));
+        epicChest.put("material", "TRAPPED_CHEST");
+        epicChest.put("cost", 100);
+        epicChest.put("cooldown", 86400);
+        epicChest.put("permission", "rebus.chest.default");
+        epicChest.put("slot", 2);
+        epicChest.put("particle", "HAPPY_VILLAGER");
+        epicChest.put("particleCount", 35);
+        epicChest.put("openSound", "BLOCK_CHEST_OPEN");
+        epicChest.put("closeSound", "BLOCK_CHEST_CLOSE");
+        epicChest.put("completionSound", "ENTITY_PLAYER_LEVELUP");
+        epicChest.put("isHighTier", false);
+        //#endregion
+        //#region legendary chest
+        Map<String, Object> legendaryChest = new HashMap<>();
+        legendaryChest.put("name", "&5Pandora szelencéje");
+        legendaryChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára."));
+        legendaryChest.put("material", "ENDER_CHEST");
+        legendaryChest.put("cost", 250);
+        legendaryChest.put("cooldown", 86400);
+        legendaryChest.put("permission", "rebus.chest.pandora");
+        legendaryChest.put("slot", 4);
+        legendaryChest.put("particle", "FIREWORK");
+        legendaryChest.put("particleCount", 40);
+        legendaryChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
+        legendaryChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
+        legendaryChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
+        legendaryChest.put("isHighTier", true);
         //#endregion
         resolve("chests", Map.of(
                 "daily", dailyChest,
-                "default", bronzeChest,
-                "pandora", silverChest,
-                "choosen", goldChest
+                "commonchest", commonChest,
+                "uncommonchest", uncommonChest,
+                "rarechest", rareChest,
+                "epicchest", epicChest,
+                "legendarychest", legendaryChest
         ));
     }
 }
