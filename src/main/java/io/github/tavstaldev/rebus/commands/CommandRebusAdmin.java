@@ -142,7 +142,7 @@ public class CommandRebusAdmin implements CommandExecutor {
 
                     RebusChest chest = null;
                     for (RebusChest c : Rebus.ChestManager().getChests()) {
-                        if (Objects.equals(c.getName(), args[2])) {
+                        if (Objects.equals(c.getKey(), args[2])) {
                             chest = c;
                             break;
                         }
