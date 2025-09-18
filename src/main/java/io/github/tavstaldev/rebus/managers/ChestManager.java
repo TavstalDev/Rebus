@@ -213,7 +213,9 @@ public class ChestManager {
                             chestsUnderUnlocking.remove(location);
                             playersUnlocking.remove(player.getUniqueId());
                             playCompletionEffects(player, location, chest);
+
                             chest.reward(player);
+
                         }
                     }.runTaskLater(Rebus.Instance, 10L);
                 }
