@@ -86,15 +86,32 @@ public class RebusChest {
                 boolean inventoryFullMessageSent = false;
                 var location = player.getLocation();
                 for (ItemStack item : reward.getItemStacks()) {
-                    if (player.getInventory().firstEmpty() != -1) {
-                        player.getInventory().addItem(item);
-                        continue;
-                    }
+                    // fix: items are not correctly added
+                    if (item.getMaxStackSize() == 1 && item.getAmount() > 0) {
+                        var itemCopy = item.clone();
+                        itemCopy.setAmount(1);
+                        for (int i = 0; i < item.getAmount(); i++) {
+                            if (player.getInventory().firstEmpty() == -1) {
+                                location.getWorld().dropItemNaturally(location, itemCopy);
+                                if (!inventoryFullMessageSent) {
+                                    Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
+                                    inventoryFullMessageSent = true;
+                                }
+                                continue;
+                            }
+                            player.getInventory().addItem(itemCopy);
+                        }
+                    } else {
+                        if (player.getInventory().firstEmpty() != -1) {
+                            player.getInventory().addItem(item);
+                            continue;
+                        }
 
-                    location.getWorld().dropItemNaturally(location, item);
-                    if (!inventoryFullMessageSent) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
-                        inventoryFullMessageSent = true;
+                        location.getWorld().dropItemNaturally(location, item);
+                        if (!inventoryFullMessageSent) {
+                            Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
+                            inventoryFullMessageSent = true;
+                        }
                     }
                 }
                 PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
