@@ -6,6 +6,7 @@ import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.util.IconUtils;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import java.util.List;
 public class RebusChest {
     private final String key;
     private final String name;
+    private int rolls;
     private final List<String> description;
     private final Material material;
     private final double cost;
@@ -38,9 +40,10 @@ public class RebusChest {
     private final boolean isHighTier;
     private final Set<Reward> rewards;
 
-    public RebusChest(String key, String name, List<String> description, Material material, double cost, long cooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
+    public RebusChest(String key, String name, int rolls, List<String> description, Material material, double cost, long cooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
         this.key = key;
         this.name = name;
+        this.rolls = rolls;
         this.description = description;
         this.material = material;
         this.cost = cost;
@@ -72,39 +75,54 @@ public class RebusChest {
 
     public void reward(Player player) {
         if (rewards.isEmpty()) {
-            Rebus.Instance.sendLocalizedMsg(player, "Chests.NoRewards");
+            //Rebus.Instance.sendLocalizedMsg(player, "Chests.NoRewards");
             return;
         }
 
         int totalChance = rewards.stream().mapToInt(Reward::getChance).sum();
+        ArrayList<ItemStack> items = new ArrayList<>();
+        boolean inventoryFullMessageSent = false;
+        var location = player.getLocation();
+        for(int i = 0; i < rolls; ) {
+            ItemStack item = rollRewards(totalChance);
+            while(items.contains(item)) {
+                item = rollRewards(totalChance);
+            }
+            items.add(item);
+
+            if (player.getInventory().firstEmpty() != -1) {
+                player.getInventory().addItem(item);
+            } else {
+                if (!inventoryFullMessageSent) {
+                    Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
+                }
+                location.getWorld().dropItemNaturally(location, item);
+            }
+
+            i++;
+        }
+        items.clear();
+
+        PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
+        cache.getCooldowns().add(new Cooldown(Rebus.Config().storageContext, key, LocalDateTime.now().plusSeconds(cooldown)));
+        Rebus.Database().addCooldown(player.getUniqueId(), key, cooldown);
+        Rebus.Instance.sendLocalizedMsg(player, "Chests.RewardReceived", Map.of("chest_name", getName()));
+
+        //Rebus.Instance.sendLocalizedMsg(player, "Chests.NoRewards");
+    }
+
+    public ItemStack rollRewards(int totalChance) {
         int randomValue = (int) (Math.random() * totalChance);
         int cumulativeChance = 0;
 
         for (Reward reward : rewards) {
+            List<ItemStack> test = new ArrayList<>(reward.getItemStacks());
             cumulativeChance += reward.getChance();
             if (randomValue < cumulativeChance) {
-                boolean inventoryFullMessageSent = false;
-                var location = player.getLocation();
-                for (ItemStack item : reward.getItemStacks()) {
-                    if (player.getInventory().firstEmpty() != -1) {
-                        player.getInventory().addItem(item);
-                        continue;
-                    }
-
-                    location.getWorld().dropItemNaturally(location, item);
-                    if (!inventoryFullMessageSent) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
-                        inventoryFullMessageSent = true;
-                    }
-                }
-                PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
-                cache.getCooldowns().add(new Cooldown(Rebus.Config().storageContext, key, LocalDateTime.now().plusSeconds(cooldown)));
-                Rebus.Database().addCooldown(player.getUniqueId(), key, cooldown);
-                Rebus.Instance.sendLocalizedMsg(player, "Chests.RewardReceived", Map.of("chest_name", getName()));
-                return;
+                return test.getFirst();
             }
         }
-        Rebus.Instance.sendLocalizedMsg(player, "Chests.NoRewards");
+        return null; // unlucky
     }
 
     public static @Nullable RebusChest fromMap(String key, ConfigurationSection values) {
@@ -132,14 +150,17 @@ public class RebusChest {
             return null;
         }
 
+        Map<String, Object> yamlMap;
         try (FileInputStream stream = new FileInputStream(rewardFile)) {
             Yaml yaml = new Yaml();
-            Map<String, Object> yamlMap = TypeUtils.castAsMap(yaml.load(stream), null);
+            yamlMap = TypeUtils.castAsMap(yaml.load(stream), null);
 
             if (yamlMap == null || !yamlMap.containsKey("data")) {
                 Rebus.Logger().Warn("Invalid reward data for chest: " + key);
                 return null;
             }
+
+            int rolls = (int) yamlMap.getOrDefault("rolls", 1);
 
             Map<String, Object> dataMap = TypeUtils.castAsMap(yamlMap.get("data"), null);
             if (dataMap == null) {
@@ -158,12 +179,14 @@ public class RebusChest {
 
                 rewards.add(new Reward(chance, items));
             }
+            return new RebusChest(key, name, rolls,
+                    description, material, cost, cooldown, permission, slot, particle, particleCount,
+                    openSound, closeSound, completionSound, isHighTier, rewards);
         } catch (Exception ex) {
             Rebus.Logger().Warn("Error loading reward file for chest: " + key);
             Rebus.Logger().Warn(ex.getMessage());
             return null;
         }
-        return new RebusChest(key, name, description, material, cost, cooldown, permission, slot, particle, particleCount, openSound, closeSound, completionSound, isHighTier, rewards);
     }
 
     //#region Getters
