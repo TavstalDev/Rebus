@@ -2,10 +2,10 @@ items:
   - id: 1
     material: BLAZE_ROD
     amount: 3
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -13,7 +13,8 @@ items:
 
   - id: 2
     material: DIAMOND_CHESTPLATE
-    name: "&e&lBûvölt Mellvért"
+    name: "&e&lBűvölt Mellvért"
+    amount: 2
     lore:
       - "&8Ritkaság: &e&lEmlékezetes"
       - "&7A legendás páncélzat, amit a"
@@ -175,10 +176,14 @@ items:
   - id: 18
     material: BLAZE_ROD
     amount: 7
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
+    persistent-data:
+      airborn:items/save_rod:
+        type: BOOLEAN
+        value: true
 
   - id: 19
     material: TRIDENT
@@ -188,7 +193,7 @@ items:
       - "&7Ahol a dolog becsapódik, ott a mennydörgés"
       - "&7és a villámok ereje szabadul el."
     enchantments:
-      CHANNELING: 1
+      LOYALTY: 1
       UNBREAKING: 3
 
   - id: 20
@@ -203,7 +208,7 @@ items:
 
   - id: 21
     material: DIAMOND_LEGGINGS
-    amount: 7
+    amount: 2
     name: "&e&lMasszív Lábszárvédő"
     lore:
       - "&8Ritkaság: &e&lEmlékezetes"
@@ -214,7 +219,7 @@ items:
 
   - id: 22
     material: DIAMOND_BOOTS
-    amount: 7
+    amount: 2
     name: "&5&lTörhetetlen Bakancs"
     lore:
       - "&8Ritkaság: &5&lVégtelen"
@@ -234,7 +239,7 @@ items:
 
   - id: 24
     material: DIAMOND_HELMET
-    amount: 6
+    amount: 2
     name: "&4&lHadúr Sisakja"
     lore:
       - "&8Ritkaság: &4&lLegendás"
@@ -271,10 +276,7 @@ items:
       - "&8Ritkaság: &c&lMisztikus"
       - "&7A gyógyító elixírek anyja."
       - "&7Nagyobb erőt ad."
-    potion_effects:
-      - type: STRENGTH
-        duration: 300
-        level: 2
+    basePotionType: LONG_STRENGTH
 
   - id: 28
     material: DIAMOND_LEGGINGS
@@ -292,10 +294,7 @@ items:
     lore:
       - "&8Ritkaság: &b&lRitka"
       - "&7Fokozza a harci képességeket."
-    potion_effects:
-      - type: SPEED
-        duration: 300
-        level: 2
+    basePotionType: LONG_SWIFTNESS
 
   - id: 30
     material: DIAMOND_AXE
@@ -323,43 +322,46 @@ items:
   - id: 32
     material: BLAZE_ROD
     amount: 1
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
         value: true
+
   - id: 33
     material: BLAZE_ROD
     amount: 4
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
         value: true
+
   - id: 34
     material: BLAZE_ROD
     amount: 10
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
         value: true
+
   - id: 35
     material: BLAZE_ROD
     amount: 7
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -367,10 +369,10 @@ items:
   - id: 36
     material: BLAZE_ROD
     amount: 16
-    name: "&b&lMentőrúd"
+    name: "&5Mentőrúd"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Ezzel az eszközzel baj esetén megmenekülhetsz."
+      - '&eHa van ilyen tárgy a táskádba,'
+      - '&ehalálkor nem veszíted el a tárgyaidat.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
