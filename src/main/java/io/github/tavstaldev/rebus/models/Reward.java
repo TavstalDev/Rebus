@@ -1,6 +1,7 @@
 package io.github.tavstaldev.rebus.models;
 
 import io.github.tavstaldev.rebus.Rebus;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
@@ -25,6 +26,8 @@ public class Reward {
             ItemStack itemStack = itemsTable.get(itemId);
             if (itemStack != null) {
                 itemStacks.add(itemStack);
+            } else {
+                Bukkit.broadcastMessage("NULL ITEM: " + itemId);
             }
         }
 
