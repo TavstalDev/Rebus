@@ -82,8 +82,8 @@ public class RebusConfig extends ConfigurationBase {
         bronzeChest.put("name", "&6Alap láda");
         bronzeChest.put("description", Arrays.asList("&7Kezdő kalandozók számára."));
         bronzeChest.put("material", "TRAPPED_CHEST");
-        bronzeChest.put("cost", 100);
-        bronzeChest.put("cooldown", 86400);
+        bronzeChest.put("cost", 500);
+        bronzeChest.put("cooldown", 300);
         bronzeChest.put("permission", "rebus.chest.default");
         bronzeChest.put("slot", 2);
         bronzeChest.put("particle", "HAPPY_VILLAGER");
@@ -98,8 +98,8 @@ public class RebusConfig extends ConfigurationBase {
         silverChest.put("name", "&5Pandora szelencéje");
         silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára."));
         silverChest.put("material", "ENDER_CHEST");
-        silverChest.put("cost", 250);
-        silverChest.put("cooldown", 86400);
+        silverChest.put("cost", 1000);
+        silverChest.put("cooldown", 300);
         silverChest.put("permission", "rebus.chest.pandora");
         silverChest.put("slot", 4);
         silverChest.put("particle", "FIREWORK");
@@ -114,8 +114,8 @@ public class RebusConfig extends ConfigurationBase {
         goldChest.put("name", "&cKiválasztottak ládája");
         goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára"));
         goldChest.put("material", "BEACON");
-        goldChest.put("cost", 500);
-        goldChest.put("cooldown", 86400);
+        goldChest.put("cost", 1500);
+        goldChest.put("cooldown", 300);
         goldChest.put("permission", "rebus.chest.choosen");
         goldChest.put("slot", 6);
         goldChest.put("particle", "ENCHANTED_HIT");
