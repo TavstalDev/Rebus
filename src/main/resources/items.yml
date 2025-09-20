@@ -227,16 +227,6 @@ items:
     enchantments:
       UNBREAKING: 3
 
-  - id: 23
-    material: ELYTRA
-    amount: 3
-    name: "&a&lFlappy"
-    lore:
-      - "&8Ritkaság: &a&lKözönséges"
-      - "&7Segít elrepülni a harcmezőről."
-    enchantments:
-      UNBREAKING: 3
-
   - id: 24
     material: DIAMOND_HELMET
     amount: 2

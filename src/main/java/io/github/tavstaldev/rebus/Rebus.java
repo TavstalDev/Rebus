@@ -90,9 +90,6 @@ public final class Rebus extends PluginBase {
         BlockEventListener.init();
         NpcEventListener.init();
 
-        // Generate config file
-        saveDefaultConfig();
-
         // Load Localizations
         if (!_translator.Load())
         {

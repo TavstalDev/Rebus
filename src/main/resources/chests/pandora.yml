@@ -1,7 +1,7 @@
 data:
   common:
     chance: 30
-    items: [23, 25, 33]
+    items: [22, 25, 33]
   rare:
     chance: 20
     items: [18, 29, 33]

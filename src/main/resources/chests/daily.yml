@@ -1,7 +1,7 @@
 data:
   common:
     chance: 40
-    items: [ 7, 23 ]
+    items: [ 7, 24 ]
   common_2:
       chance: 20
       items: [ 13, 14 ]
