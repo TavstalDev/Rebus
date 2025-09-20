@@ -1,19 +1,22 @@
 data:
-  common:
-    chance: 35
-    items: [36]
-  rare:
+  common_1:
     chance: 25
-    items: [41, 34]
-  memorable:
+    items: [33, 5]
+  common_2:
     chance: 20
-    items: [38, 31, 42, 34]
-  mystic:
+    items: [30, 5]
+  uncommon_1:
+    chance: 15
+    items: [6]
+  uncommon_2:
+    chance: 15
+    items: [22, 5]
+  rare_1:
     chance: 10
-    items: [37, 17, 34]
-  legendary:
-    chance: 7
-    items: [40, 34]
-  infinite:
-    chance: 3
-    items: [39, 30, 34]
+    items: [32, 5]
+  epic_1:
+    chance: 5
+    items: [31, 5]
+  epic_2:
+    chance: 5
+    items: [34, 5]

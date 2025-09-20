@@ -98,7 +98,7 @@ public class RebusConfig extends ConfigurationBase {
         silverChest.put("name", "&5Pandora szelencéje");
         silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára."));
         silverChest.put("material", "ENDER_CHEST");
-        silverChest.put("cost", 1000);
+        silverChest.put("cost", 750);
         silverChest.put("cooldown", 300);
         silverChest.put("permission", "rebus.chest.pandora");
         silverChest.put("slot", 4);
@@ -114,7 +114,7 @@ public class RebusConfig extends ConfigurationBase {
         goldChest.put("name", "&cKiválasztottak ládája");
         goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára"));
         goldChest.put("material", "BEACON");
-        goldChest.put("cost", 1500);
+        goldChest.put("cost", 1000);
         goldChest.put("cooldown", 300);
         goldChest.put("permission", "rebus.chest.choosen");
         goldChest.put("slot", 6);
