@@ -44,7 +44,7 @@ public class ChestManager {
     public final Set<Location> chestsUnderUnlocking = new HashSet<>();
 
     public void load() {
-        chests = (chests == null) ? new HashSet<>() : new HashSet<>(chests);
+        chests = new HashSet<>();
 
         // Ensure chests directory exists and create default chest files if necessary
         var chestsDir = Paths.get(Rebus.Instance.getDataFolder().getPath(), "chests").toFile();
