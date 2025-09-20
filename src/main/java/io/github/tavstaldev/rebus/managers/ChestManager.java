@@ -154,11 +154,12 @@ public class ChestManager {
         final Location location = block.getLocation();
         chestsUnderUnlocking.add(location);
         playersUnlocking.add(player.getUniqueId());
-        if (item.getAmount() <= 1) {
-            player.getInventory().remove(item);
+        var offHand = player.getInventory().getItemInOffHand();
+        if (offHand.isSimilar(item.asOne()) && offHand.getAmount() >= 1) {
+            offHand.setAmount(offHand.getAmount() - 1);
+            player.getInventory().setItemInOffHand(offHand);
         } else {
-            item.setAmount(item.getAmount() - 1);
-            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
+            player.getInventory().removeItem(item.asQuantity(1));
         }
 
         //#region Animate
