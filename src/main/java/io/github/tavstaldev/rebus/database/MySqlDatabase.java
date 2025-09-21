@@ -13,17 +13,27 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Represents the MySQL database implementation for managing cooldowns and other data.
+ * Utilizes HikariCP for efficient database connection pooling.
+ */
 public class MySqlDatabase implements IDatabase {
     private HikariDataSource _dataSource;
     private RebusConfig _config;
     private final PluginLogger _logger = Rebus.Logger().WithModule(MySqlDatabase.class);
 
+    /**
+     * Loads the database configuration and initializes the connection pool.
+     */
     @Override
     public void load() {
         _config = Rebus.Config();
         _dataSource = CreateDataSource();
     }
 
+    /**
+     * Unloads the database by closing the connection pool.
+     */
     @Override
     public void unload() {
         if (_dataSource != null) {
@@ -32,29 +42,32 @@ public class MySqlDatabase implements IDatabase {
         }
     }
 
+    /**
+     * Creates a HikariCP data source for managing database connections.
+     *
+     * @return A HikariDataSource object, or null if an error occurs.
+     */
     public HikariDataSource CreateDataSource() {
-        try
-        {
+        try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s", _config.storageHost,_config.storagePort, _config.storageDatabase));
+            config.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s", _config.storageHost, _config.storagePort, _config.storageDatabase));
             config.setUsername(_config.storageUsername);
             config.setPassword(_config.storagePassword);
             config.setMaximumPoolSize(10); // Pool size defaults to 10
             config.setMaxLifetime(30000);
             return new HikariDataSource(config);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.Error(String.format("Unknown error happened during the creation of database connection...\n%s", ex.getMessage()));
             return null;
         }
     }
 
+    /**
+     * Checks and creates the necessary database schema if it does not exist.
+     */
     @Override
     public void checkSchema() {
-        try (Connection connection = _dataSource.getConnection())
-        {
-            // PlayerData
+        try (Connection connection = _dataSource.getConnection()) {
             String sql = String.format("CREATE TABLE IF NOT EXISTS %s_cooldowns (" +
                             "PlayerId VARCHAR(36), " +
                             "Context VARCHAR(32), " +
@@ -65,67 +78,71 @@ public class MySqlDatabase implements IDatabase {
             );
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.Error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
         }
     }
 
+    /**
+     * Adds a cooldown entry for a player in the database.
+     *
+     * @param playerId The UUID of the player.
+     * @param chestKey The key of the chest associated with the cooldown.
+     * @param seconds  The duration of the cooldown in seconds.
+     */
     @Override
     public void addCooldown(UUID playerId, String chestKey, long seconds) {
-        try (Connection connection =  _dataSource.getConnection())
-        {
+        try (Connection connection = _dataSource.getConnection()) {
             String sql = String.format("INSERT INTO %s_cooldowns (PlayerId, Context, Chest, ExpiresAt) " +
                             "VALUES (?, ?, ?, ?) " +
                             "ON DUPLICATE KEY UPDATE ExpiresAt = VALUES(ExpiresAt);",
                     _config.storageTablePrefix);
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                // Set parameters for the prepared statement
                 statement.setString(1, playerId.toString());
-                statement.setString(2,  _config.storageContext);
-                statement.setString(3,chestKey);
+                statement.setString(2, _config.storageContext);
+                statement.setString(3, chestKey);
                 statement.setTimestamp(4, Timestamp.valueOf((LocalDateTime.now().plusSeconds(seconds))));
-
-                // Execute the query
                 statement.executeUpdate();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.Error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
         }
     }
 
+    /**
+     * Removes cooldown entries for a specific player and chest from the database.
+     *
+     * @param playerId The UUID of the player.
+     * @param chestKey The key of the chest associated with the cooldown.
+     */
     @Override
     public void removeCooldowns(UUID playerId, String chestKey) {
-        try (Connection connection =  _dataSource.getConnection())
-        {
+        try (Connection connection = _dataSource.getConnection()) {
             String sql = String.format("DELETE FROM %s_cooldowns WHERE PlayerId=? AND Context=? AND Chest=? LIMIT 1;",
                     _config.storageTablePrefix);
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                // Set parameters for the prepared statement
                 statement.setString(1, playerId.toString());
                 statement.setString(2, _config.storageContext);
-                statement.setString(3,chestKey);
-
-                // Execute the query
+                statement.setString(3, chestKey);
                 statement.executeUpdate();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
+    /**
+     * Retrieves all cooldowns for a specific player from the database.
+     *
+     * @param playerId The UUID of the player.
+     * @return A set of Cooldown objects representing the player's cooldowns.
+     */
     @Override
     public Set<Cooldown> getCooldowns(UUID playerId) {
         Set<Cooldown> cooldowns = new HashSet<>();
-        try (Connection connection =  _dataSource.getConnection())
-        {
+        try (Connection connection = _dataSource.getConnection()) {
             String sql = String.format("SELECT * FROM %s_cooldowns WHERE PlayerId=? AND Context=?;",
                     _config.storageTablePrefix);
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -137,12 +154,10 @@ public class MySqlDatabase implements IDatabase {
                     }
                 }
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             _logger.Error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
             return null;
         }
-        return  cooldowns;
+        return cooldowns;
     }
 }

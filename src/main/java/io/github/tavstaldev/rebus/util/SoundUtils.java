@@ -17,7 +17,7 @@ public class SoundUtils {
 
     /**
      * Retrieves an XSound instance based on the provided sound name.
-     *
+     * <br>
      * This method attempts to resolve a sound name to an XSound instance.
      * If the name is "none" (case-insensitive), it returns an empty Optional.
      * If an exception occurs during the resolution, it logs the error and
