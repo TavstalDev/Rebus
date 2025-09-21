@@ -120,7 +120,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
                         return true;
                     }
-                    Rebus.NpcManager().removeAllNPCs();
+                    Rebus.NpcManager().removeAllNpcs();
                     return  true;
                 }
                 case "give": {
