@@ -74,7 +74,7 @@ items:
   - id: 7
     material: DIAMOND_CHESTPLATE
     name: "&e&lBűvölt Mellvért"
-    amount: 2
+    amount: 1
     lore:
       - "&8Ritkaság: &e&lEmlékezetes"
       - "&7A legendás páncélzat, amit a"
@@ -94,7 +94,7 @@ items:
 
   - id: 9
     material: DIAMOND_SWORD
-    amount: 2
+    amount: 1
     name: "&4&lVégzet Csapása"
     lore:
       - "&8Ritkaság: &4&lLegendás"
@@ -105,7 +105,7 @@ items:
 
   - id: 10
     material: DIAMOND_AXE
-    amount: 2
+    amount: 1
     name: "&c&lRedFox Foga"
     lore:
       - "&8Ritkaság: &c&lMisztikus"
@@ -116,7 +116,7 @@ items:
 
   - id: 11
     material: DIAMOND_SWORD
-    amount: 2
+    amount: 1
     name: "&5&lVégtelen Penge"
     lore:
       - "&8Ritkaság: &5&lVégtelen"
@@ -256,7 +256,7 @@ items:
 
   - id: 25
     material: DIAMOND_LEGGINGS
-    amount: 2
+    amount: 1
     name: "&e&lMasszív Lábszárvédő"
     lore:
       - "&8Ritkaság: &e&lEmlékezetes"
@@ -267,7 +267,7 @@ items:
 
   - id: 26
     material: DIAMOND_BOOTS
-    amount: 2
+    amount: 1
     name: "&5&lTörhetetlen Bakancs"
     lore:
       - "&8Ritkaság: &5&lVégtelen"
@@ -277,7 +277,7 @@ items:
 
   - id: 27
     material: DIAMOND_HELMET
-    amount: 2
+    amount: 1
     name: "&4&lHadúr Sisakja"
     lore:
       - "&8Ritkaság: &4&lLegendás"
