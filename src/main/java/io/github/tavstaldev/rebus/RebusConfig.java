@@ -6,6 +6,7 @@ import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RebusConfig extends ConfigurationBase {
@@ -60,7 +61,7 @@ public class RebusConfig extends ConfigurationBase {
 
         // chests
         //#region Daily chest
-        Map<String, Object> dailyChest = new HashMap<>();
+        Map<String, Object> dailyChest = new LinkedHashMap<>();
         dailyChest.put("name", "&aNapi láda");
         dailyChest.put("description", Arrays.asList("&7Ingyenes napi láda mindenkinek."));
         dailyChest.put("material", "CHEST");
@@ -77,7 +78,7 @@ public class RebusConfig extends ConfigurationBase {
         dailyChest.put("isHighTier", false);
         //#endregion
         //#region Default chest
-        Map<String, Object> bronzeChest = new HashMap<>();
+        Map<String, Object> bronzeChest = new LinkedHashMap<>();
         bronzeChest.put("name", "&6Alap láda");
         bronzeChest.put("description", Arrays.asList("&7Kezdő kalandozók számára.", "&7Garantált mentőrudak: &e1"));
         bronzeChest.put("material", "TRAPPED_CHEST");
@@ -94,7 +95,7 @@ public class RebusConfig extends ConfigurationBase {
         bronzeChest.put("isHighTier", false);
         //#endregion
         //#region Pandora chest
-        Map<String, Object> silverChest = new HashMap<>();
+        Map<String, Object> silverChest = new LinkedHashMap<>();
         silverChest.put("name", "&5Pandora szelencéje");
         silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára.", "&7Garantált mentőrudak: &e4"));
         silverChest.put("material", "ENDER_CHEST");
@@ -111,7 +112,7 @@ public class RebusConfig extends ConfigurationBase {
         silverChest.put("isHighTier", true);
         //#endregion
         //#region Choosen chest
-        Map<String, Object> goldChest = new HashMap<>();
+        Map<String, Object> goldChest = new LinkedHashMap<>();
         goldChest.put("name", "&cKiválasztottak ládája");
         goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára", "&7Garantált mentőrudak: &e10"));
         goldChest.put("material", "BEACON");
