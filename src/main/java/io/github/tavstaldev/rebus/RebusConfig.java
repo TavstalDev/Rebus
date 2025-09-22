@@ -1,13 +1,11 @@
 package io.github.tavstaldev.rebus;
 
-import com.cryptomorin.xseries.particles.XParticle;
 import io.github.tavstaldev.minecorelib.config.ConfigurationBase;
 import io.github.tavstaldev.rebus.util.IconUtils;
 import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RebusConfig extends ConfigurationBase {
@@ -68,6 +66,7 @@ public class RebusConfig extends ConfigurationBase {
         dailyChest.put("material", "CHEST");
         dailyChest.put("cost", 0);
         dailyChest.put("cooldown", 86400);
+        dailyChest.put("buyCooldown", 86400);
         dailyChest.put("permission", "rebus.chest.daily");
         dailyChest.put("slot", 0);
         dailyChest.put("particle", "ENCHANT");
@@ -80,10 +79,11 @@ public class RebusConfig extends ConfigurationBase {
         //#region Default chest
         Map<String, Object> bronzeChest = new HashMap<>();
         bronzeChest.put("name", "&6Alap láda");
-        bronzeChest.put("description", Arrays.asList("&7Kezdő kalandozók számára."));
+        bronzeChest.put("description", Arrays.asList("&7Kezdő kalandozók számára.", "&7Garantált mentőrudak: &e1"));
         bronzeChest.put("material", "TRAPPED_CHEST");
         bronzeChest.put("cost", 500);
         bronzeChest.put("cooldown", 300);
+        bronzeChest.put("buyCooldown", 300);
         bronzeChest.put("permission", "rebus.chest.default");
         bronzeChest.put("slot", 2);
         bronzeChest.put("particle", "HAPPY_VILLAGER");
@@ -96,10 +96,11 @@ public class RebusConfig extends ConfigurationBase {
         //#region Pandora chest
         Map<String, Object> silverChest = new HashMap<>();
         silverChest.put("name", "&5Pandora szelencéje");
-        silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára."));
+        silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára.", "&7Garantált mentőrudak: &e4"));
         silverChest.put("material", "ENDER_CHEST");
         silverChest.put("cost", 750);
         silverChest.put("cooldown", 300);
+        silverChest.put("buyCooldown", 300);
         silverChest.put("permission", "rebus.chest.pandora");
         silverChest.put("slot", 4);
         silverChest.put("particle", "FIREWORK");
@@ -112,10 +113,11 @@ public class RebusConfig extends ConfigurationBase {
         //#region Choosen chest
         Map<String, Object> goldChest = new HashMap<>();
         goldChest.put("name", "&cKiválasztottak ládája");
-        goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára"));
+        goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára", "&7Garantált mentőrudak: &e10"));
         goldChest.put("material", "BEACON");
         goldChest.put("cost", 1000);
         goldChest.put("cooldown", 300);
+        goldChest.put("buyCooldown", 300);
         goldChest.put("permission", "rebus.chest.choosen");
         goldChest.put("slot", 6);
         goldChest.put("particle", "ENCHANTED_HIT");

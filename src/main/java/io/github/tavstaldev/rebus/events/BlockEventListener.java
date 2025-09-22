@@ -3,7 +3,6 @@ package io.github.tavstaldev.rebus.events;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.models.ECooldownType;
 import io.github.tavstaldev.rebus.models.RebusChest;
-import io.github.tavstaldev.rebus.util.PermissionUtils;
 import io.github.tavstaldev.rebus.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -74,14 +73,14 @@ public class BlockEventListener implements Listener {
         }
 
         // Check if the player has the required permission to place the chest.
-        if (!PermissionUtils.checkPermission(player, chest.getPermission())) {
+        if (!player.hasPermission(chest.getPermission())) {
             Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
             return;
         }
 
         // Check if the chest is on cooldown for the player.
         long remainingTime = Rebus.Database().getCooldown(player.getUniqueId(), ECooldownType.OPEN, chest.getKey());
-        if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.cooldown")) {
+        if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
             Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
             return;
         }

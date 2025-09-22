@@ -3,6 +3,8 @@ General:
   NotEnoughMoney: "%prefix% &cNincs elég bányászérméd. Egyenleg: &e%balance% &6BÉ"
   PurchaseSuccessful: "%prefix% &aSikeres vásárlás!"
   PlayerNotFound: "%prefix% &cA játékos nem található."
+  ResetCooldowns: "%prefix% &aSikeresen visszaállítottad a(z) &e%player%&a játékos összes láda nyitási idejét."
+  YourCooldownsReset: "%prefix% &aSikeresen visszaállították az összes láda nyitási idődet."
 
 NPC:
   Spawned: "%prefix% &aSikeresen létrehoztad a Rebus NPC-t."

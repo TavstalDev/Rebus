@@ -19,8 +19,6 @@ import io.github.tavstaldev.rebus.events.PlayerEventListener;
 import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
 import io.github.tavstaldev.rebus.models.NpcTrait;
-import io.github.tavstaldev.rebus.util.EconomyUtils;
-import io.github.tavstaldev.rebus.util.PermissionUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
@@ -171,16 +169,6 @@ public final class Rebus extends PluginBase {
             return;
         }
 
-        // Register economy integration
-        _logger.Debug("Hooking into Vault...");
-        if (EconomyUtils.setupEconomy()) {
-            _logger.Info("Economy plugin found and hooked into Vault.");
-        } else {
-            _logger.Warn("Economy plugin not found. Unloading...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
         // Check for BanyaszLib plugin
         _logger.Debug("Hooking into BanyaszLib...");
         if (Bukkit.getPluginManager().isPluginEnabled("BanyaszLib")) {
@@ -190,15 +178,6 @@ public final class Rebus extends PluginBase {
             _logger.Warn("BanyaszLib not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
-        }
-
-        // Check for permissions plugin
-        if (!PermissionUtils.setupPermissions()) {
-            _logger.Info("Permissions plugin with Vault API support was not found. Unloading...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else {
-            _logger.Info("Permissions plugin found and hooked into Vault.");
         }
 
         // Check for Citizens plugin
@@ -294,6 +273,10 @@ public final class Rebus extends PluginBase {
         _logger.Debug("Reloading configuration...");
         this._config.load();
         _logger.Debug("Configuration reloaded.");
+
+        _database.unload();
+        _database.load();
+        _database.checkSchema();
 
         // Reload chests
         _chestManager.load();

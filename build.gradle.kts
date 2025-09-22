@@ -56,9 +56,6 @@ repositories {
 dependencies {
     // Paper API for Minecraft server development
     compileOnly("io.papermc.paper:paper-api:${paperApiVersion}")
-    compileOnly("com.github.MilkBowl:VaultAPI:${vaultApiVersion}") {
-        exclude(group = "org.bukkit", module = "bukkit")
-    }
     compileOnly("net.citizensnpcs:citizens-main:${citizensApiVersion}") {
         exclude(group = "*", module = "*")
     }

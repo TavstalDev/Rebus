@@ -40,6 +40,8 @@ public class RebusChest {
     // Cooldown time in seconds for the chest
     private final long cooldown;
 
+    private final long buyCooldown;
+
     // Permission required to use the chest
     private final String permission;
 
@@ -88,13 +90,14 @@ public class RebusChest {
      * @param isHighTier      Indicates if the chest is a high-tier chest.
      * @param rewards         Set of rewards associated with the chest.
      */
-    public RebusChest(String key, String name, List<String> description, Material material, double cost, long cooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
+    public RebusChest(String key, String name, List<String> description, Material material, double cost, long cooldown, long buyCooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
         this.key = key;
         this.name = name;
         this.description = description;
         this.material = material;
         this.cost = cost;
         this.cooldown = cooldown;
+        this.buyCooldown = buyCooldown;
         this.permission = permission;
         this.slot = slot;
         this.particle = particle;
@@ -223,7 +226,9 @@ public class RebusChest {
         double cost = values.getDouble("cost", 0);
 
         // Retrieve the cooldown time in seconds for the chest.
-        long cooldown = values.getLong("cooldown");
+        long cooldown = values.getLong("cooldown", 0);
+
+        long buyCooldown = values.getLong("buyCooldown", 0);
 
         // Retrieve the permission required to use the chest, defaulting to "rebus.use".
         String permission = values.getString("permission", "rebus.use").isEmpty() ? "rebus.use" : values.getString("permission");
@@ -301,7 +306,7 @@ public class RebusChest {
         }
 
         // Return a new RebusChest instance with the loaded properties and rewards.
-        return new RebusChest(key, name, description, material, cost, cooldown, permission, slot, particle, particleCount, openSound, closeSound, completionSound, isHighTier, rewards);
+        return new RebusChest(key, name, description, material, cost, cooldown, buyCooldown, permission, slot, particle, particleCount, openSound, closeSound, completionSound, isHighTier, rewards);
     }
 
     //#region Getters
@@ -357,6 +362,15 @@ public class RebusChest {
      */
     public long getCooldown() {
         return cooldown;
+    }
+
+    /**
+     * Gets the buy cooldown time of the chest.
+     *
+     * @return The buy cooldown time in seconds.
+     */
+    public long getBuyCooldown() {
+        return buyCooldown;
     }
 
     /**
