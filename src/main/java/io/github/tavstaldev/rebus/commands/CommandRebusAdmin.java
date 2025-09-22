@@ -164,6 +164,28 @@ public class CommandRebusAdmin implements CommandExecutor {
                     ));
                     return  true;
                 }
+                case "reset": {
+                    if (!player.hasPermission("rebus.reset")) {
+                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                        return true;
+                    }
+
+                    if (args.length != 2) {
+                        Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
+                        return true;
+                    }
+
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target == null) {
+                        Rebus.Instance.sendLocalizedMsg(player, "General.PlayerNotFound");
+                        return true;
+                    }
+
+                    Rebus.Database().removeAllCooldowns(target.getUniqueId());
+                    Rebus.Instance.sendLocalizedMsg(player, "General.ResetCooldowns", Map.of("player", target.getName()));
+                    Rebus.Instance.sendLocalizedMsg(target, "General.YourCooldownsReset");
+                    return true;
+                }
             }
 
             Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
