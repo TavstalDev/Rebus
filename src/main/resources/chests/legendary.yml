@@ -1,0 +1,47 @@
+rolls: 5
+data:
+  enchapple:
+    chance: 5
+    items: [ 600 ]
+  goldapple:
+      chance: 10
+      items: [ 601 ]
+  netheringot:
+      chance: 6
+      items: [ 602 ]
+  diablock:
+      chance: 10
+      items: [ 603 ]
+  ironblock:
+      chance: 10
+      items: [ 604 ]
+  emeraldblock:
+      chance: 10
+      items: [ 605 ]
+  enchelytra:
+      chance: 5
+      items: [ 606 ]
+  firework:
+      chance: 8
+      items: [ 607 ]
+  shulkerbox:
+      chance: 5
+      items: [ 608 ]
+  enchnetheritesword:
+      chance: 4
+      items: [ 609 ]
+  enchbow:
+      chance: 4
+      items: [ 610 ]
+  strenght2:
+      chance: 6
+      items: [ 611 ]
+  mending:
+      chance: 5
+      items: [ 612 ]
+  witherskull:
+      chance: 5
+      items: [ 613 ]
+  eyeofender:
+      chance: 7
+      items: [ 614 ]

@@ -1,0 +1,56 @@
+rolls: 5
+data:
+  ironore:
+    chance: 7
+    items: [ 215 ]
+  goldore:
+      chance: 7
+      items: [ 216 ]
+  lapis:
+      chance: 7
+      items: [ 217 ]
+  shield:
+      chance: 9
+      items: [ 218 ]
+  weaknesspot:
+      chance: 5
+      items: [ 219 ]
+  ironpickaxe:
+      chance: 7
+      items: [ 221 ]
+  ironsword:
+      chance: 7
+      items: [ 222 ]
+  ironaxe:
+      chance: 7
+      items: [ 223 ]
+  goldenapple:
+      chance: 3
+      items: [ 224 ]
+  verymeat:
+      chance: 10
+      items: [ 225 ]
+  nametag:
+      chance: 7
+      items: [ 226 ]
+  obsidian:
+      chance: 5
+      items: [ 227 ]
+  wool:
+      chance: 7
+      items: [ 228 ]
+  glass:
+      chance: 7
+      items: [ 229 ]
+  ironboot:
+      chance: 1.25
+      items: [ 230 ]
+  ironlegs:
+      chance: 1.25
+      items: [ 231 ]
+  ironchest:
+      chance: 1.25
+      items: [ 232 ]
+  ironhelm:
+      chance: 1.25
+      items: [ 233 ]

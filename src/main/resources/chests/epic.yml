@@ -1,0 +1,47 @@
+rolls: 5
+data:
+  ench_golden_apple:
+    chance: 4
+    items: [500]
+  netherite_scrap:
+    chance: 7
+    items: [501]
+  lapis_block:
+    chance: 10
+    items: [502]
+  emerald_block:
+    chance: 10
+    items: [503]
+  iron_block:
+    chance: 10
+    items: [504]
+  diamond_block:
+    chance: 10
+    items: [505]
+  diamond_sword_loot3_sharp4_unb3:
+    chance: 4
+    items: [506]
+  diamond_pickaxe_fort3_eff3_unb3:
+    chance: 4
+    items: [507]
+  diamond_axe_eff3_unb3_sharp3:
+    chance: 4
+    items: [508]
+  bow_power3_unb3:
+    chance: 4
+    items: [509]
+  book_unb3:
+    chance: 7
+    items: [510]
+  book_fort3:
+    chance: 7
+    items: [511]
+  book_thorns3:
+    chance: 7
+    items: [512]
+  totem_of_undying:
+    chance: 5
+    items: [513]
+  eye_of_ender:
+    chance: 7
+    items: [514]

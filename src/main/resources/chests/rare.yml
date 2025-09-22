@@ -1,0 +1,57 @@
+rolls: 5
+data:
+  diamond:
+    chance: 7
+    items: [ 445 ]
+  netheritescrap:
+      chance: 5
+      items: [ 446 ]
+  obsidian:
+      chance: 8
+      items: [ 447 ]
+  emeraldblock:
+      chance: 7
+      items: [ 448 ]
+  ironblock:
+      chance: 8
+      items: [ 449 ]
+  goldblock:
+      chance: 8
+      items: [ 450 ]
+  lapisblock:
+      chance: 8
+      items: [ 451 ]
+  diamondaxe:
+      chance: 4
+      items: [ 453 ]
+  unb2:
+      chance: 4
+      items: [ 454 ]
+  fort2:
+      chance: 4
+      items: [ 455 ]
+  thorns2:
+      chance: 4
+      items: [ 456 ]
+  expbottle:
+      chance: 6
+      items: [ 457 ]
+  totem:
+      chance: 7
+      items: [ 458 ]
+  shulkerbox:
+      chance: 3
+      items: [ 459 ]
+  diaboots:
+      chance: 1
+      items: [ 460 ]
+  dialegs:
+      chance: 1
+      items: [ 461 ]
+  diachest:
+      chance: 1
+      items: [ 462 ]
+  diahelm:
+      chance: 1
+      items: [ 463 ]
+ 

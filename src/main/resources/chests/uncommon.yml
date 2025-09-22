@@ -1,0 +1,48 @@
+rolls: 5
+data:
+  ironore:
+    chance: 8
+    items: [ 330 ]
+  goldore:
+      chance: 8
+      items: [ 331 ]
+  lapis:
+      chance: 8
+      items: [ 332 ]
+  emerald:
+      chance: 8
+      items: [ 333 ]
+  blazerod:
+      chance: 9
+      items: [ 334 ]
+  enchbookeff1:
+      chance: 6
+      items: [ 335 ]
+  enchbookfort1:
+      chance: 6
+      items: [ 337 ]
+  enchbookunbreak1:
+      chance: 6
+      items: [ 336 ]
+  enchbookloot3:
+      chance: 3
+      items: [ 338 ]
+  enchtable:
+      chance: 4
+      items: [ 339 ]
+  brewingstand:
+      chance: 7
+      items: [ 340 ]
+  windcharge:
+      chance: 6
+      items: [ 341 ]
+  firework:
+      chance: 7
+      items: [ 342 ]
+  enderpearl:
+      chance: 5
+      items: [ 343 ]
+  saddle:
+      chance: 9
+      items: [ 344 ]
+ 
