@@ -9,21 +9,18 @@ public class Cooldown {
     // The context in which the cooldown is applied (e.g., storage context).
     private final String context;
 
+    private final ECooldownType type;
+
     // The unique identifier of the chest associated with the cooldown.
     private final String chest;
 
     // The expiration time of the cooldown.
     private final LocalDateTime expiresAt;
 
-    /**
-     * Constructs a new Cooldown instance.
-     *
-     * @param context   The context in which the cooldown is applied.
-     * @param chest     The unique identifier of the chest.
-     * @param expiresAt The expiration time of the cooldown.
-     */
-    public Cooldown(String context, String chest, LocalDateTime expiresAt) {
+
+    public Cooldown(String context, ECooldownType type, String chest, LocalDateTime expiresAt) {
         this.context = context;
+        this.type = type;
         this.chest = chest;
         this.expiresAt = expiresAt;
     }
@@ -44,6 +41,10 @@ public class Cooldown {
      */
     public String getChest() {
         return chest;
+    }
+
+    public ECooldownType getType() {
+        return type;
     }
 
     /**

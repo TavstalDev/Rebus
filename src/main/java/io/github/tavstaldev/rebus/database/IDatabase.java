@@ -1,6 +1,7 @@
 package io.github.tavstaldev.rebus.database;
 
 import io.github.tavstaldev.rebus.models.Cooldown;
+import io.github.tavstaldev.rebus.models.ECooldownType;
 
 import java.util.Set;
 import java.util.UUID;
@@ -26,21 +27,23 @@ public interface IDatabase {
     void checkSchema();
 
     /**
-     * Adds a cooldown entry for a player in the database.
+     * Adds a cooldown for a specific player in the database.
      *
      * @param playerId The UUID of the player.
-     * @param chestKey The key of the chest associated with the cooldown.
-     * @param seconds  The duration of the cooldown in seconds.
+     * @param type The type of cooldown (e.g., ECooldownType).
+     * @param chestKey The key identifying the chest associated with the cooldown.
+     * @param seconds The duration of the cooldown in seconds.
      */
-    void addCooldown(UUID playerId, String chestKey, long seconds);
+    void addCooldown(UUID playerId, ECooldownType type, String chestKey, long seconds);
 
     /**
-     * Removes cooldown entries for a specific player and chest from the database.
+     * Removes a specific cooldown for a player from the database.
      *
      * @param playerId The UUID of the player.
-     * @param chestKey The key of the chest associated with the cooldown.
+     * @param type The type of cooldown to remove (e.g., ECooldownType).
+     * @param chestKey The key identifying the chest associated with the cooldown.
      */
-    void removeCooldowns(UUID playerId, String chestKey);
+    void removeCooldowns(UUID playerId, ECooldownType type, String chestKey);
 
     /**
      * Retrieves all cooldowns for a specific player from the database.
@@ -49,4 +52,14 @@ public interface IDatabase {
      * @return A set of Cooldown objects representing the player's cooldowns.
      */
     Set<Cooldown> getCooldowns(UUID playerId);
+
+    /**
+     * Retrieves the remaining cooldown time for a specific player and chest.
+     *
+     * @param playerId The UUID of the player.
+     * @param type The type of cooldown (e.g., ECooldownType).
+     * @param chestKey The key identifying the chest associated with the cooldown.
+     * @return The remaining cooldown time in seconds.
+     */
+    long getCooldown(UUID playerId, ECooldownType type, String chestKey);
 }

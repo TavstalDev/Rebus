@@ -3,7 +3,6 @@ package io.github.tavstaldev.rebus.models;
 import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.minecorelib.utils.TypeUtils;
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.util.IconUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -17,9 +16,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.List;
 
 /**
  * Represents a RebusChest, which is a custom chest with rewards and various properties.
@@ -189,9 +186,7 @@ public class RebusChest {
                 }
 
                 // Add a cooldown for the chest to the player's cache and database.
-                PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
-                cache.getCooldowns().add(new Cooldown(Rebus.Config().storageContext, key, LocalDateTime.now().plusSeconds(cooldown)));
-                Rebus.Database().addCooldown(player.getUniqueId(), key, cooldown);
+                Rebus.Database().addCooldown(player.getUniqueId(), ECooldownType.OPEN, key, cooldown);
 
                 // Notify the player that they have received a reward.
                 Rebus.Instance.sendLocalizedMsg(player, "Chests.RewardReceived", Map.of("chest_name", getName()));

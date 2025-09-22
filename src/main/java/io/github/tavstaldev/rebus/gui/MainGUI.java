@@ -9,6 +9,7 @@ import io.github.tavstaldev.minecorelib.utils.GuiUtils;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
+import io.github.tavstaldev.rebus.models.ECooldownType;
 import io.github.tavstaldev.rebus.models.RebusChest;
 import io.github.tavstaldev.rebus.util.TimeUtil;
 import io.github.tavstaldev.rebus.util.PermissionUtils;
@@ -142,14 +143,14 @@ public class MainGUI {
                     }
 
                     // Check if the chest is on cooldown for the player.
-                    long remainingTime = playerCache.getCooldown(chest);
+                    long remainingTime = Rebus.Database().getCooldown(playerId, ECooldownType.OPEN, chest.getKey());
                     if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.cooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
                     }
 
                     // Check if the player is on a buy cooldown for the chest.
-                    remainingTime = playerCache.getBuyCooldown(chest);
+                    remainingTime = Rebus.Database().getCooldown(playerId, ECooldownType.BUY, chest.getKey());
                     if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.buycooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.BuyCooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
@@ -157,9 +158,10 @@ public class MainGUI {
 
                     // Deduct the cost and give the chest to the player.
                     if (chest.getCost() > 0)
-                        Rebus.BanyaszApi().decreaseBalance(player.getUniqueId(), (int) chest.getCost());
+                        Rebus.BanyaszApi().decreaseBalance(playerId, (int) chest.getCost());
                     chest.give(player, 1);
-                    playerCache.addBuyCooldown(chest);
+                    if (chest.getCooldown() > 0)
+                        Rebus.Database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getCooldown());
                     Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
                 });
 

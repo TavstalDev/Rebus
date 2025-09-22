@@ -16,6 +16,7 @@ val vaultApiVersion: String by project
 val citizensApiVersion: String by project
 val xseriesVersion: String by project
 val hikariCpVersion: String by project
+val caffeineVersion: String by project
 val projectPackageName = "${project.group}.rebus"
 
 // Configure Java toolchain and compatibility settings
@@ -73,6 +74,8 @@ dependencies {
     implementation(files("libs/MineCoreLib-${mineCoreLibVersion}.jar"))
     // XSeries
     implementation("com.github.cryptomorin:XSeries:${xseriesVersion}")
+    // SQL caching
+    implementation("com.github.ben-manes.caffeine:caffeine:${caffeineVersion}")
 }
 
 // Disable the default JAR task
@@ -86,9 +89,15 @@ tasks.shadowJar {
     manifest {
         attributes["paperweight-mappings-namespace"] = "spigot" // Add custom manifest attributes
     }
+
+    exclude("com/google/**")
+    exclude("org/jspecify/**")
+    exclude("org/slf4j/**")
+
     // Relocate packages to avoid conflicts
     relocate("com.samjakob.spigui", "${projectPackageName}.shadow.spigui")
     relocate("com.cryptomorin.xseries", "${projectPackageName}.shadow.xseries")
+    relocate("com.github.benmanes.caffeine", "${projectPackageName}.shadow.caffeine")
 }
 
 // Ensure the Shadow JAR task runs during the build process
