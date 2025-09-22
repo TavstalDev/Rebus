@@ -48,7 +48,7 @@ public class PreviewGUI {
 
             // Close Button
             SGButton closeButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, Material.BARRIER, Rebus.Instance.Localize(player, "GUI.Back")))
+                    GuiUtils.createItem(Rebus.Instance, Material.SPRUCE_DOOR, Rebus.Instance.Localize(player, "GUI.Back")))
                     .withListener((InventoryClickEvent event) -> MainGUI.open(player));
             menu.setButton(0, 45, closeButton);
 
@@ -141,7 +141,7 @@ public class PreviewGUI {
                     continue;
                 }
 
-                ItemStack itemStack = rewards.get(index);
+                ItemStack itemStack = rewards.get(index).clone();
                 var meta = itemStack.getItemMeta();
                 meta.getPersistentDataContainer().set(GuiDupeDetector.getDupeProtectedKey(), PersistentDataType.BOOLEAN, true);
                 itemStack.setItemMeta(meta);
