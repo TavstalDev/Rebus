@@ -9,9 +9,9 @@ import io.github.tavstaldev.minecorelib.utils.GuiUtils;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
+import io.github.tavstaldev.rebus.models.ECooldownType;
 import io.github.tavstaldev.rebus.models.RebusChest;
 import io.github.tavstaldev.rebus.util.TimeUtil;
-import io.github.tavstaldev.rebus.util.PermissionUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -85,7 +85,7 @@ public class MainGUI {
                 for (String line : chest.getDescription()) {
                     lore.add(ChatUtils.translateColors(line, true));
                 }
-                if (!PermissionUtils.checkPermission(player, chest.getPermission())) {
+                if (!player.hasPermission(chest.getPermission())) {
                     lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.NoPermission"), true));
                 }
 
@@ -101,7 +101,7 @@ public class MainGUI {
                         // TODO: Add preview
                     }
 
-                    if (!PermissionUtils.checkPermission(player, chest.getPermission())) {
+                    if (!player.hasPermission(chest.getPermission())) {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
                         return;
                     }
@@ -112,14 +112,14 @@ public class MainGUI {
                         return;
                     }
 
-                    long remainingTime = playerCache.getCooldown(chest);
-                    if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.cooldown")) {
+                    long remainingTime = Rebus.Database().getCooldown(playerId, ECooldownType.OPEN, chest.getKey());
+                    if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
                     }
 
-                    remainingTime = playerCache.getBuyCooldown(chest);
-                    if (remainingTime > 0 && !PermissionUtils.checkPermission(player, "rebus.bypass.buycooldown")) {
+                    remainingTime = Rebus.Database().getCooldown(playerId, ECooldownType.BUY, chest.getKey());
+                    if (remainingTime > 0 && !player.hasPermission("rebus.bypass.buycooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.BuyCooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
                     }
@@ -127,7 +127,8 @@ public class MainGUI {
                     if (chest.getCost() > 0)
                         Rebus.BanyaszApi().decreaseBalance(player.getUniqueId(), (int)chest.getCost());
                     chest.give(player, 1);
-                    playerCache.addBuyCooldown(chest);
+                    if (chest.getBuyCooldown() > 0)
+                        Rebus.Database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
                     Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
                 });
 

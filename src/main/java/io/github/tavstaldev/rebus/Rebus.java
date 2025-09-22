@@ -15,12 +15,9 @@ import io.github.tavstaldev.rebus.database.IDatabase;
 import io.github.tavstaldev.rebus.database.MySqlDatabase;
 import io.github.tavstaldev.rebus.database.SqlLiteDatabase;
 import io.github.tavstaldev.rebus.events.BlockEventListener;
-import io.github.tavstaldev.rebus.events.NpcEventListener;
 import io.github.tavstaldev.rebus.events.PlayerEventListener;
 import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
-import io.github.tavstaldev.rebus.util.EconomyUtils;
-import io.github.tavstaldev.rebus.util.PermissionUtils;
 import org.bukkit.Bukkit;
 
 public final class Rebus extends PluginBase {
@@ -88,25 +85,11 @@ public final class Rebus extends PluginBase {
         // Register Events
         PlayerEventListener.init();
         BlockEventListener.init();
-        NpcEventListener.init();
-
-        // Generate config file
-        saveDefaultConfig();
 
         // Load Localizations
         if (!_translator.Load())
         {
             _logger.Error("Failed to load localizations... Unloading...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        // Register economy integration
-        _logger.Debug("Hooking into Vault...");
-        if (EconomyUtils.setupEconomy()) {
-            _logger.Info("Economy plugin found and hooked into Vault.");
-        } else {
-            _logger.Warn("Economy plugin not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -120,17 +103,6 @@ public final class Rebus extends PluginBase {
             _logger.Warn("BanyaszLib not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
-        }
-
-        // check if permissions plugin is installed
-        if (!PermissionUtils.setupPermissions()) {
-            _logger.Info("Permissions plugin with Vault API support was not found. Unloading...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-        else
-        {
-            _logger.Info("Permissions plugin found and hooked into Vault.");
         }
 
         // Check Citizens Plugin
@@ -223,6 +195,9 @@ public final class Rebus extends PluginBase {
         this._config.load();
         _logger.Debug("Configuration reloaded.");
 
+        _database.unload();
+        _database.load();
+        _database.checkSchema();
 
         _chestManager.load(); // Reload chests
     }

@@ -6,7 +6,6 @@ import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.util.IconUtils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -20,7 +19,6 @@ import java.io.FileInputStream;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.List;
 
 public class RebusChest {
     private final String key;
@@ -30,6 +28,7 @@ public class RebusChest {
     private final Material material;
     private final double cost;
     private final long cooldown;
+    private final long buyCooldown;
     private final String permission;
     private final int slot;
     private final String particle;
@@ -40,7 +39,7 @@ public class RebusChest {
     private final boolean isHighTier;
     private final Set<Reward> rewards;
 
-    public RebusChest(String key, String name, int rolls, List<String> description, Material material, double cost, long cooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
+    public RebusChest(String key, String name, int rolls, List<String> description, Material material, double cost, long cooldown, long buyCooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
         this.key = key;
         this.name = name;
         this.rolls = rolls;
@@ -48,6 +47,7 @@ public class RebusChest {
         this.material = material;
         this.cost = cost;
         this.cooldown = cooldown;
+        this.buyCooldown = buyCooldown;
         this.permission = permission;
         this.slot = slot;
         this.particle = particle;
@@ -130,7 +130,8 @@ public class RebusChest {
         List<String> description = values.getStringList("description");
         Material material = IconUtils.getMaterial(values.getString("material"));
         double cost = values.getDouble("cost", 0);
-        long cooldown = values.getLong("cooldown");
+        long cooldown = values.getLong("cooldown", 0);
+        long buyCooldown = values.getLong("buyCooldown", 0);
         String permission = values.getString("permission", "rebus.use").isEmpty() ? "rebus.use" : values.getString("permission");
         int slot = values.getInt("slot", 0);
 
@@ -180,7 +181,7 @@ public class RebusChest {
                 rewards.add(new Reward(chance, items));
             }
             return new RebusChest(key, name, rolls,
-                    description, material, cost, cooldown, permission, slot, particle, particleCount,
+                    description, material, cost, cooldown, buyCooldown, permission, slot, particle, particleCount,
                     openSound, closeSound, completionSound, isHighTier, rewards);
         } catch (Exception ex) {
             Rebus.Logger().Warn("Error loading reward file for chest: " + key);
@@ -212,6 +213,10 @@ public class RebusChest {
 
     public long getCooldown() {
         return cooldown;
+    }
+
+    public long getBuyCooldown() {
+        return buyCooldown;
     }
 
     public String getPermission() {

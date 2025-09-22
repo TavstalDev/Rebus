@@ -1,28 +1,29 @@
 package io.github.tavstaldev.rebus.models;
 
 import com.samjakob.spigui.menu.SGMenu;
-import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.gui.MainGUI;
+import io.github.tavstaldev.rebus.gui.PreviewGUI;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 public class PlayerCache {
     private final Player _player;
     private boolean _isGUIOpened;
     private SGMenu _mainMenu;
-    private Set<Cooldown> _cooldowns;
-    private Set<Cooldown> _buyCooldowns;
+    private RebusChest _previewChest;
+    private Set<ItemStack> _items;
+    private SGMenu _previewMenu;
+    private int _previewPage;
 
     public PlayerCache(Player player) {
         this._player = player;
         this._isGUIOpened = false;
         this._mainMenu = null;
-        this._cooldowns = Rebus.Database().getCooldowns(player.getUniqueId());
-        this._buyCooldowns = new HashSet<>();
+        this._previewChest = null;
+        this._previewMenu = null;
+        this._previewPage = 1;
     }
 
     public boolean isGuiOpened() {
@@ -40,34 +41,30 @@ public class PlayerCache {
         return _mainMenu;
     }
 
-    public Set<Cooldown> getCooldowns() {
-        return _cooldowns;
-    }
-
-    public void addBuyCooldown(RebusChest chest) {
-        final String context = Rebus.Config().storageContext;
-        _buyCooldowns.removeIf(cooldown -> cooldown.getContext().equals(context) && cooldown.getChest().equals(chest.getKey()));
-        Cooldown newCooldown = new Cooldown(Rebus.Config().storageContext, chest.getKey(), LocalDateTime.now().plusSeconds(chest.getCooldown()));
-        _buyCooldowns.add(newCooldown);
-    }
-
-    public long getBuyCooldown(RebusChest chest) {
-        final String context = Rebus.Config().storageContext;
-        for (Cooldown cooldown : _buyCooldowns) {
-            if (cooldown.getContext().equals(context) && !cooldown.isExpired() && cooldown.getChest().equals(chest.getKey())) {
-                return Duration.between(LocalDateTime.now(), cooldown.getExpiresAt()).abs().toSeconds();
-            }
+    public SGMenu getPreviewMenu() {
+        if (_previewMenu == null) {
+            _previewMenu = PreviewGUI.create(_player);
         }
-        return 0;
+        return _previewMenu;
     }
 
-    public long getCooldown(RebusChest chest) {
-        final String context = Rebus.Config().storageContext;
-        for (Cooldown cooldown : _cooldowns) {
-            if (cooldown.getContext().equals(context) && !cooldown.isExpired() && cooldown.getChest().equals(chest.getKey())) {
-                return Duration.between(LocalDateTime.now(), cooldown.getExpiresAt()).abs().toSeconds();
-            }
-        }
-        return 0;
+    public int getPreviewPage() {
+        return _previewPage;
+    }
+
+    public void setPreviewPage(int page) {
+        this._previewPage = page;
+    }
+
+    public RebusChest getPreviewChest() {
+        return _previewChest;
+    }
+
+    public Set<ItemStack> getItems() {
+        return _items;
+    }
+
+    public void setPreviewChest(RebusChest chest) {
+        this._previewChest = chest;
     }
 }
