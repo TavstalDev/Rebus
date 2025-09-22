@@ -165,6 +165,28 @@ public class MySqlDatabase implements IDatabase {
         }
     }
 
+    /**
+     * Removes all cooldowns for a specific player from the database and invalidates the cache.
+     *
+     * @param playerId The UUID of the player whose cooldowns are to be removed.
+     */
+    @Override
+    public void removeAllCooldowns(UUID playerId) {
+        try (Connection connection = _dataSource.getConnection()) {
+            String sql = String.format("DELETE FROM %s_cooldowns WHERE PlayerId=? AND Context=?;",
+                    _config.storageTablePrefix);
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, playerId.toString());
+                statement.setString(2, _config.storageContext);
+                statement.executeUpdate();
+            }
+
+            _playerCache.invalidate(playerId);
+        } catch (Exception ex) {
+            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+        }
+    }
 
     /**
      * Retrieves all cooldowns for a specific player from the database.
@@ -214,6 +236,8 @@ public class MySqlDatabase implements IDatabase {
     public long getCooldown(UUID playerId, ECooldownType type, String chestKey) {
         long cooldown = 0;
         final Set<Cooldown> cooldowns = getCooldowns(playerId);
+        if (cooldowns == null || cooldowns.isEmpty())
+            return cooldown;
         final var now = LocalDateTime.now();
         for (Cooldown cd : cooldowns) {
             if (cd.getType() == type && cd.getChest().equals(chestKey) && cd.getContext().equals(_config.storageContext)) {

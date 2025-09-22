@@ -46,6 +46,13 @@ public interface IDatabase {
     void removeCooldowns(UUID playerId, ECooldownType type, String chestKey);
 
     /**
+     * Removes all cooldowns for a specific player from the database.
+     *
+     * @param playerId The UUID of the player whose cooldowns are to be removed.
+     */
+    void removeAllCooldowns(UUID playerId);
+
+    /**
      * Retrieves all cooldowns for a specific player from the database.
      *
      * @param playerId The UUID of the player.

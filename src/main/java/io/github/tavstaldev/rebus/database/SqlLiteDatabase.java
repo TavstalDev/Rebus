@@ -146,6 +146,28 @@ public class SqlLiteDatabase implements IDatabase {
         }
     }
 
+    /**
+     * Removes all cooldowns for a specific player from the database and invalidates the cache.
+     *
+     * @param playerId The UUID of the player whose cooldowns are to be removed.
+     */
+    @Override
+    public void removeAllCooldowns(UUID playerId) {
+        try (Connection connection = CreateConnection()) {
+            String sql = String.format("DELETE FROM %s_cooldowns WHERE PlayerId=? AND Context=?;",
+                    _config.storageTablePrefix);
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, playerId.toString());
+                statement.setString(2, _config.storageContext);
+                statement.executeUpdate();
+            }
+
+            _playerCache.invalidate(playerId);
+        } catch (Exception ex) {
+            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+        }
+    }
 
     /**
      * Retrieves all cooldowns for a specific player from the database.
