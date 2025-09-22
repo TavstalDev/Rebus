@@ -55,6 +55,7 @@ Commands:
 
 GUI:
   Title: "&8Ládák"
+  PreviewTitle: "&8%chest% előnézet"
   Close: "&cBezárás"
   Back: "&cVissza"
   PreviousPage: "&7Előző oldal"
@@ -64,6 +65,8 @@ GUI:
   Confirm: "&aMegerősítés"
   Price: "&eÁr: &6%price% &6BÉ"
   NoPermission: "&c&lNincs jogosultságod ehhez a ládához."
+  ClickToBuy: "&8» &eKattints bal egérgombbal a vásárláshoz."
+  ClickToPreview: "&8» &eKattints jobb egérgombbal az előnézethez."
 
 Time:
   Seconds: "%value% másodperc"

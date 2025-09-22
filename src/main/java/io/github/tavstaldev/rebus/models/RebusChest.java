@@ -67,6 +67,8 @@ public class RebusChest {
     // Set of rewards associated with the chest
     private final Set<Reward> rewards;
 
+    private final Set<ItemStack> itemCache = new HashSet<>();
+
     /**
      * Constructs a RebusChest instance with the specified properties.
      *
@@ -382,6 +384,24 @@ public class RebusChest {
      */
     public Set<Reward> getRewards() {
         return rewards;
+    }
+
+    /**
+     * Retrieves all possible items from the rewards associated with the chest.
+     * This method is intended for previewing items in the GUI and should not be used for rewarding players.
+     *
+     * @return A set of ItemStack objects representing all possible items from the chest's rewards.
+     */
+    public Set<ItemStack> getPossibleItems() {
+        if (!itemCache.isEmpty())
+            return itemCache;
+
+        Set<ItemStack> items = new HashSet<>();
+        for (Reward reward : rewards) {
+            items.addAll(reward.getItemStacks());
+        }
+        itemCache.addAll(items);
+        return items;
     }
 
     /**

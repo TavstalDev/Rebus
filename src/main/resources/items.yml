@@ -342,7 +342,7 @@ items:
       - "&7Egy hatalmas erejű fejsze."
     enchantments:
       SHARPNESS: 5
-      EFFICIENCY: 5
+      KNOCKBACK: 2
       UNBREAKING: 3
 
   - id: 33

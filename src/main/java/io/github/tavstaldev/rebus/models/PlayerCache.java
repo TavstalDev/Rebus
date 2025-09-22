@@ -2,7 +2,11 @@ package io.github.tavstaldev.rebus.models;
 
 import com.samjakob.spigui.menu.SGMenu;
 import io.github.tavstaldev.rebus.gui.MainGUI;
+import io.github.tavstaldev.rebus.gui.PreviewGUI;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Set;
 
 /**
  * Represents a cache for a player, storing various states and cooldowns.
@@ -17,6 +21,11 @@ public class PlayerCache {
     // The main menu GUI for the player.
     private SGMenu _mainMenu;
 
+    private RebusChest _previewChest;
+    private Set<ItemStack> _items;
+    private SGMenu _previewMenu;
+    private int _previewPage;
+
     /**
      * Constructs a PlayerCache instance for the specified player.
      *
@@ -26,6 +35,9 @@ public class PlayerCache {
         this._player = player;
         this._isGUIOpened = false;
         this._mainMenu = null;
+        this._previewChest = null;
+        this._previewMenu = null;
+        this._previewPage = 1;
     }
 
     /**
@@ -56,5 +68,32 @@ public class PlayerCache {
             _mainMenu = MainGUI.create(_player);
         }
         return _mainMenu;
+    }
+
+    public SGMenu getPreviewMenu() {
+        if (_previewMenu == null) {
+            _previewMenu = PreviewGUI.create(_player);
+        }
+        return _previewMenu;
+    }
+
+    public int getPreviewPage() {
+        return _previewPage;
+    }
+
+    public void setPreviewPage(int page) {
+        this._previewPage = page;
+    }
+
+    public RebusChest getPreviewChest() {
+        return _previewChest;
+    }
+
+    public Set<ItemStack> getItems() {
+        return _items;
+    }
+
+    public void setPreviewChest(RebusChest chest) {
+        this._previewChest = chest;
     }
 }

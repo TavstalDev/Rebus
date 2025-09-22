@@ -112,9 +112,14 @@ public class MainGUI {
                 for (String line : chest.getDescription()) {
                     lore.add(ChatUtils.translateColors(line, true));
                 }
+                lore.add(Component.text(""));
                 if (!PermissionUtils.checkPermission(player, chest.getPermission())) {
                     lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.NoPermission"), true));
                 }
+                else {
+                    lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.ClickToBuy"), true));
+                }
+                lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.ClickToPreview"), true));
 
                 // Create an item representing the chest and add it to the GUI.
                 ItemStack item = GuiUtils.createItem(
@@ -126,7 +131,8 @@ public class MainGUI {
 
                 SGButton chestButton = new SGButton(item).withListener(event -> {
                     if (event.isRightClick()) {
-                        // TODO: Add preview functionality.
+                        PreviewGUI.open(player, chest);
+                        return;
                     }
 
                     // Check if the player has the required permission.
