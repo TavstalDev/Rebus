@@ -141,7 +141,6 @@ public final class Rebus extends PluginBase {
         // Initialize NPC Manager
         _logger.Debug("Initializing NPC Manager...");
         _npcManager = new NpcManager();
-        _npcManager.loadExistingNPCs();
 
         // Initialize database based on configuration
         String databaseType = Config().storageType;
@@ -180,9 +179,6 @@ public final class Rebus extends PluginBase {
     @Override
     public void onDisable() {
         super.onDisable();
-        if (this._npcManager != null) {
-            this._npcManager.shutdown();
-        }
         _logger.Info(String.format("%s has been successfully unloaded.", getProjectName()));
     }
 

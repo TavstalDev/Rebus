@@ -3,7 +3,6 @@ package io.github.tavstaldev.rebus.models;
 import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.minecorelib.utils.TypeUtils;
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.util.IconUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -17,13 +16,12 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class RebusChest {
     private final String key;
     private final String name;
-    private int rolls;
+    private final int rolls;
     private final List<String> description;
     private final Material material;
     private final double cost;
@@ -38,6 +36,7 @@ public class RebusChest {
     private final String completionSound;
     private final boolean isHighTier;
     private final Set<Reward> rewards;
+    private final Set<ItemStack> itemCache = new HashSet<>();
 
     public RebusChest(String key, String name, int rolls, List<String> description, Material material, double cost, long cooldown, long buyCooldown, String permission, int slot, String particle, int particleCount, String openSound, String closeSound, String completionSound, boolean isHighTier, Set<Reward> rewards) {
         this.key = key;
@@ -103,9 +102,7 @@ public class RebusChest {
         }
         items.clear();
 
-        PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
-        cache.getCooldowns().add(new Cooldown(Rebus.Config().storageContext, key, LocalDateTime.now().plusSeconds(cooldown)));
-        Rebus.Database().addCooldown(player.getUniqueId(), key, cooldown);
+        Rebus.Database().addCooldown(player.getUniqueId(), ECooldownType.OPEN, key, cooldown);
         Rebus.Instance.sendLocalizedMsg(player, "Chests.RewardReceived", Map.of("chest_name", getName()));
 
         //Rebus.Instance.sendLocalizedMsg(player, "Chests.NoRewards");
@@ -229,6 +226,18 @@ public class RebusChest {
 
     public Set<Reward> getRewards() {
         return rewards;
+    }
+
+    public Set<ItemStack> getPossibleItems() {
+        if (!itemCache.isEmpty())
+            return itemCache;
+
+        Set<ItemStack> items = new HashSet<>();
+        for (Reward reward : rewards) {
+            items.addAll(reward.getItemStacks());
+        }
+        itemCache.addAll(items);
+        return items;
     }
 
     public String getParticle() {
