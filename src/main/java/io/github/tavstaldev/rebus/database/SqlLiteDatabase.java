@@ -126,7 +126,7 @@ public class SqlLiteDatabase implements IDatabase {
     @Override
     public void removeCooldowns(UUID playerId, ECooldownType type, String chestKey) {
         try (Connection connection = CreateConnection()) {
-            String sql = String.format("DELETE FROM %s_cooldowns WHERE PlayerId=? AND Type=? AND Context=? AND Chest=? LIMIT 1;",
+            String sql = String.format("DELETE FROM %s_cooldowns WHERE PlayerId=? AND Type=? AND Context=? AND Chest=?;",
                     _config.storageTablePrefix);
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
