@@ -142,7 +142,7 @@ public class MainGUI {
 
                     // Check if the player's inventory has space.
                     if (player.getInventory().firstEmpty() == -1) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
+                        Rebus.Instance.sendLocalizedMsg(player, "Chests.CannotBuy");
                         return;
                     }
 

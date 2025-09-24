@@ -15,6 +15,7 @@ Chests:
   NoRewards: "%prefix% &cNincsenek jutalmak a ládában."
   LocationOccupied": "%prefix% &cEzen a helyen már van egy láda."
   InventoryFull: "%prefix% &cNincs elég hely a tárgyaknak ezért a földre kerültek a tárgyaid."
+  CannotBuy: "%prefix% &cNincs elég hely az inventorydban."
   Cooldown: "%prefix% &cKérlek várj még &e%time% &cmielőtt újra kinyitnád ezt a ládát."
   AlreadyOpening: "%prefix% &cNem nyithatsz ki egyszerre több ládát."
   BuyCooldown: "%prefix% &cMég nem vásárolhatsz új ládát. Kérlek várj még &e%time%&c."
