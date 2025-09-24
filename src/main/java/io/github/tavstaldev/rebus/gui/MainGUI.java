@@ -140,6 +140,12 @@ public class MainGUI {
                         return;
                     }
 
+                    // Check if the player's inventory has space.
+                    if (player.getInventory().firstEmpty() == -1) {
+                        Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
+                        return;
+                    }
+
                     // Check if the player has enough balance to purchase the chest.
                     var balance = Rebus.BanyaszApi().getBalance(playerId);
                     if (balance < chest.getCost()) {
@@ -164,9 +170,9 @@ public class MainGUI {
                     // Deduct the cost and give the chest to the player.
                     if (chest.getCost() > 0)
                         Rebus.BanyaszApi().decreaseBalance(playerId, (int) chest.getCost());
-                    chest.give(player, 1);
                     if (chest.getBuyCooldown() > 0)
                         Rebus.Database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
+                    chest.give(player, 1);
                     Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
                 });
 
