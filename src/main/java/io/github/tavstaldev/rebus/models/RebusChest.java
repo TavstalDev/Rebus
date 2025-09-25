@@ -157,14 +157,15 @@ public class RebusChest {
 
                 // Iterate through the items in the reward.
                 for (ItemStack item : reward.getItemStacks()) {
+                    ItemStack cloneItem = item.clone();
+
                     // Handle items with a maximum stack size of 1.
-                    if (item.getMaxStackSize() == 1 && item.getAmount() > 0) {
-                        var itemCopy = item.clone();
-                        itemCopy.setAmount(1);
-                        for (int i = 0; i < item.getAmount(); i++) {
+                    if (cloneItem.getMaxStackSize() == 1 && cloneItem.getAmount() > 0) {
+                        cloneItem.setAmount(1);
+                        for (int i = 0; i < cloneItem.getAmount(); i++) {
                             // Drop the item if the player's inventory is full.
                             if (player.getInventory().firstEmpty() == -1) {
-                                location.getWorld().dropItemNaturally(location, itemCopy);
+                                location.getWorld().dropItemNaturally(location, cloneItem);
                                 if (!inventoryFullMessageSent) {
                                     Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
                                     inventoryFullMessageSent = true;
@@ -172,20 +173,23 @@ public class RebusChest {
                                 continue;
                             }
                             // Add the item to the player's inventory.
-                            player.getInventory().addItem(itemCopy);
+                            player.getInventory().addItem(cloneItem);
                         }
                     } else {
-                        // Add the item to the player's inventory if there is space.
-                        if (player.getInventory().firstEmpty() != -1) {
-                            player.getInventory().addItem(item);
-                            continue;
-                        }
+                        var remainder = player.getInventory().addItem(cloneItem);
 
-                        // Drop the item if the player's inventory is full.
-                        location.getWorld().dropItemNaturally(location, item);
-                        if (!inventoryFullMessageSent) {
-                            Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
-                            inventoryFullMessageSent = true;
+                        // Check if there are any remaining items.
+                        if (!remainder.isEmpty()) {
+                            // Drop all remaining items on the ground.
+                            for (ItemStack remainingItem : remainder.values()) {
+                                location.getWorld().dropItemNaturally(location, remainingItem);
+                            }
+
+                            // Send the inventory full message only once.
+                            if (!inventoryFullMessageSent) {
+                                Rebus.Instance.sendLocalizedMsg(player, "Chests.InventoryFull");
+                                inventoryFullMessageSent = true;
+                            }
                         }
                     }
                 }

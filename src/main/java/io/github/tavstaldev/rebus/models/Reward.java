@@ -3,6 +3,7 @@ package io.github.tavstaldev.rebus.models;
 import io.github.tavstaldev.rebus.Rebus;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -47,7 +48,7 @@ public class Reward {
      */
     public Set<ItemStack> getItemStacks() {
         if (_stackCache != null && !_stackCache.isEmpty())
-            return _stackCache;
+            return Collections.unmodifiableSet(_stackCache);
 
         Set<ItemStack> itemStacks = new java.util.HashSet<>();
         var itemsTable = Rebus.ChestManager().getItemTable();
@@ -58,6 +59,6 @@ public class Reward {
             }
         }
         _stackCache = itemStacks;
-        return itemStacks;
+        return Collections.unmodifiableSet(itemStacks);
     }
 }
