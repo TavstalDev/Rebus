@@ -19,6 +19,7 @@ import io.github.tavstaldev.rebus.events.PlayerEventListener;
 import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
 import io.github.tavstaldev.rebus.models.NpcTrait;
+import io.github.tavstaldev.rebus.tasks.CacheCleanTask;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
@@ -39,6 +40,7 @@ public final class Rebus extends PluginBase {
     private ProtocolManager _protocolManager;
     private IDatabase _database;
     private BanyaszApi _banyaszApi;
+    private CacheCleanTask cacheCleanTask; // Task for cleaning player caches.
 
     /**
      * Provides access to the plugin's logger.
@@ -233,6 +235,12 @@ public final class Rebus extends PluginBase {
         }
         _database.load();
         _database.checkSchema();
+
+        // Register cache cleanup task.
+        if (cacheCleanTask != null && !cacheCleanTask.isCancelled())
+            cacheCleanTask.cancel();
+        cacheCleanTask = new CacheCleanTask(); // Runs every 5 minutes
+        cacheCleanTask.runTaskTimer(this, 0, 5 * 60 * 20);
 
         _logger.Ok(String.format("%s has been successfully loaded.", getProjectName()));
 
