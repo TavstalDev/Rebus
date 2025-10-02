@@ -110,7 +110,7 @@ public class MySqlDatabase implements IDatabase {
         try (Connection connection = _dataSource.getConnection()) {
             String sql = String.format("INSERT INTO %s_cooldowns (PlayerId, Context, Type, Chest, ExpiresAt) " +
                             "VALUES (?, ?, ?, ?, ?) " +
-                            "ON DUPLICATE KEY UPDATE ExpiresAt = VALUES(ExpiresAt);",
+                            "ON DUPLICATE KEY UPDATE ExpiresAt = VALUES(ExpiresAt), Type = VALUES(Type);",
                     _config.storageTablePrefix);
 
             var cooldownExpiresAt = LocalDateTime.now().plusSeconds(seconds);

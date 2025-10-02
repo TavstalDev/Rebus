@@ -90,8 +90,11 @@ public class SqlLiteDatabase implements IDatabase {
     @Override
     public void addCooldown(UUID playerId, ECooldownType type, String chestKey, long seconds) {
         try (Connection connection = CreateConnection()) {
-            String sql = String.format("INSERT OR REPLACE INTO %s_cooldowns (PlayerId, Context, Type, Chest, ExpiresAt) " +
-                            "VALUES (?, ?, ?, ?, ?);",
+            String sql = String.format("INSERT INTO %s_cooldowns (PlayerId, Context, Type, Chest, ExpiresAt) " +
+                            "VALUES (?, ?, ?, ?, ?)" +
+                            "ON CONFLICT (PlayerId, Context, Chest) DO UPDATE SET " +
+                            "  ExpiresAt = excluded.ExpiresAt, " +
+                            "  Type = excluded.Type;",
                     _config.storageTablePrefix);
 
             var cooldownExpiresAt = LocalDateTime.now().plusSeconds(seconds);
