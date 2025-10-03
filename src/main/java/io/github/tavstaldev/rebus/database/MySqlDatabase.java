@@ -209,7 +209,7 @@ public class MySqlDatabase implements IDatabase {
                 statement.setString(1, playerId.toString());
                 statement.setString(2, _config.storageContext);
                 try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
+                    while (result.next()) {
                         cooldowns.add(new Cooldown(result.getString("Context"), ECooldownType.valueOf(result.getString("Type")), result.getString("Chest"), result.getTimestamp("ExpiresAt").toLocalDateTime()));
                     }
                 }
