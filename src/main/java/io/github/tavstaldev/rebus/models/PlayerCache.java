@@ -21,9 +21,16 @@ public class PlayerCache {
     // The main menu GUI for the player.
     private SGMenu _mainMenu;
 
+    // The preview chest associated with the player.
     private RebusChest _previewChest;
+
+    // A set of items associated with the player.
     private Set<ItemStack> _items;
+
+    // The preview menu GUI for the player.
     private SGMenu _previewMenu;
+
+    // The current page of the preview menu.
     private int _previewPage;
 
     /**
@@ -70,6 +77,11 @@ public class PlayerCache {
         return _mainMenu;
     }
 
+    /**
+     * Retrieves the preview menu GUI for the player, creating it if necessary.
+     *
+     * @return The preview menu GUI.
+     */
     public SGMenu getPreviewMenu() {
         if (_previewMenu == null) {
             _previewMenu = PreviewGUI.create(_player);
@@ -77,22 +89,47 @@ public class PlayerCache {
         return _previewMenu;
     }
 
+    /**
+     * Retrieves the current page of the preview menu.
+     *
+     * @return The current preview page.
+     */
     public int getPreviewPage() {
         return _previewPage;
     }
 
+    /**
+     * Sets the current page of the preview menu.
+     *
+     * @param page The page number to set.
+     */
     public void setPreviewPage(int page) {
         this._previewPage = page;
     }
 
+    /**
+     * Retrieves the preview chest associated with the player.
+     *
+     * @return The preview chest.
+     */
     public RebusChest getPreviewChest() {
         return _previewChest;
     }
 
+    /**
+     * Retrieves the set of items associated with the player.
+     *
+     * @return A set of ItemStack objects.
+     */
     public Set<ItemStack> getItems() {
         return _items;
     }
 
+    /**
+     * Sets the preview chest associated with the player.
+     *
+     * @param chest The preview chest to set.
+     */
     public void setPreviewChest(RebusChest chest) {
         this._previewChest = chest;
     }

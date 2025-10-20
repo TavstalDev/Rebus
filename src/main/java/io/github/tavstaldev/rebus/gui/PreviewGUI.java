@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class PreviewGUI {
-    private static final PluginLogger _logger = Rebus.Logger().WithModule(PreviewGUI.class);
+    private static final PluginLogger _logger = Rebus.Logger().withModule(PreviewGUI.class);
     private static final Integer[] SlotPlaceholders = {
             0,  1,  2,  3,  4,  5,  6,  7,  8,
             9,                              17,
@@ -48,13 +48,13 @@ public class PreviewGUI {
 
             // Close Button
             SGButton closeButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, Material.SPRUCE_DOOR, Rebus.Instance.Localize(player, "GUI.Back")))
+                    GuiUtils.createItem(Rebus.Instance, Material.SPRUCE_DOOR, Rebus.Instance.localize(player, "GUI.Back")))
                     .withListener((InventoryClickEvent event) -> MainGUI.open(player));
             menu.setButton(0, 45, closeButton);
 
             // Previous Page Button
             SGButton prevPageButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, Material.ARROW, Rebus.Instance.Localize(player, "GUI.PreviousPage")))
+                    GuiUtils.createItem(Rebus.Instance, Material.ARROW, Rebus.Instance.localize(player, "GUI.PreviousPage")))
                     .withListener((InventoryClickEvent event) -> {
                         PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
                         if (cache.getPreviewPage() - 1 <= 0)
@@ -66,13 +66,13 @@ public class PreviewGUI {
 
             // Page Indicator
             SGButton pageButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, Material.PAPER, Rebus.Instance.Localize(player, "GUI.Page", Map.of("page", "1")))
+                    GuiUtils.createItem(Rebus.Instance, Material.PAPER, Rebus.Instance.localize(player, "GUI.Page", Map.of("page", "1")))
             );
             menu.setButton(0, 49, pageButton);
 
             // Next Page Button
             SGButton nextPageButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, Material.ARROW, Rebus.Instance.Localize(player, "GUI.NextPage")))
+                    GuiUtils.createItem(Rebus.Instance, Material.ARROW, Rebus.Instance.localize(player, "GUI.NextPage")))
                     .withListener((InventoryClickEvent event) -> {
                         PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
                         int maxPage = 1 + (cache.getPreviewChest().getRewards().size() / 28);
@@ -85,8 +85,8 @@ public class PreviewGUI {
             return menu;
         }
         catch (Exception ex) {
-            _logger.Error("An error occurred while creating the Preview GUI.");
-            _logger.Error(ex);
+            _logger.error("An error occurred while creating the Preview GUI.");
+            _logger.error(ex);
             return null;
         }
     }
@@ -97,7 +97,7 @@ public class PreviewGUI {
         cache.setPreviewChest(chest);
         cache.setGuiOpened(true);
         cache.setPreviewPage(1);
-        cache.getPreviewMenu().setName(Rebus.Instance.Localize(player, "GUI.PreviewTitle", Map.of("chest", chest.getName())));
+        cache.getPreviewMenu().setName(Rebus.Instance.localize(player, "GUI.PreviewTitle", Map.of("chest", chest.getName())));
         player.openInventory(cache.getPreviewMenu().getInventory());
         refresh(player);
     }
@@ -124,7 +124,7 @@ public class PreviewGUI {
             SGButton pageButton = new SGButton(
                     GuiUtils.createItem(Rebus.Instance,
                             Material.PAPER,
-                            Rebus.Instance.Localize(player, "GUI.Page",
+                            Rebus.Instance.localize(player, "GUI.Page",
                                     Map.of("page", String.valueOf(cache.getPreviewPage()))
                             )
                     )
@@ -151,8 +151,8 @@ public class PreviewGUI {
             player.openInventory(cache.getPreviewMenu().getInventory());
         }
         catch (Exception ex) {
-            _logger.Error("An error occurred while refreshing the Preview GUI.");
-            _logger.Error(ex);
+            _logger.error("An error occurred while refreshing the Preview GUI.");
+            _logger.error(ex);
         }
     }
 }

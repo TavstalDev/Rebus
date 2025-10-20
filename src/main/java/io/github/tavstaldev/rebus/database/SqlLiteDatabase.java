@@ -26,7 +26,7 @@ public class SqlLiteDatabase implements IDatabase {
             .maximumSize(1000)
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
-    private final PluginLogger _logger = Rebus.Logger().WithModule(SqlLiteDatabase.class);
+    private final PluginLogger _logger = Rebus.Logger().withModule(SqlLiteDatabase.class);
 
     /**
      * Loads the database configuration.
@@ -52,7 +52,7 @@ public class SqlLiteDatabase implements IDatabase {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(String.format("jdbc:sqlite:plugins/Rebus/%s.db", _config.storageFilename));
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while creating db connection...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while creating db connection...\n%s", ex.getMessage()));
             return null;
         }
     }
@@ -75,7 +75,7 @@ public class SqlLiteDatabase implements IDatabase {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -115,7 +115,7 @@ public class SqlLiteDatabase implements IDatabase {
                 cache.add(new Cooldown(_config.storageContext, type, chestKey, cooldownExpiresAt));
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -145,7 +145,7 @@ public class SqlLiteDatabase implements IDatabase {
                 cache.removeIf(x -> x.getType() == type && x.getChest().equals(chestKey) && x.getContext().equals(_config.storageContext));
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -168,7 +168,7 @@ public class SqlLiteDatabase implements IDatabase {
 
             _playerCache.invalidate(playerId);
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -199,7 +199,7 @@ public class SqlLiteDatabase implements IDatabase {
                 }
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
             return null;
         }
 

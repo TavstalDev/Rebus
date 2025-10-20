@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class CommandRebusAdmin implements CommandExecutor {
-    private final PluginLogger _logger = Rebus.Logger().WithModule(CommandRebusAdmin.class);
+    private final PluginLogger _logger = Rebus.Logger().withModule(CommandRebusAdmin.class);
     private final List<SubCommandData> _subCommands = new ArrayList<>() {
         {
             // HELP
@@ -52,7 +52,7 @@ public class CommandRebusAdmin implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         if (sender instanceof ConsoleCommandSender) {
-            _logger.Info(ChatUtils.translateColors("Commands.ConsoleCaller", true).toString());
+            _logger.info(ChatUtils.translateColors("Commands.ConsoleCaller", true).toString());
             return true;
         }
         Player player = (Player) sender;
@@ -91,7 +91,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                             Rebus.Instance.sendLocalizedMsg(player, "Commands.Version.Outdated", Map.of("link", Rebus.Instance.getDownloadUrl()));
                         }
                     }).exceptionally(e -> {
-                        _logger.Error("Failed to determine update status: " + e.getMessage());
+                        _logger.error("Failed to determine update status: " + e.getMessage());
                         return null;
                     });
                     return true;
@@ -232,9 +232,9 @@ public class CommandRebusAdmin implements CommandExecutor {
         }
 
         // Bottom message
-        String previousBtn = Rebus.Instance.Localize(player, "Commands.Help.PrevBtn");
-        String nextBtn = Rebus.Instance.Localize(player, "Commands.Help.NextBtn");
-        String bottomMsg = Rebus.Instance.Localize(player, "Commands.Help.Bottom")
+        String previousBtn = Rebus.Instance.localize(player, "Commands.Help.PrevBtn");
+        String nextBtn = Rebus.Instance.localize(player, "Commands.Help.NextBtn");
+        String bottomMsg = Rebus.Instance.localize(player, "Commands.Help.Bottom")
                 .replace("%current_page%", String.valueOf(page))
                 .replace("%max_page%", String.valueOf(maxPage));
 

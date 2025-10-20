@@ -151,11 +151,11 @@ public final class Rebus extends PluginBase {
         _config.load(); // Ensure configuration is loaded before usage
         _translator = new PluginTranslator(this, new String[]{"eng", "hun"});
         _itemMetaSerializer = new ItemMetaSerializer(this);
-        _logger.Info(String.format("Loading %s...", getProjectName()));
+        _logger.info(String.format("Loading %s...", getProjectName()));
 
         // Check for compatibility with Minecraft versions
         if (VersionUtils.isLegacy()) {
-            _logger.Error("The plugin is not compatible with legacy versions of Minecraft. Please use a newer version of the game.");
+            _logger.error("The plugin is not compatible with legacy versions of Minecraft. Please use a newer version of the game.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -165,40 +165,40 @@ public final class Rebus extends PluginBase {
         BlockEventListener.init();
 
         // Load localizations
-        if (!_translator.Load()) {
-            _logger.Error("Failed to load localizations... Unloading...");
+        if (!_translator.load()) {
+            _logger.error("Failed to load localizations... Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
         // Check for BanyaszLib plugin
-        _logger.Debug("Hooking into BanyaszLib...");
+        _logger.debug("Hooking into BanyaszLib...");
         if (Bukkit.getPluginManager().isPluginEnabled("BanyaszLib")) {
             _banyaszApi = BanyaszApi.getInstance();
-            _logger.Info("BanyaszLib found and hooked into it.");
+            _logger.info("BanyaszLib found and hooked into it.");
         } else {
-            _logger.Warn("BanyaszLib not found. Unloading...");
+            _logger.warn("BanyaszLib not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
         // Check for Citizens plugin
-        _logger.Debug("Hooking into Citizens...");
+        _logger.debug("Hooking into Citizens...");
         if (!Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-            _logger.Warn("Citizens not found. Unloading...");
+            _logger.warn("Citizens not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         } else {
             CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(NpcTrait.class));
-            _logger.Info("Citizens found and hooked into it.");
+            _logger.info("Citizens found and hooked into it.");
         }
 
         // Initialize SpiGUI
-        _logger.Debug("Initializing SpiGUI...");
+        _logger.debug("Initializing SpiGUI...");
         _spiGUI = new SpiGUI(this);
 
         // Register commands
-        _logger.Debug("Registering commands...");
+        _logger.debug("Registering commands...");
         var command = getCommand("rebus");
         if (command != null) {
             command.setExecutor(new CommandRebus());
@@ -209,12 +209,12 @@ public final class Rebus extends PluginBase {
         }
 
         // Initialize ChestManager
-        _logger.Debug("Initializing Chest Manager...");
+        _logger.debug("Initializing Chest Manager...");
         _chestManager = new ChestManager();
         _chestManager.load();
 
         // Initialize NpcManager
-        _logger.Debug("Initializing NPC Manager...");
+        _logger.debug("Initializing NPC Manager...");
         _npcManager = new NpcManager();
 
         // Initialize database based on configuration
@@ -242,18 +242,18 @@ public final class Rebus extends PluginBase {
         cacheCleanTask = new CacheCleanTask(); // Runs every 5 minutes
         cacheCleanTask.runTaskTimer(this, 0, 5 * 60 * 20);
 
-        _logger.Ok(String.format("%s has been successfully loaded.", getProjectName()));
+        _logger.ok(String.format("%s has been successfully loaded.", getProjectName()));
 
         // Check for updates if enabled in configuration
         if (Config().checkForUpdates) {
             isUpToDate().thenAccept(upToDate -> {
                 if (upToDate) {
-                    _logger.Ok("Plugin is up to date!");
+                    _logger.ok("Plugin is up to date!");
                 } else {
-                    _logger.Warn("A new version of the plugin is available: " + getDownloadUrl());
+                    _logger.warn("A new version of the plugin is available: " + getDownloadUrl());
                 }
             }).exceptionally(e -> {
-                _logger.Error("Failed to determine update status: " + e.getMessage());
+                _logger.error("Failed to determine update status: " + e.getMessage());
                 return null;
             });
         }
@@ -266,7 +266,7 @@ public final class Rebus extends PluginBase {
     @Override
     public void onDisable() {
         super.onDisable();
-        _logger.Info(String.format("%s has been successfully unloaded.", getProjectName()));
+        _logger.info(String.format("%s has been successfully unloaded.", getProjectName()));
     }
 
     /**
@@ -274,13 +274,13 @@ public final class Rebus extends PluginBase {
      * Also reloads the ChestManager.
      */
     public void reload() {
-        _logger.Info(String.format("Reloading %s...", getProjectName()));
-        _logger.Debug("Reloading localizations...");
-        _translator.Load();
-        _logger.Debug("Localizations reloaded.");
-        _logger.Debug("Reloading configuration...");
+        _logger.info(String.format("Reloading %s...", getProjectName()));
+        _logger.debug("Reloading localizations...");
+        _translator.load();
+        _logger.debug("Localizations reloaded.");
+        _logger.debug("Reloading configuration...");
         this._config.load();
-        _logger.Debug("Configuration reloaded.");
+        _logger.debug("Configuration reloaded.");
 
         _database.unload();
         _database.load();

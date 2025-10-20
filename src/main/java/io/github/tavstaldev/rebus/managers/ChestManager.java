@@ -3,10 +3,10 @@ package io.github.tavstaldev.rebus.managers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
-import com.cryptomorin.xseries.XSound;
 import io.github.tavstaldev.minecorelib.utils.TypeUtils;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.models.RebusChest;
+import io.github.tavstaldev.rebus.util.SoundUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -94,20 +94,20 @@ public class ChestManager {
                     try (InputStream inputStream = Rebus.Instance.getResource("chests/" + resource + ".yml")) {
                         if (inputStream == null) {
                             // Log a debug message if the resource file is not found.
-                            Rebus.Logger().Debug(String.format("Failed to get resource file for chest '%s'.", resource));
+                            Rebus.Logger().debug(String.format("Failed to get resource file for chest '%s'.", resource));
                         } else {
                             // Copy the resource file to the chests directory.
                             Files.copy(inputStream, filePath);
                         }
                     } catch (IOException ex) {
                         // Log a warning and error message if file creation fails.
-                        Rebus.Logger().Warn(String.format("Failed to create file for chest '%s'.", resource));
-                        Rebus.Logger().Error(ex.getMessage());
+                        Rebus.Logger().warn(String.format("Failed to create file for chest '%s'.", resource));
+                        Rebus.Logger().error(ex.getMessage());
                     }
                 }
             } catch (Exception ex) {
                 // Log an error message if the chests directory creation fails.
-                Rebus.Logger().Error("Failed to create chests directory: " + ex.getMessage());
+                Rebus.Logger().error("Failed to create chests directory: " + ex.getMessage());
                 return;
             }
         }
@@ -121,12 +121,12 @@ public class ChestManager {
                     Files.copy(inputStream, itemsFile.toPath());
                 } else {
                     // Log a warning if the resource file is not found.
-                    Rebus.Logger().Warn("Failed to get resource file for items.yml.");
+                    Rebus.Logger().warn("Failed to get resource file for items.yml.");
                 }
             } catch (IOException ex) {
                 // Log a warning and error message if file creation fails.
-                Rebus.Logger().Warn("Failed to create items.yml file.");
-                Rebus.Logger().Error(ex.getMessage());
+                Rebus.Logger().warn("Failed to create items.yml file.");
+                Rebus.Logger().error(ex.getMessage());
             }
         }
 
@@ -137,14 +137,14 @@ public class ChestManager {
 
             // Validate the items data.
             if (yamlMap == null || !yamlMap.containsKey("items")) {
-                Rebus.Logger().Warn("Invalid items data.");
+                Rebus.Logger().warn("Invalid items data.");
                 return;
             }
 
             // Parse the items section and populate the item table.
             List<Map<String, Object>> itemsList = TypeUtils.castAsListOfMaps(yamlMap.get("items"), Rebus.Logger());
             if (itemsList == null) {
-                Rebus.Logger().Warn("Invalid items section in items.yml.");
+                Rebus.Logger().warn("Invalid items section in items.yml.");
                 return;
             }
 
@@ -157,7 +157,7 @@ public class ChestManager {
 
         } catch (Exception ex) {
             // Log a warning if an error occurs while loading items.yml.
-            Rebus.Logger().Warn("Error loading items.yml: " + ex.getMessage());
+            Rebus.Logger().warn("Error loading items.yml: " + ex.getMessage());
             return;
         }
 
@@ -165,21 +165,21 @@ public class ChestManager {
         var chestsSection = Rebus.Config().getConfigurationSection("chests");
         if (chestsSection == null) {
             // Log a warning if the chests section is not found in the configuration.
-            Rebus.Logger().Warn("No chests section found in configuration.");
+            Rebus.Logger().warn("No chests section found in configuration.");
             return;
         }
 
         for (String key : chestsSection.getKeys(false)) {
             if (key == null || key.isEmpty()) {
                 // Log a warning if a chest with an empty key is found.
-                Rebus.Logger().Warn("Found chest with empty key in configuration.");
+                Rebus.Logger().warn("Found chest with empty key in configuration.");
                 continue;
             }
 
             var chestSection = chestsSection.getConfigurationSection(key);
             if (chestSection == null) {
                 // Log a warning if the chest configuration is invalid.
-                Rebus.Logger().Warn("Invalid chest configuration for key: " + key);
+                Rebus.Logger().warn("Invalid chest configuration for key: " + key);
                 continue;
             }
 
@@ -247,8 +247,13 @@ public class ChestManager {
                 switch (this.phase) {
                     case 0: {
                         // Play the chest opening sound and particle effects.
-                        XSound sound = XSound.of(chest.getOpenSound()).orElse(XSound.ENTITY_PIGLIN_ANGRY);
-                        sound.play(location, 1.0f, 1.0f);
+                        var sound = SoundUtils.getSound(chest.getOpenSound());
+                        if (sound.isEmpty()) {
+                            Rebus.Logger().warn("Invalid sound: " + chest.getOpenSound());
+                        }
+                        else {
+                            location.getWorld().playSound(sound.get(), location.getX(), location.y(), location.z());
+                        }
                         playParticleEffect(location.clone().add(0.5, 1.0, 0.5), chest.getParticle(), 20, 0.5, 0.5, 0.5, 0.15);
                         new BukkitRunnable() {
                             @Override
@@ -273,8 +278,13 @@ public class ChestManager {
                     }
                     case 3: {
                         // Play the chest closing sound and animation.
-                        XSound sound = XSound.of(chest.getCloseSound()).orElse(XSound.ENTITY_PIGLIN_ANGRY);
-                        sound.play(location, 0.8f, 1.1f);
+                        var sound = SoundUtils.getSound(chest.getCloseSound());
+                        if (sound.isEmpty()) {
+                            Rebus.Logger().warn("Invalid sound: " + chest.getOpenSound());
+                        }
+                        else {
+                            location.getWorld().playSound(sound.get(), location.getX(), location.y(), location.z());
+                        }
                         new BukkitRunnable() {
                             @Override
                             public void run() {
@@ -321,7 +331,7 @@ public class ChestManager {
             Particle particle = this.getParticleSafely(particleType);
             location.getWorld().spawnParticle(Objects.requireNonNullElse(particle, Particle.ENCHANT), location, count, offsetX, offsetY, offsetZ, speed);
         } catch (Exception exception) {
-            Rebus.Logger().Error("Error playing particle effect: " + exception.getMessage());
+            Rebus.Logger().error("Error playing particle effect: " + exception.getMessage());
         }
     }
 
@@ -348,11 +358,14 @@ public class ChestManager {
      * @param chest    The RebusChest object representing the chest.
      */
     private void playCompletionEffects(Player player, final Location location, final RebusChest chest) {
-        float volume = 1.0f;
-        float pitch = 1.0f;
         this.playParticleEffect(location.clone().add(0.5, 0.5, 0.5), chest.getParticle(), chest.getParticleCount(), 0.8, 0.8, 0.8, 0.3);
-        XSound completionSound = XSound.of(chest.getCompletionSound()).orElse(XSound.ENTITY_PIGLIN_ANGRY);
-        completionSound.play(player, volume, pitch);
+        var sound = SoundUtils.getSound(chest.getCompletionSound());
+        if (sound.isEmpty()) {
+            Rebus.Logger().warn("Invalid sound: " + chest.getOpenSound());
+        }
+        else {
+            location.getWorld().playSound(sound.get(), location.getX(), location.y(), location.z());
+        }
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -447,7 +460,7 @@ public class ChestManager {
             Rebus.Protocols().sendServerPacket(player, packet);
 
         } catch (Exception e) {
-            Rebus.Logger().Error("Failed to play chest animation: " + e.getMessage());
+            Rebus.Logger().error("Failed to play chest animation: " + e.getMessage());
         }
     }
 }

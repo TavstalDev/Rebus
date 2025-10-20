@@ -262,7 +262,7 @@ public class RebusChest {
         File rewardFile = Paths.get(Rebus.Instance.getDataFolder().getPath(), "chests", key + ".yml").toFile();
         // Check if the reward file exists; if not, log a warning and return null.
         if (!rewardFile.exists()) {
-            Rebus.Logger().Warn("Reward file not found for chest: " + key);
+            Rebus.Logger().warn("Reward file not found for chest: " + key);
             return null;
         }
 
@@ -274,14 +274,14 @@ public class RebusChest {
 
             // Validate the parsed data and log a warning if invalid.
             if (yamlMap == null || !yamlMap.containsKey("data")) {
-                Rebus.Logger().Warn("Invalid reward data for chest: " + key);
+                Rebus.Logger().warn("Invalid reward data for chest: " + key);
                 return null;
             }
 
             // Retrieve the "data" section of the YAML map.
             Map<String, Object> dataMap = TypeUtils.castAsMap(yamlMap.get("data"), null);
             if (dataMap == null) {
-                Rebus.Logger().Warn("Invalid data section for chest: " + key);
+                Rebus.Logger().warn("Invalid data section for chest: " + key);
                 return null;
             }
 
@@ -304,8 +304,8 @@ public class RebusChest {
             }
         } catch (Exception ex) {
             // Log any exceptions that occur while loading the reward file.
-            Rebus.Logger().Warn("Error loading reward file for chest: " + key);
-            Rebus.Logger().Warn(ex.getMessage());
+            Rebus.Logger().warn("Error loading reward file for chest: " + key);
+            Rebus.Logger().warn(ex.getMessage());
             return null;
         }
 

@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class MainGUI {
     // Logger instance for logging errors and information related to the MainGUI.
-    private static final PluginLogger _logger = Rebus.Logger().WithModule(MainGUI.class);
+    private static final PluginLogger _logger = Rebus.Logger().withModule(MainGUI.class);
 
     // Translator instance for localizing messages and GUI elements.
     private static final PluginTranslator _translator = Rebus.Instance.getTranslator();
@@ -41,7 +41,7 @@ public class MainGUI {
         try {
             RebusConfig config = Rebus.Config();
             int rows = config.guiRows;
-            SGMenu menu = Rebus.GUI().create(_translator.Localize(player, "GUI.Title"), rows);
+            SGMenu menu = Rebus.GUI().create(_translator.localize(player, "GUI.Title"), rows);
 
             // Fill empty slots with placeholders if enabled in the configuration.
             if (config.guiFillEmptySlots) {
@@ -54,15 +54,15 @@ public class MainGUI {
 
             // Add a close button to the GUI.
             SGButton closeButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, config.guiCloseMaterial, _translator.Localize(player, "GUI.Close"))
+                    GuiUtils.createItem(Rebus.Instance, config.guiCloseMaterial, _translator.localize(player, "GUI.Close"))
             ).withListener(event -> close(player));
             menu.setButton(0, config.guiCloseBtnSlot, closeButton);
 
             return menu;
         } catch (Exception ex) {
             // Log an error if GUI creation fails.
-            _logger.Error("An error occurred while creating the main GUI.");
-            _logger.Error(ex);
+            _logger.error("An error occurred while creating the main GUI.");
+            _logger.error(ex);
             return null;
         }
     }
@@ -106,19 +106,19 @@ public class MainGUI {
             var chests = Rebus.ChestManager().getChests();
             for (RebusChest chest : chests) {
                 List<Component> lore = new ArrayList<>();
-                String price = Rebus.Translator().Localize("GUI.Price", Map.of("price", chest.getCost()));
+                String price = Rebus.Translator().localize("GUI.Price", Map.of("price", chest.getCost()));
                 lore.add(ChatUtils.translateColors(price, true));
                 for (String line : chest.getDescription()) {
                     lore.add(ChatUtils.translateColors(line, true));
                 }
                 lore.add(Component.text(""));
                 if (!player.hasPermission(chest.getPermission())) {
-                    lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.NoPermission"), true));
+                    lore.add(ChatUtils.translateColors(Rebus.Translator().localize("GUI.NoPermission"), true));
                 }
                 else {
-                    lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.ClickToBuy"), true));
+                    lore.add(ChatUtils.translateColors(Rebus.Translator().localize("GUI.ClickToBuy"), true));
                 }
-                lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.ClickToPreview"), true));
+                lore.add(ChatUtils.translateColors(Rebus.Translator().localize("GUI.ClickToPreview"), true));
 
                 // Create an item representing the chest and add it to the GUI.
                 ItemStack item = GuiUtils.createItem(
@@ -182,8 +182,8 @@ public class MainGUI {
             player.openInventory(menu.getInventory());
         } catch (Exception ex) {
             // Log an error if refreshing the GUI fails.
-            _logger.Error("An error occurred while refreshing the main GUI.");
-            _logger.Error(ex);
+            _logger.error("An error occurred while refreshing the main GUI.");
+            _logger.error(ex);
         }
     }
 }

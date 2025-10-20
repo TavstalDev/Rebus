@@ -44,16 +44,16 @@ public class NpcManager {
                 npc.getOrAddTrait(SkinTrait.class).setSkinPersistent(npcName, "", skinData);
             }
             catch (Exception e) {
-                Rebus.Logger().Warn("Failed to apply skin to NPC: " + e.getMessage());
+                Rebus.Logger().warn("Failed to apply skin to NPC: " + e.getMessage());
             }
         }
         npc.setProtected(true);
         try {
             npc.addTrait(new NpcTrait());
-            Rebus.Logger().Info("Rebus NPC created for player: " + player.getName() + " (NPC ID: " + npc.getId() + ")");
+            Rebus.Logger().info("Rebus NPC created for player: " + player.getName() + " (NPC ID: " + npc.getId() + ")");
         }
         catch (Exception e) {
-            Rebus.Logger().Warn("Error setting NPC persistent data: " + e.getMessage());
+            Rebus.Logger().warn("Error setting NPC persistent data: " + e.getMessage());
         }
         plugin.sendLocalizedMsg(player, "NPC.Spawned");
     }
@@ -65,7 +65,7 @@ public class NpcManager {
         for (NPC npc : registry.sorted()) {
             if (isRebusNPC(npc)) {
                 npc.destroy();
-                Rebus.Logger().Info("Removed Rebus NPC (ID: " + npc.getId() + ")");
+                Rebus.Logger().info("Removed Rebus NPC (ID: " + npc.getId() + ")");
             }
         }
     }

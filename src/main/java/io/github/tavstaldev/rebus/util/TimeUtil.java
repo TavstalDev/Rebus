@@ -27,22 +27,23 @@ public class TimeUtil
         long minutes = (seconds % 3600) / 60; // Calculate the number of minutes
         long secs = seconds % 60; // Calculate the remaining seconds
 
+        final var translator = Rebus.Translator();
         StringBuilder sb = new StringBuilder();
         if (days > 0) {
             // Append localized days string if days are greater than 0
-            sb.append(Rebus.Translator().Localize(player, "Time.Days", Map.of("%value%", String.valueOf(days)))).append(" ");
+            sb.append(translator.localize(player, "Time.Days", Map.of("%value%", String.valueOf(days)))).append(" ");
         }
         if (hours > 0 || days > 0) {
             // Append localized hours string if hours or days are greater than 0
-            sb.append(Rebus.Translator().Localize(player, "Time.Hours", Map.of("%value%", String.valueOf(hours)))).append(" ");
+            sb.append(translator.localize(player, "Time.Hours", Map.of("%value%", String.valueOf(hours)))).append(" ");
         }
         if (minutes > 0 || hours > 0 || days > 0) {
             // Append localized minutes string if minutes, hours, or days are greater than 0
-            sb.append(Rebus.Translator().Localize(player, "Time.Minutes", Map.of("%value%", String.valueOf(minutes)))).append(" ");
+            sb.append(translator.localize(player, "Time.Minutes", Map.of("%value%", String.valueOf(minutes)))).append(" ");
         }
         if (secs > 0) {
             // Append localized seconds string if seconds are greater than 0
-            sb.append(Rebus.Translator().Localize(player, "Time.Seconds", Map.of("%value%", String.valueOf(secs)))).append(" ");
+            sb.append(translator.localize(player, "Time.Seconds", Map.of("%value%", String.valueOf(secs)))).append(" ");
         }
 
         // Return the formatted string, trimmed of any trailing spaces
