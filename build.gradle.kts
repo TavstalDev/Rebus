@@ -14,7 +14,6 @@ val mineCoreLibVersion: String by project
 val spiGuiVersion: String by project
 val vaultApiVersion: String by project
 val citizensApiVersion: String by project
-val xseriesVersion: String by project
 val hikariCpVersion: String by project
 val caffeineVersion: String by project
 val projectPackageName = "${project.group}.rebus"
@@ -70,8 +69,6 @@ dependencies {
     implementation("com.samjakob:SpiGUI:${spiGuiVersion}")
     // Custom library for core functionality
     implementation(files("libs/MineCoreLib-${mineCoreLibVersion}.jar"))
-    // XSeries
-    implementation("com.github.cryptomorin:XSeries:${xseriesVersion}")
     // SQL caching
     implementation("com.github.ben-manes.caffeine:caffeine:${caffeineVersion}")
 }
@@ -93,8 +90,8 @@ tasks.shadowJar {
     exclude("org/slf4j/**")
 
     // Relocate packages to avoid conflicts
+    relocate("com.zaxxer.hikari", "${projectPackageName}.shadow.hikari")
     relocate("com.samjakob.spigui", "${projectPackageName}.shadow.spigui")
-    relocate("com.cryptomorin.xseries", "${projectPackageName}.shadow.xseries")
     relocate("com.github.benmanes.caffeine", "${projectPackageName}.shadow.caffeine")
 }
 
