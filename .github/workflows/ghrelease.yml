@@ -1,0 +1,101 @@
+# Purpose: This GitHub Actions workflow builds the Paper plugin and creates a pre-release on the stable branch.
+# Uploads the built JAR file(s) to github, and generates a changelog based on the latest Git tag.
+name: Build and Pre-release Paper Plugin
+
+on:
+  push:
+    branches:
+      - stable
+
+permissions:
+  contents: write
+
+env:
+  CONFIG_PATH: src/main/resources/plugin.yml
+  COMMIT_EXTRA_DESC: ""
+
+jobs:
+  build:
+    name: Build Plugin
+    runs-on: ubuntu-latest
+    outputs:
+      plugin_version: ${{ steps.extract_version.outputs.version }}
+      changelog: ${{ steps.generate_changelog.outputs.commits }}
+
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Java 21
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      # Grant Gradle wrapper permission
+      - name: Grant Gradle wrapper permission
+        run: chmod +x ./gradlew
+
+      # Build the plugin
+      - name: Build plugin
+        run: ./gradlew build
+
+      # Extract plugin version from plugin.yml and set it as an environment variable
+      - name: Extract plugin version from plugin.yml
+        id: extract_version
+        run: |
+          version=$(grep "^version:" src/main/resources/plugin.yml | cut -d ' ' -f2 | tr -d '[:cntrl:]' | xargs)
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      # Generate changelog since the latest tag
+      - name: Generate changelog since latest tag
+        id: generate_changelog
+        run: |
+          git fetch --unshallow || true
+          latest=$(git tag --sort=-v:refname | head -n 1 || echo "none")
+          if [ "$latest" = "none" ] || [ -z "$latest" ]; then
+            log=$(git log --pretty=format:"- [%h](https://github.com/${{ github.repository }}/commit/%h) - %s")
+          else
+            log=$(git log "$latest"..HEAD --pretty=format:"- [%h](https://github.com/${{ github.repository }}/commit/%h) - %s")
+          fi
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$log" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      # Upload the built JAR file as an artifact
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-jar
+          path: build/libs/*.jar
+
+  release:
+    name: Create GitHub Pre-release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Download the built JAR artifact
+      - name: Download built JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-jar
+
+      # Create a pre-release on GitHub with the built JAR file
+      - name: Create GitHub Pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.build.outputs.plugin_version }}
+          name: "Pre-release v${{ needs.build.outputs.plugin_version }}"
+          prerelease: true
+          body: |
+            ## 📜 Changelog
+            Changes pushed to `${{ github.ref_name }}`
+
+            ${{ needs.build.outputs.changelog }}
+          files: |
+            *.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
