@@ -46,7 +46,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the plugin's logger.
      * @return PluginLogger instance.
      */
-    public static PluginLogger Logger() {
+    public static PluginLogger logger() {
         return Instance.getCustomLogger();
     }
 
@@ -54,7 +54,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the plugin's translator.
      * @return PluginTranslator instance.
      */
-    public static PluginTranslator Translator() {
+    public static PluginTranslator translator() {
         return Instance.getTranslator();
     }
 
@@ -62,7 +62,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the plugin's configuration.
      * @return RebusConfig instance.
      */
-    public static RebusConfig Config(){
+    public static RebusConfig config(){
         return (RebusConfig) Instance._config;
     }
 
@@ -70,7 +70,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the ItemMetaSerializer.
      * @return ItemMetaSerializer instance.
      */
-    public static ItemMetaSerializer ItemSerializer() {
+    public static ItemMetaSerializer itemSerializer() {
         return Instance._itemMetaSerializer;
     }
 
@@ -78,7 +78,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the ChestManager.
      * @return ChestManager instance.
      */
-    public static ChestManager ChestManager() {
+    public static ChestManager chestManager() {
         return Instance._chestManager;
     }
 
@@ -86,7 +86,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the NpcManager.
      * @return NpcManager instance.
      */
-    public static NpcManager NpcManager() {
+    public static NpcManager npcManager() {
         return Instance._npcManager;
     }
 
@@ -94,7 +94,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the SpiGUI instance.
      * @return SpiGUI instance.
      */
-    public static SpiGUI GUI() {
+    public static SpiGUI gui() {
         return Instance._spiGUI;
     }
 
@@ -102,7 +102,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the ProtocolManager.
      * @return ProtocolManager instance.
      */
-    public static ProtocolManager Protocols() {
+    public static ProtocolManager protocols() {
         return Instance._protocolManager;
     }
 
@@ -110,7 +110,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the database instance.
      * @return IDatabase instance.
      */
-    public static IDatabase Database() {
+    public static IDatabase database() {
         return Instance._database;
     }
 
@@ -118,7 +118,7 @@ public final class Rebus extends PluginBase {
      * Provides access to the BanyaszApi instance.
      * @return BanyaszApi instance.
      */
-    public static BanyaszApi BanyaszApi() {
+    public static BanyaszApi banyaszApi() {
         return Instance._banyaszApi;
     }
 
@@ -218,7 +218,7 @@ public final class Rebus extends PluginBase {
         _npcManager = new NpcManager();
 
         // Initialize database based on configuration
-        String databaseType = Config().storageType;
+        String databaseType = config().storageType;
         if (databaseType == null) {
             databaseType = "sqlite";
         }
@@ -245,7 +245,7 @@ public final class Rebus extends PluginBase {
         _logger.ok(String.format("%s has been successfully loaded.", getProjectName()));
 
         // Check for updates if enabled in configuration
-        if (Config().checkForUpdates) {
+        if (config().checkForUpdates) {
             isUpToDate().thenAccept(upToDate -> {
                 if (upToDate) {
                     _logger.ok("Plugin is up to date!");

@@ -33,14 +33,14 @@ public class MySqlDatabase implements IDatabase {
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
     private RebusConfig _config;
-    private final PluginLogger _logger = Rebus.Logger().withModule(MySqlDatabase.class);
+    private final PluginLogger _logger = Rebus.logger().withModule(MySqlDatabase.class);
 
     /**
      * Loads the database configuration and initializes the connection pool.
      */
     @Override
     public void load() {
-        _config = Rebus.Config();
+        _config = Rebus.config();
         _dataSource = CreateDataSource();
     }
 

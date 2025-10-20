@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandRebus implements CommandExecutor {
-    private final PluginLogger _logger = Rebus.Logger().withModule(CommandRebus.class);
+    private final PluginLogger _logger = Rebus.logger().withModule(CommandRebus.class);
 
     private final List<SubCommandData> _subCommands = new ArrayList<>() {
         {

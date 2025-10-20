@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class PreviewGUI {
-    private static final PluginLogger _logger = Rebus.Logger().withModule(PreviewGUI.class);
+    private static final PluginLogger _logger = Rebus.logger().withModule(PreviewGUI.class);
     private static final Integer[] SlotPlaceholders = {
             0,  1,  2,  3,  4,  5,  6,  7,  8,
             9,                              17,
@@ -38,7 +38,7 @@ public class PreviewGUI {
      */
     public static SGMenu create(@NotNull Player player) {
         try {
-            SGMenu menu = Rebus.GUI().create("...", 6);
+            SGMenu menu = Rebus.gui().create("...", 6);
 
             // Create Placeholders
             SGButton placeholderButton = new SGButton(GuiUtils.createItem(Rebus.Instance, Material.BLACK_STAINED_GLASS_PANE, " "));

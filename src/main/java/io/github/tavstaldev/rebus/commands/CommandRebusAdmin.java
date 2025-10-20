@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class CommandRebusAdmin implements CommandExecutor {
-    private final PluginLogger _logger = Rebus.Logger().withModule(CommandRebusAdmin.class);
+    private final PluginLogger _logger = Rebus.logger().withModule(CommandRebusAdmin.class);
     private final List<SubCommandData> _subCommands = new ArrayList<>() {
         {
             // HELP
@@ -112,7 +112,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
 
-                    Rebus.NpcManager().spawnNPC(player);
+                    Rebus.npcManager().spawnNPC(player);
                     return  true;
                 }
                 case "removenpcs": {
@@ -120,7 +120,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
                         return true;
                     }
-                    Rebus.NpcManager().removeAllNpcs();
+                    Rebus.npcManager().removeAllNpcs();
                     return  true;
                 }
                 case "give": {
@@ -141,7 +141,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                     }
 
                     RebusChest chest = null;
-                    for (RebusChest c : Rebus.ChestManager().getChests()) {
+                    for (RebusChest c : Rebus.chestManager().getChests()) {
                         if (Objects.equals(c.getKey(), args[2])) {
                             chest = c;
                             break;
@@ -181,7 +181,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
 
-                    Rebus.Database().removeAllCooldowns(target.getUniqueId());
+                    Rebus.database().removeAllCooldowns(target.getUniqueId());
                     Rebus.Instance.sendLocalizedMsg(player, "General.ResetCooldowns", Map.of("player", target.getName()));
                     Rebus.Instance.sendLocalizedMsg(target, "General.YourCooldownsReset");
                     return true;

@@ -57,7 +57,7 @@ public class PlayerEventListener implements Listener {
             return;
         }
 
-        if (Rebus.ChestManager().chestsUnderUnlocking.contains(clickedBlock.getLocation())) {
+        if (Rebus.chestManager().chestsUnderUnlocking.contains(clickedBlock.getLocation())) {
             event.setCancelled(true);
         }
     }

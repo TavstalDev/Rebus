@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public class SoundUtils {
     /** Logger instance for logging messages related to SoundUtils. */
-    private static final PluginLogger _logger = Rebus.Logger().withModule(SoundUtils.class);
+    private static final PluginLogger _logger = Rebus.logger().withModule(SoundUtils.class);
 
     /**
      * Retrieves a sound object based on its name with default volume and pitch.

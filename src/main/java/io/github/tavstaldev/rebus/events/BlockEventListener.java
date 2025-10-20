@@ -46,13 +46,13 @@ public class BlockEventListener implements Listener {
         var meta = itemInHand.getItemMeta();
 
         // Check if the item has the custom chest key.
-        if (!meta.getPersistentDataContainer().has(Rebus.ChestManager().getChestKey())) {
+        if (!meta.getPersistentDataContainer().has(Rebus.chestManager().getChestKey())) {
             return;
         }
 
         // Retrieve the chest key and corresponding chest object.
-        String key = meta.getPersistentDataContainer().get(Rebus.ChestManager().getChestKey(), PersistentDataType.STRING);
-        RebusChest chest = Rebus.ChestManager().getByKey(key);
+        String key = meta.getPersistentDataContainer().get(Rebus.chestManager().getChestKey(), PersistentDataType.STRING);
+        RebusChest chest = Rebus.chestManager().getByKey(key);
         if (chest == null) {
             return;
         }
@@ -61,13 +61,13 @@ public class BlockEventListener implements Listener {
         event.setCancelled(true);
 
         // Check if the block location is already occupied by an unlocking chest.
-        if (Rebus.ChestManager().chestsUnderUnlocking.contains(event.getBlock().getLocation())) {
+        if (Rebus.chestManager().chestsUnderUnlocking.contains(event.getBlock().getLocation())) {
             Rebus.Instance.sendLocalizedMsg(player, "Chest.LocationOccupied");
             return;
         }
 
         // Check if the player is already unlocking a chest.
-        if (Rebus.ChestManager().playersUnlocking.contains(player.getUniqueId())) {
+        if (Rebus.chestManager().playersUnlocking.contains(player.getUniqueId())) {
             Rebus.Instance.sendLocalizedMsg(player, "Chests.AlreadyOpening");
             return;
         }
@@ -79,14 +79,14 @@ public class BlockEventListener implements Listener {
         }
 
         // Check if the chest is on cooldown for the player.
-        long remainingTime = Rebus.Database().getCooldown(player.getUniqueId(), ECooldownType.OPEN, chest.getKey());
+        long remainingTime = Rebus.database().getCooldown(player.getUniqueId(), ECooldownType.OPEN, chest.getKey());
         if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
             Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
             return;
         }
 
         // Handle the placement of the chest.
-        Rebus.ChestManager().handlePlaceChest(player, chest, itemInHand, event.getBlock());
+        Rebus.chestManager().handlePlaceChest(player, chest, itemInHand, event.getBlock());
     }
 
     /**
@@ -102,7 +102,7 @@ public class BlockEventListener implements Listener {
         }
 
         // Cancel the event if the block is under unlocking.
-        if (Rebus.ChestManager().chestsUnderUnlocking.contains(event.getBlock().getLocation())) {
+        if (Rebus.chestManager().chestsUnderUnlocking.contains(event.getBlock().getLocation())) {
             event.setCancelled(true);
         }
     }

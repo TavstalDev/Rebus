@@ -26,14 +26,14 @@ public class SqlLiteDatabase implements IDatabase {
             .maximumSize(1000)
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
-    private final PluginLogger _logger = Rebus.Logger().withModule(SqlLiteDatabase.class);
+    private final PluginLogger _logger = Rebus.logger().withModule(SqlLiteDatabase.class);
 
     /**
      * Loads the database configuration.
      */
     @Override
     public void load() {
-        _config = Rebus.Config();
+        _config = Rebus.config();
     }
 
     /**

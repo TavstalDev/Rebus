@@ -27,7 +27,7 @@ public class TimeUtil
         long minutes = (seconds % 3600) / 60; // Calculate the number of minutes
         long secs = seconds % 60; // Calculate the remaining seconds
 
-        final var translator = Rebus.Translator();
+        final var translator = Rebus.translator();
         StringBuilder sb = new StringBuilder();
         if (days > 0) {
             // Append localized days string if days are greater than 0

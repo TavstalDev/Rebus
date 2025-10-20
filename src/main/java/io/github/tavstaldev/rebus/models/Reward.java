@@ -51,7 +51,7 @@ public class Reward {
             return Collections.unmodifiableSet(_stackCache);
 
         Set<ItemStack> itemStacks = new java.util.HashSet<>();
-        var itemsTable = Rebus.ChestManager().getItemTable();
+        var itemsTable = Rebus.chestManager().getItemTable();
         for (Integer itemId : items) {
             ItemStack itemStack = itemsTable.get(itemId);
             if (itemStack != null) {
