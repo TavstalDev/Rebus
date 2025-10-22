@@ -33,14 +33,14 @@ public class MySqlDatabase implements IDatabase {
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
     private RebusConfig _config;
-    private final PluginLogger _logger = Rebus.Logger().WithModule(MySqlDatabase.class);
+    private final PluginLogger _logger = Rebus.logger().withModule(MySqlDatabase.class);
 
     /**
      * Loads the database configuration and initializes the connection pool.
      */
     @Override
     public void load() {
-        _config = Rebus.Config();
+        _config = Rebus.config();
         _dataSource = CreateDataSource();
     }
 
@@ -70,7 +70,7 @@ public class MySqlDatabase implements IDatabase {
             config.setMaxLifetime(30000);
             return new HikariDataSource(config);
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened during the creation of database connection...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened during the creation of database connection...\n%s", ex.getMessage()));
             return null;
         }
     }
@@ -93,7 +93,7 @@ public class MySqlDatabase implements IDatabase {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -110,7 +110,7 @@ public class MySqlDatabase implements IDatabase {
         try (Connection connection = _dataSource.getConnection()) {
             String sql = String.format("INSERT INTO %s_cooldowns (PlayerId, Context, Type, Chest, ExpiresAt) " +
                             "VALUES (?, ?, ?, ?, ?) " +
-                            "ON DUPLICATE KEY UPDATE ExpiresAt = VALUES(ExpiresAt);",
+                            "ON DUPLICATE KEY UPDATE ExpiresAt = VALUES(ExpiresAt), Type = VALUES(Type);",
                     _config.storageTablePrefix);
 
             var cooldownExpiresAt = LocalDateTime.now().plusSeconds(seconds);
@@ -131,7 +131,7 @@ public class MySqlDatabase implements IDatabase {
                 cache.add(new Cooldown(_config.storageContext, type, chestKey, cooldownExpiresAt));
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -161,7 +161,7 @@ public class MySqlDatabase implements IDatabase {
                 cache.removeIf(x -> x.getType() == type && x.getChest().equals(chestKey) && x.getContext().equals(_config.storageContext));
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -184,7 +184,7 @@ public class MySqlDatabase implements IDatabase {
 
             _playerCache.invalidate(playerId);
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -209,13 +209,13 @@ public class MySqlDatabase implements IDatabase {
                 statement.setString(1, playerId.toString());
                 statement.setString(2, _config.storageContext);
                 try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
+                    while (result.next()) {
                         cooldowns.add(new Cooldown(result.getString("Context"), ECooldownType.valueOf(result.getString("Type")), result.getString("Chest"), result.getTimestamp("ExpiresAt").toLocalDateTime()));
                     }
                 }
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
             return null;
         }
 

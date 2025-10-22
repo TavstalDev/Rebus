@@ -5,7 +5,6 @@ import io.github.tavstaldev.rebus.util.IconUtils;
 import org.bukkit.Material;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -14,14 +13,18 @@ public class RebusConfig extends ConfigurationBase {
         super(Rebus.Instance, "config.yml", null);
     }
 
+    // General
     public String prefix;
     public boolean checkForUpdates, debug;
 
+    // Storage
     public String storageType, storageContext, storageFilename, storageHost, storageDatabase, storageUsername, storagePassword, storageTablePrefix;
     public int storagePort;
 
+    // NPC
     public String npcName, npcSkin;
 
+    // GUI
     public boolean guiFillEmptySlots;
     public Material guiPlaceholderMaterial, guiCloseMaterial;
     public int guiRows, guiCloseBtnSlot;
@@ -29,11 +32,11 @@ public class RebusConfig extends ConfigurationBase {
     @Override
     protected void loadDefaults() {
         // General
-        resolve("locale", "hun");
-        resolve("usePlayerLocale", false);
-        checkForUpdates = resolveGet("checkForUpdates", false);
+        resolve("locale", "eng");
+        resolve("usePlayerLocale", true);
+        checkForUpdates = resolveGet("checkForUpdates", true);
         debug = resolveGet("debug", false);
-        prefix = resolveGet("prefix", "&dRébusz &8»");
+        prefix = resolveGet("prefix", "&dRebus &8»");
 
         // Storage
         storageType = resolveGet("storage.type", "sqlite");

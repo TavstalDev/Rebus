@@ -67,7 +67,7 @@ public class RebusChest {
             lore.add(ChatUtils.translateColors(line, true));
         }
         itemMeta.lore(lore);
-        itemMeta.getPersistentDataContainer().set(Rebus.ChestManager().getChestKey(), PersistentDataType.STRING, key);
+        itemMeta.getPersistentDataContainer().set(Rebus.chestManager().getChestKey(), PersistentDataType.STRING, key);
         item.setItemMeta(itemMeta);
         player.getInventory().addItem(item);
     }
@@ -102,7 +102,7 @@ public class RebusChest {
         }
         items.clear();
 
-        Rebus.Database().addCooldown(player.getUniqueId(), ECooldownType.OPEN, key, cooldown);
+        Rebus.database().addCooldown(player.getUniqueId(), ECooldownType.OPEN, key, cooldown);
         Rebus.Instance.sendLocalizedMsg(player, "Chests.RewardReceived", Map.of("chest_name", getName()));
 
         //Rebus.Instance.sendLocalizedMsg(player, "Chests.NoRewards");
@@ -144,7 +144,7 @@ public class RebusChest {
         Set<Reward> rewards = new HashSet<>();
         File rewardFile = Paths.get(Rebus.Instance.getDataFolder().getPath(), "chests", key + ".yml").toFile();
         if (!rewardFile.exists()) {
-            Rebus.Logger().Warn("Reward file not found for chest: " + key);
+            Rebus.logger().warn("Reward file not found for chest: " + key);
             return null;
         }
 
@@ -154,7 +154,7 @@ public class RebusChest {
             yamlMap = TypeUtils.castAsMap(yaml.load(stream), null);
 
             if (yamlMap == null || !yamlMap.containsKey("data")) {
-                Rebus.Logger().Warn("Invalid reward data for chest: " + key);
+                Rebus.logger().warn("Invalid reward data for chest: " + key);
                 return null;
             }
 
@@ -162,7 +162,7 @@ public class RebusChest {
 
             Map<String, Object> dataMap = TypeUtils.castAsMap(yamlMap.get("data"), null);
             if (dataMap == null) {
-                Rebus.Logger().Warn("Invalid data section for chest: " + key);
+                Rebus.logger().warn("Invalid data section for chest: " + key);
                 return null;
             }
 
@@ -171,7 +171,7 @@ public class RebusChest {
                 if (dataEntry == null) continue;
 
                 int chance = dataEntry.containsKey("chance") ? ((Number) dataEntry.get("chance")).intValue() : 25;
-                List<Integer> itemsRaw = TypeUtils.castAsList(dataEntry.get("items"), Rebus.Logger());
+                List<Integer> itemsRaw = TypeUtils.castAsList(dataEntry.get("items"), Rebus.logger());
                 if (itemsRaw == null) return null;
                 Set<Integer> items = new HashSet<>(itemsRaw);
 
@@ -181,8 +181,8 @@ public class RebusChest {
                     description, material, cost, cooldown, buyCooldown, permission, slot, particle, particleCount,
                     openSound, closeSound, completionSound, isHighTier, rewards);
         } catch (Exception ex) {
-            Rebus.Logger().Warn("Error loading reward file for chest: " + key);
-            Rebus.Logger().Warn(ex.getMessage());
+            Rebus.logger().warn("Error loading reward file for chest: " + key);
+            Rebus.logger().warn(ex.getMessage());
             return null;
         }
     }

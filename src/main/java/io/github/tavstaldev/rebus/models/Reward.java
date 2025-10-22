@@ -26,13 +26,13 @@ public class Reward {
             return _stackCache;
 
         Set<ItemStack> itemStacks = new HashSet<>();
-        var itemsTable = Rebus.ChestManager().getItemTable();
+        var itemsTable = Rebus.chestManager().getItemTable();
         for (Integer itemId : items) {
             ItemStack itemStack = itemsTable.get(itemId);
             if (itemStack != null) {
                 itemStacks.add(itemStack);
             } else {
-                Rebus.Logger().Error("NULL ITEM: " + itemId);
+                Rebus.logger().error("NULL ITEM: " + itemId);
             }
         }
         _stackCache = itemStacks;

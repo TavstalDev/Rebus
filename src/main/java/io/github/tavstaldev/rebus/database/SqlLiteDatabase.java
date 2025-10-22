@@ -26,14 +26,14 @@ public class SqlLiteDatabase implements IDatabase {
             .maximumSize(1000)
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
-    private final PluginLogger _logger = Rebus.Logger().WithModule(SqlLiteDatabase.class);
+    private final PluginLogger _logger = Rebus.logger().withModule(SqlLiteDatabase.class);
 
     /**
      * Loads the database configuration.
      */
     @Override
     public void load() {
-        _config = Rebus.Config();
+        _config = Rebus.config();
     }
 
     /**
@@ -52,7 +52,7 @@ public class SqlLiteDatabase implements IDatabase {
             Class.forName("org.sqlite.JDBC");
             return DriverManager.getConnection(String.format("jdbc:sqlite:plugins/Rebus/%s.db", _config.storageFilename));
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while creating db connection...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while creating db connection...\n%s", ex.getMessage()));
             return null;
         }
     }
@@ -75,7 +75,7 @@ public class SqlLiteDatabase implements IDatabase {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.executeUpdate();
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while creating tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -90,8 +90,11 @@ public class SqlLiteDatabase implements IDatabase {
     @Override
     public void addCooldown(UUID playerId, ECooldownType type, String chestKey, long seconds) {
         try (Connection connection = CreateConnection()) {
-            String sql = String.format("INSERT OR REPLACE INTO %s_cooldowns (PlayerId, Context, Type, Chest, ExpiresAt) " +
-                            "VALUES (?, ?, ?, ?, ?);",
+            String sql = String.format("INSERT INTO %s_cooldowns (PlayerId, Context, Type, Chest, ExpiresAt) " +
+                            "VALUES (?, ?, ?, ?, ?) " +
+                            "ON CONFLICT (PlayerId, Context, Chest) DO UPDATE SET " +
+                            "ExpiresAt = excluded.ExpiresAt, " +
+                            "Type = excluded.Type;",
                     _config.storageTablePrefix);
 
             var cooldownExpiresAt = LocalDateTime.now().plusSeconds(seconds);
@@ -112,7 +115,7 @@ public class SqlLiteDatabase implements IDatabase {
                 cache.add(new Cooldown(_config.storageContext, type, chestKey, cooldownExpiresAt));
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while adding tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -142,7 +145,7 @@ public class SqlLiteDatabase implements IDatabase {
                 cache.removeIf(x -> x.getType() == type && x.getChest().equals(chestKey) && x.getContext().equals(_config.storageContext));
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -165,7 +168,7 @@ public class SqlLiteDatabase implements IDatabase {
 
             _playerCache.invalidate(playerId);
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while removing tables...\n%s", ex.getMessage()));
         }
     }
 
@@ -190,13 +193,13 @@ public class SqlLiteDatabase implements IDatabase {
                 statement.setString(1, playerId.toString());
                 statement.setString(2, _config.storageContext);
                 try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
+                    while (result.next()) {
                         cooldowns.add(new Cooldown(result.getString("Context"), ECooldownType.valueOf(result.getString("Type")), result.getString("Chest"), result.getTimestamp("ExpiresAt").toLocalDateTime()));
                     }
                 }
             }
         } catch (Exception ex) {
-            _logger.Error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
+            _logger.error(String.format("Unknown error happened while finding cooldowns...\n%s", ex.getMessage()));
             return null;
         }
 

@@ -22,14 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 public class MainGUI {
-    private static final PluginLogger _logger = Rebus.Logger().WithModule(MainGUI.class);
+    private static final PluginLogger _logger = Rebus.logger().withModule(MainGUI.class);
     private static final PluginTranslator _translator = Rebus.Instance.getTranslator();
 
     public static SGMenu create(@NotNull Player player) {
         try {
-            RebusConfig config = Rebus.Config();
+            RebusConfig config = Rebus.config();
             int rows = config.guiRows;
-            SGMenu menu = Rebus.GUI().create(_translator.Localize(player, "GUI.Title"), rows);
+            SGMenu menu = Rebus.gui().create(_translator.localize(player, "GUI.Title"), rows);
 
             // Create Placeholders
             if (config.guiFillEmptySlots) {
@@ -42,7 +42,7 @@ public class MainGUI {
 
             // Close Button
             SGButton closeButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, config.guiCloseMaterial, _translator.Localize(player, "GUI.Close"))
+                    GuiUtils.createItem(Rebus.Instance, config.guiCloseMaterial, _translator.localize(player, "GUI.Close"))
             ).withListener(event -> close(player));
             menu.setButton(0, config.guiCloseBtnSlot, closeButton);
 
@@ -50,8 +50,8 @@ public class MainGUI {
             return menu;
         }
         catch (Exception ex) {
-            _logger.Error("An error occurred while creating the main GUI.");
-            _logger.Error(ex);
+            _logger.error("An error occurred while creating the main GUI.");
+            _logger.error(ex);
             return null;
         }
     }
@@ -77,16 +77,16 @@ public class MainGUI {
             var menu = playerCache.getMainMenu();
 
             // Daily Quests
-            var chests =  Rebus.ChestManager().getChests();
+            var chests =  Rebus.chestManager().getChests();
             for (RebusChest chest : chests) {
                 List<Component> lore = new ArrayList<>();
-                String price = Rebus.Translator().Localize("GUI.Price", Map.of("price", chest.getCost()));
+                String price = Rebus.translator().localize("GUI.Price", Map.of("price", chest.getCost()));
                 lore.add(ChatUtils.translateColors(price, true));
                 for (String line : chest.getDescription()) {
                     lore.add(ChatUtils.translateColors(line, true));
                 }
                 if (!player.hasPermission(chest.getPermission())) {
-                    lore.add(ChatUtils.translateColors(Rebus.Translator().Localize("GUI.NoPermission"), true));
+                    lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.NoPermission"), true));
                 }
 
                 ItemStack item = GuiUtils.createItem(
@@ -106,29 +106,29 @@ public class MainGUI {
                         return;
                     }
 
-                    var balance = Rebus.BanyaszApi().getBalance(playerId);
+                    var balance = Rebus.banyaszApi().getBalance(playerId);
                     if (balance < chest.getCost()) {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NotEnoughMoney", Map.of("balance", balance));
                         return;
                     }
 
-                    long remainingTime = Rebus.Database().getCooldown(playerId, ECooldownType.OPEN, chest.getKey());
+                    long remainingTime = Rebus.database().getCooldown(playerId, ECooldownType.OPEN, chest.getKey());
                     if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
                     }
 
-                    remainingTime = Rebus.Database().getCooldown(playerId, ECooldownType.BUY, chest.getKey());
+                    remainingTime = Rebus.database().getCooldown(playerId, ECooldownType.BUY, chest.getKey());
                     if (remainingTime > 0 && !player.hasPermission("rebus.bypass.buycooldown")) {
                         Rebus.Instance.sendLocalizedMsg(player, "Chests.BuyCooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
                         return;
                     }
 
                     if (chest.getCost() > 0)
-                        Rebus.BanyaszApi().decreaseBalance(player.getUniqueId(), (int)chest.getCost());
+                        Rebus.banyaszApi().decreaseBalance(player.getUniqueId(), (int)chest.getCost());
                     chest.give(player, 1);
                     if (chest.getBuyCooldown() > 0)
-                        Rebus.Database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
+                        Rebus.database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
                     Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
                 });
 
@@ -137,8 +137,8 @@ public class MainGUI {
             player.openInventory(menu.getInventory());
         }
         catch (Exception ex) {
-            _logger.Error("An error occurred while refreshing the main GUI.");
-            _logger.Error(ex);
+            _logger.error("An error occurred while refreshing the main GUI.");
+            _logger.error(ex);
         }
     }
 }
