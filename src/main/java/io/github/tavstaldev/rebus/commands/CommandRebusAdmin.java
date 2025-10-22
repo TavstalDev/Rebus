@@ -17,31 +17,39 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * CommandRebusAdmin is the command handler for the "rebusadmin" command.
+ * It implements the CommandExecutor interface to process admin-level commands
+ * and their subcommands.
+ */
 public class CommandRebusAdmin implements CommandExecutor {
+    // Logger instance for logging messages related to this command.
     private final PluginLogger _logger = Rebus.logger().withModule(CommandRebusAdmin.class);
+
+    // List of subcommands available for the "rebusadmin" command.
     private final List<SubCommandData> _subCommands = new ArrayList<>() {
         {
-            // HELP
+            // HELP subcommand
             add(new SubCommandData("help", "rebus.admin", Map.of(
                     "syntax", "",
                     "description", "Commands.Help.Desc"
             )));
-            // VERSION
+            // VERSION subcommand
             add(new SubCommandData("version", "rebus.info", Map.of(
                     "syntax", "",
                     "description", "Commands.Version.Desc"
             )));
-            // RELOAD
+            // RELOAD subcommand
             add(new SubCommandData("reload", "rebus.reload", Map.of(
                     "syntax", "",
                     "description", "Commands.Reload.Desc"
             )));
-            // NPC
+            // NPC subcommand
             add(new SubCommandData("npc", "rebus.npc", Map.of(
                     "syntax", "",
                     "description", "Commands.Npc.Desc"
             )));
-            // GIVE
+            // GIVE subcommand
             add(new SubCommandData("give", "rebus.give", Map.of(
                     "syntax", "Commands.Give.Syntax",
                     "description", "Commands.Give.Desc"
@@ -49,19 +57,31 @@ public class CommandRebusAdmin implements CommandExecutor {
         }
     };
 
+    /**
+     * Handles the execution of the "rebusadmin" command.
+     *
+     * @param sender  The sender of the command (e.g., player or console).
+     * @param command The command being executed.
+     * @param label   The alias of the command used.
+     * @param args    The arguments provided with the command.
+     * @return true if the command was successfully executed, false otherwise.
+     */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
+        // Handle console sender
         if (sender instanceof ConsoleCommandSender) {
             _logger.info(ChatUtils.translateColors("Commands.ConsoleCaller", true).toString());
             return true;
         }
+
+        // Handle player sender
         Player player = (Player) sender;
         if (!player.hasPermission("rebus.admin")) {
             Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
             return true;
         }
 
-
+        // Process subcommands
         if (args.length > 0) {
             switch (args[0].toLowerCase()) {
                 case "help":
@@ -113,7 +133,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                     }
 
                     Rebus.npcManager().spawnNPC(player);
-                    return  true;
+                    return true;
                 }
                 case "removenpcs": {
                     if (!player.hasPermission("rebus.npc")) {
@@ -121,7 +141,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                         return true;
                     }
                     Rebus.npcManager().removeAllNpcs();
-                    return  true;
+                    return true;
                 }
                 case "give": {
                     if (!player.hasPermission("rebus.give")) {
@@ -162,7 +182,7 @@ public class CommandRebusAdmin implements CommandExecutor {
                             "chest", chest.getName(),
                             "player", player.getName()
                     ));
-                    return  true;
+                    return true;
                 }
                 case "reset": {
                     if (!player.hasPermission("rebus.reset")) {
@@ -188,23 +208,33 @@ public class CommandRebusAdmin implements CommandExecutor {
                 }
             }
 
+            // Invalid arguments
             Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
             return true;
         }
 
+        // Default to help command
         help(player, 1);
         return true;
     }
 
+    /**
+     * Displays the help menu for the "rebusadmin" command.
+     *
+     * @param player The player requesting help.
+     * @param page   The page number of the help menu to display.
+     */
     private void help(Player player, int page) {
         int maxPage = 1 + (_subCommands.size() / 15);
 
+        // Ensure the page number is within valid bounds
         if (page > maxPage)
             page = maxPage;
         if (page < 1)
             page = 1;
         int finalPage = page;
 
+        // Send help title and info
         Rebus.Instance.sendLocalizedMsg(player, "Commands.Help.Title", Map.of(
                         "current_page", finalPage,
                         "max_page", maxPage
@@ -212,6 +242,7 @@ public class CommandRebusAdmin implements CommandExecutor {
         );
         Rebus.Instance.sendLocalizedMsg(player, "Commands.Help.Info");
 
+        // Display subcommands
         boolean reachedEnd = false;
         int itemIndex = 0;
         for (int i = 0; i < 15; i++) {
@@ -228,10 +259,10 @@ public class CommandRebusAdmin implements CommandExecutor {
                 continue;
             }
 
-            subCommand.send(Rebus.Instance, player);
+            subCommand.send(Rebus.Instance, player, "rebusadmin");
         }
 
-        // Bottom message
+        // Display navigation buttons
         String previousBtn = Rebus.Instance.localize(player, "Commands.Help.PrevBtn");
         String nextBtn = Rebus.Instance.localize(player, "Commands.Help.NextBtn");
         String bottomMsg = Rebus.Instance.localize(player, "Commands.Help.Bottom")

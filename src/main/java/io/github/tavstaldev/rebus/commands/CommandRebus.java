@@ -19,22 +19,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * CommandRebus is the main command handler for the "rebus" command.
+ * It implements the CommandExecutor interface to process commands
+ * and their subcommands.
+ */
 public class CommandRebus implements CommandExecutor {
+    // Logger instance for logging messages related to this command.
     private final PluginLogger _logger = Rebus.logger().withModule(CommandRebus.class);
 
+    // List of subcommands available for the "rebus" command.
     private final List<SubCommandData> _subCommands = new ArrayList<>() {
         {
-            // HELP
-            add(new SubCommandData("help", "rebus.admin", Map.of(
+            // HELP subcommand
+            add(new SubCommandData("help", "", Map.of(
                     "syntax", "",
                     "description", "Commands.Help.Desc"
             )));
-            // VERSION
-            add(new SubCommandData("version", "rebus.info", Map.of(
+            // VERSION subcommand
+            add(new SubCommandData("version", "", Map.of(
                     "syntax", "",
                     "description", "Commands.Version.Desc"
             )));
-            // MENU
+            // MENU subcommand
             add(new SubCommandData("menu", "rebus.use", Map.of(
                     "syntax", "",
                     "description", "Commands.Menu.Desc"
@@ -42,19 +49,31 @@ public class CommandRebus implements CommandExecutor {
         }
     };
 
+    /**
+     * Handles the execution of the "rebus" command.
+     *
+     * @param sender  The sender of the command (e.g., player or console).
+     * @param command The command being executed.
+     * @param label   The alias of the command used.
+     * @param args    The arguments provided with the command.
+     * @return true if the command was successfully executed, false otherwise.
+     */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
+        // Handle console sender
         if (sender instanceof ConsoleCommandSender) {
             _logger.info(ChatUtils.translateColors("Commands.ConsoleCaller", true).toString());
             return true;
         }
+
+        // Handle player sender
         Player player = (Player) sender;
         if (!player.hasPermission("rebus.use")) {
             Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
             return true;
         }
 
-
+        // Process subcommands
         if (args.length > 0) {
             switch (args[0].toLowerCase()) {
                 case "help":
@@ -100,23 +119,33 @@ public class CommandRebus implements CommandExecutor {
                 }
             }
 
+            // Invalid arguments
             Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
             return true;
         }
 
+        // Default to help command
         help(player, 1);
         return true;
     }
 
+    /**
+     * Displays the help menu for the "rebus" command.
+     *
+     * @param player The player requesting help.
+     * @param page   The page number of the help menu to display.
+     */
     private void help(Player player, int page) {
         int maxPage = 1 + (_subCommands.size() / 15);
 
+        // Ensure the page number is within valid bounds
         if (page > maxPage)
             page = maxPage;
         if (page < 1)
             page = 1;
         int finalPage = page;
 
+        // Send help title and info
         Rebus.Instance.sendLocalizedMsg(player, "Commands.Help.Title", Map.of(
                         "current_page", finalPage,
                         "max_page", maxPage
@@ -124,6 +153,7 @@ public class CommandRebus implements CommandExecutor {
         );
         Rebus.Instance.sendLocalizedMsg(player, "Commands.Help.Info");
 
+        // Display subcommands
         boolean reachedEnd = false;
         int itemIndex = 0;
         for (int i = 0; i < 15; i++) {
@@ -140,10 +170,10 @@ public class CommandRebus implements CommandExecutor {
                 continue;
             }
 
-            subCommand.send(Rebus.Instance, player);
+            subCommand.send(Rebus.Instance, player, "rebus");
         }
 
-        // Bottom message
+        // Display navigation buttons
         String previousBtn = Rebus.Instance.localize(player, "Commands.Help.PrevBtn");
         String nextBtn = Rebus.Instance.localize(player, "Commands.Help.NextBtn");
         String bottomMsg = Rebus.Instance.localize(player, "Commands.Help.Bottom")
