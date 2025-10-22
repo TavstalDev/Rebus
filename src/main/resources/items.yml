@@ -2,10 +2,10 @@ items:
   - id: 1
     material: BLAZE_ROD
     amount: 1
-    name: "&5Mentőrúd"
+    name: "&5Save Rod"
     lore:
-      - '&eHa van ilyen tárgy a táskádba,'
-      - '&ehalálkor nem veszíted el a tárgyaidat.'
+      - '&eIf you have this item in your inventory,'
+      - '&eyou won''t lose your items upon death.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -14,10 +14,10 @@ items:
   - id: 2
     material: BLAZE_ROD
     amount: 3
-    name: "&5Mentőrúd"
+    name: "&5Save Rod"
     lore:
-      - '&eHa van ilyen tárgy a táskádba,'
-      - '&ehalálkor nem veszíted el a tárgyaidat.'
+      - '&eIf you have this item in your inventory,'
+      - '&eyou won''t lose your items upon death.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -26,10 +26,10 @@ items:
   - id: 3
     material: BLAZE_ROD
     amount: 4
-    name: "&5Mentőrúd"
+    name: "&5Save Rod"
     lore:
-      - '&eHa van ilyen tárgy a táskádba,'
-      - '&ehalálkor nem veszíted el a tárgyaidat.'
+      - '&eIf you have this item in your inventory,'
+      - '&eyou won''t lose your items upon death.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -38,10 +38,10 @@ items:
   - id: 4
     material: BLAZE_ROD
     amount: 7
-    name: "&5Mentőrúd"
+    name: "&5Save Rod"
     lore:
-      - '&eHa van ilyen tárgy a táskádba,'
-      - '&ehalálkor nem veszíted el a tárgyaidat.'
+      - '&eIf you have this item in your inventory,'
+      - '&eyou won''t lose your items upon death.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -50,10 +50,10 @@ items:
   - id: 5
     material: BLAZE_ROD
     amount: 10
-    name: "&5Mentőrúd"
+    name: "&5Save Rod"
     lore:
-      - '&eHa van ilyen tárgy a táskádba,'
-      - '&ehalálkor nem veszíted el a tárgyaidat.'
+      - '&eIf you have this item in your inventory,'
+      - '&eyou won''t lose your items upon death.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -62,10 +62,10 @@ items:
   - id: 6
     material: BLAZE_ROD
     amount: 16
-    name: "&5Mentőrúd"
+    name: "&5Save Rod"
     lore:
-      - '&eHa van ilyen tárgy a táskádba,'
-      - '&ehalálkor nem veszíted el a tárgyaidat.'
+      - '&eIf you have this item in your inventory,'
+      - '&eyou won''t lose your items upon death.'
     persistent-data:
       airborn:items/save_rod:
         type: BOOLEAN
@@ -73,12 +73,12 @@ items:
 
   - id: 7
     material: DIAMOND_CHESTPLATE
-    name: "&e&lBűvölt Mellvért"
+    name: "&e&lEnchanted Chestplate"
     amount: 1
     lore:
-      - "&8Ritkaság: &e&lEmlékezetes"
-      - "&7A legendás páncélzat, amit a"
-      - "&7leghatalmasabb varázslók viseltek."
+      - "&8Rarity: &e&lMemorable"
+      - "&7The legendary armor worn by the"
+      - "&7most powerful wizards."
     enchantments:
       PROTECTION: 4
       UNBREAKING: 3
@@ -86,19 +86,19 @@ items:
   - id: 8
     material: GOLDEN_APPLE
     amount: 15
-    name: "&6&lAranyalma"
+    name: "&6&lGolden Apple"
     lore:
-      - "&8Ritkaság: &6&lKülönleges"
-      - "&7Gyorsan regenerál, egy csata során"
-      - "&7sorsdöntő lehet."
+      - "&8Rarity: &6&lSpecial"
+      - "&7Regenerates quickly, can be a game-changer"
+      - "&7during a battle."
 
   - id: 9
     material: DIAMOND_SWORD
     amount: 1
-    name: "&4&lVégzet Csapása"
+    name: "&4&lDoom's Strike"
     lore:
-      - "&8Ritkaság: &4&lLegendás"
-      - "&7Aki kézbe veszi, az ismeri a halál ízét."
+      - "&8Rarity: &4&lLegendary"
+      - "&7Whoever wields it knows the taste of death."
     enchantments:
       SHARPNESS: 5
       UNBREAKING: 3
@@ -106,10 +106,10 @@ items:
   - id: 10
     material: DIAMOND_AXE
     amount: 1
-    name: "&c&lRedFox Foga"
+    name: "&c&lRedFox's Fang"
     lore:
-      - "&8Ritkaság: &c&lMisztikus"
-      - "&7Egy róka erejével és ravaszságával."
+      - "&8Rarity: &c&lMystical"
+      - "&7With the strength and cunning of a fox."
     enchantments:
       SHARPNESS: 4
       UNBREAKING: 3
@@ -117,10 +117,10 @@ items:
   - id: 11
     material: DIAMOND_SWORD
     amount: 1
-    name: "&5&lVégtelen Penge"
+    name: "&5&lInfinite Blade"
     lore:
-      - "&8Ritkaság: &5&lVégtelen"
-      - "&7Sosem törődés, ami örökké tart."
+      - "&8Rarity: &5&lInfinite"
+      - "&7Never breaks, lasts forever."
     enchantments:
       MENDING: 1
       SHARPNESS: 5
@@ -129,46 +129,46 @@ items:
   - id: 12
     material: EXPERIENCE_BOTTLE
     amount: 64
-    name: "&a&lFejlődés Itala"
+    name: "&a&lElixir of Progress"
     lore:
-      - "&8Ritkaság: &a&lKözönséges"
-      - "&7Segít, hogy szintet lépj a csata közben."
+      - "&8Rarity: &a&lCommon"
+      - "&7Helps you level up mid-battle."
 
   - id: 13
     material: BOW
-    name: "&b&lReflex Íj"
+    name: "&b&lReflex Bow"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Gyorsabb lövések, amik az ellenségedet"
-      - "&7messze elrepítik."
+      - "&8Rarity: &b&lRare"
+      - "&7Faster shots that send your enemy"
+      - "&7flying far away."
     enchantments:
       PUNCH: 2
       POWER: 3
 
   - id: 14
     material: GOLDEN_LEGGINGS
-    name: "&6&lArany Lábszárvédő"
+    name: "&6&lGolden Leggings"
     lore:
-      - "&8Ritkaság: &6&lKülönleges"
-      - "&7Könnyű és gyors mozgást tesz lehetővé."
+      - "&8Rarity: &6&lSpecial"
+      - "&7Allows for light and fast movement."
     enchantments:
       PROTECTION: 2
 
   - id: 15
     material: GOLDEN_BOOTS
-    name: "&6&lArany Csizma"
+    name: "&6&lGolden Boots"
     lore:
-      - "&8Ritkaság: &6&lKülönleges"
-      - "&7A sebesség és a stílus jegyében."
+      - "&8Rarity: &6&lSpecial"
+      - "&7In the name of speed and style."
     enchantments:
       PROTECTION: 2
 
   - id: 16
     material: BOW
-    name: "&c&lElfek Haragja"
+    name: "&c&lElves' Wrath"
     lore:
-      - "&8Ritkaság: &c&lMisztikus"
-      - "&7Egy tündék által készített fegyver."
+      - "&8Rarity: &c&lMystical"
+      - "&7A weapon crafted by the elves."
     enchantments:
       FLAME: 1
       POWER: 4
@@ -176,58 +176,58 @@ items:
 
   - id: 17
     material: BOW
-    name: "&4&lTüzes Íj"
+    name: "&4&lFiery Bow"
     lore:
-      - "&8Ritkaság: &4&lLegendás"
-      - "&7A lövések tüzet gyújtanak az ellenségen."
+      - "&8Rarity: &4&lLegendary"
+      - "&7Shots ignite enemies on fire."
     enchantments:
       FLAME: 1
       POWER: 5
 
   - id: 18
     material: IRON_CHESTPLATE
-    name: "&f&lVas Mellvért"
+    name: "&f&lIron Chestplate"
     lore:
-      - "&8Ritkaság: &f&lKözönséges"
-      - "&7Alapvető védelem egy harcos számára."
+      - "&8Rarity: &f&lCommon"
+      - "&7Basic protection for a warrior."
     enchantments:
       PROTECTION: 2
 
   - id: 19
     material: IRON_LEGGINGS
-    name: "&f&lVas Lábszárvédő"
+    name: "&f&lIron Leggings"
     lore:
-      - "&8Ritkaság: &f&lKözönséges"
-      - "&7Megbízható védelem."
+      - "&8Rarity: &f&lCommon"
+      - "&7Reliable protection."
     enchantments:
       PROTECTION: 2
 
   - id: 20
     material: IRON_SWORD
-    name: "&5&lÓriásölő"
+    name: "&5&lGiant Slayer"
     lore:
-      - "&8Ritkaság: &5&lVégtelen"
-      - "&7Hatalmas szörnyek ellen is hatásos."
+      - "&8Rarity: &5&lInfinite"
+      - "&7Effective even against huge monsters."
     enchantments:
       SMITE: 5
       UNBREAKING: 3
 
   - id: 21
     material: DIAMOND_BOOTS
-    name: "&b&lZuhanás Cipője"
+    name: "&b&lShoes of Falling"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7A zuhanás nem fog kárt tenni benned."
+      - "&8Rarity: &b&lRare"
+      - "&7Falling won't hurt you."
     enchantments:
       FEATHER_FALLING: 4
 
   - id: 22
     material: DIAMOND_CHESTPLATE
-    name: "&c&lLéleklopó Páncél"
+    name: "&c&lSoul Stealer Armor"
     lore:
-      - "&8Ritkaság: &c&lMisztikus"
-      - "&7Lopd el az ellenség lelkének egy részét."
-      - "&7Csak a legerősebbek viselhetik."
+      - "&8Rarity: &c&lMystical"
+      - "&7Steal a part of your enemy's soul."
+      - "&7Only the strongest can wear it."
     enchantments:
       PROTECTION: 4
       THORNS: 3
@@ -235,32 +235,32 @@ items:
 
   - id: 23
     material: TRIDENT
-    name: "&4&lMennydörgés"
+    name: "&4&lThunder Strike"
     lore:
-      - "&8Ritkaság: &4&lLegendás"
-      - "&7Ahol a dolog becsapódik, ott a mennydörgés"
-      - "&7és a villámok ereje szabadul el."
+      - "&8Rarity: &4&lLegendary"
+      - "&7Where it lands, the power of thunder"
+      - "&7and lightning is unleashed."
     enchantments:
       LOYALTY: 1
       UNBREAKING: 3
 
   - id: 24
     material: SHIELD
-    name: "&5&lFal"
+    name: "&5&lWall"
     lore:
-      - "&8Ritkaság: &5&lVégtelen"
-      - "&7Egy megállíthatatlan fal, ami"
-      - "&7minden támadást kivéd."
+      - "&8Rarity: &5&lInfinite"
+      - "&7An unstoppable wall that"
+      - "&7blocks every attack."
     enchantments:
       UNBREAKING: 3
 
   - id: 25
     material: DIAMOND_LEGGINGS
     amount: 1
-    name: "&e&lMasszív Lábszárvédő"
+    name: "&e&lMassive Leggings"
     lore:
-      - "&8Ritkaság: &e&lEmlékezetes"
-      - "&7A nehéz védelmet keresők kedvence."
+      - "&8Rarity: &e&lMemorable"
+      - "&7A favorite for those seeking heavy defense."
     enchantments:
       PROTECTION: 4
       UNBREAKING: 3
@@ -268,20 +268,20 @@ items:
   - id: 26
     material: DIAMOND_BOOTS
     amount: 1
-    name: "&5&lTörhetetlen Bakancs"
+    name: "&5&lUnbreakable Boots"
     lore:
-      - "&8Ritkaság: &5&lVégtelen"
-      - "&7Sosem fog szétesni a csata hevében."
+      - "&8Rarity: &5&lInfinite"
+      - "&7Will never fall apart in the heat of battle."
     enchantments:
       UNBREAKING: 3
 
   - id: 27
     material: DIAMOND_HELMET
     amount: 1
-    name: "&4&lHadúr Sisakja"
+    name: "&4&lWarlord's Helmet"
     lore:
-      - "&8Ritkaság: &4&lLegendás"
-      - "&7A háború isteneinek adománya."
+      - "&8Rarity: &4&lLegendary"
+      - "&7A gift from the gods of war."
     enchantments:
       PROTECTION: 4
       RESPIRATION: 3
@@ -289,19 +289,19 @@ items:
 
   - id: 28
     material: IRON_HELMET
-    name: "&f&lGladiátor Sisak"
+    name: "&f&lGladiator Helmet"
     lore:
-      - "&8Ritkaság: &f&lKözönséges"
-      - "&7Egy egyszerű harcos sisakja."
+      - "&8Rarity: &f&lCommon"
+      - "&7The helmet of a simple warrior."
     enchantments:
       PROTECTION: 2
 
   - id: 29
     material: DIAMOND_SWORD
-    name: "&e&lSzikrázó Penge"
+    name: "&e&lSparkling Blade"
     lore:
-      - "&8Ritkaság: &e&lEmlékezetes"
-      - "&7Egy villámgyors és halálos fegyver."
+      - "&8Rarity: &e&lMemorable"
+      - "&7A lightning-fast and deadly weapon."
     enchantments:
       SHARPNESS: 4
       UNBREAKING: 3
@@ -309,37 +309,37 @@ items:
   - id: 30
     material: POTION
     amount: 2
-    name: "&c&lHihetetlen Erő Itala"
+    name: "&c&lPotion of Incredible Strength"
     lore:
-      - "&8Ritkaság: &c&lMisztikus"
-      - "&7A gyógyító elixírek anyja."
-      - "&7Nagyobb erőt ad."
+      - "&8Rarity: &c&lMystical"
+      - "&7The mother of all healing elixirs."
+      - "&7Grants greater strength."
     basePotionType: LONG_STRENGTH
 
   - id: 31
     material: DIAMOND_LEGGINGS
-    name: "&4&lHősök Nadrágja"
+    name: "&4&lHeroes' Trousers"
     lore:
-      - "&8Ritkaság: &4&lLegendás"
-      - "&7Egy valódi hős által viselt nadrág."
+      - "&8Rarity: &4&lLegendary"
+      - "&7Trousers worn by a true hero."
     enchantments:
       PROTECTION: 4
       UNBREAKING: 3
 
   - id: 31
     material: POTION
-    name: "&b&lAdrenalin II"
+    name: "&b&lAdrenaline II"
     lore:
-      - "&8Ritkaság: &b&lRitka"
-      - "&7Fokozza a harci képességeket."
+      - "&8Rarity: &b&lRare"
+      - "&7Boosts combat abilities."
     basePotionType: LONG_SWIFTNESS
 
   - id: 32
     material: DIAMOND_AXE
-    name: "&5&lPusztító"
+    name: "&5&lDestroyer"
     lore:
-      - "&8Ritkaság: &5&lVégtelen"
-      - "&7Egy hatalmas erejű fejsze."
+      - "&8Rarity: &5&lInfinite"
+      - "&7An axe of immense power."
     enchantments:
       SHARPNESS: 5
       KNOCKBACK: 2
@@ -347,11 +347,11 @@ items:
 
   - id: 33
     material: DIAMOND_SWORD
-    name: "&e&lKétségbeesés Pengéje"
+    name: "&e&lBlade of Despair"
     lore:
-      - "&8Ritkaság: &e&lEmlékezetes"
-      - "&7Minden csapás a kétségbeesés szelét"
-      - "&7hozza el az ellenfélre."
+      - "&8Rarity: &e&lMemorable"
+      - "&7Every strike brings the wind of despair"
+      - "&7to the opponent."
     enchantments:
       SHARPNESS: 4
       UNBREAKING: 3
