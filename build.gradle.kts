@@ -11,11 +11,12 @@ plugins {
 val javaVersion: String by project
 val paperApiVersion: String by project
 val mineCoreLibVersion: String by project
+val hikariCpVersion: String by project
+val caffeineVersion: String by project
 val spiGuiVersion: String by project
 val vaultApiVersion: String by project
 val citizensApiVersion: String by project
-val hikariCpVersion: String by project
-val caffeineVersion: String by project
+val protocolLibVersion: String by project
 val projectPackageName = "${project.group}.rebus"
 
 // Configure Java toolchain and compatibility settings
@@ -56,12 +57,13 @@ repositories {
 dependencies {
     // Paper API for Minecraft server development
     compileOnly("io.papermc.paper:paper-api:${paperApiVersion}")
+    compileOnly("com.github.MilkBowl:VaultAPI:${vaultApiVersion}") {
+        exclude(group = "org.bukkit", module = "bukkit")
+    }
     compileOnly("net.citizensnpcs:citizens-main:${citizensApiVersion}") {
         exclude(group = "*", module = "*")
     }
-    compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
-    // BanyaszApi
-    compileOnly(files("libs/BanyaszApi-1.0.0.jar"))
+    compileOnly("net.dmulloy2:ProtocolLib:${protocolLibVersion}")
 
     // HikariCP for database connection pooling
     implementation("com.zaxxer:HikariCP:${hikariCpVersion}")
