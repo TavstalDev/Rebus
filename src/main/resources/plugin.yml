@@ -1,12 +1,12 @@
 main: io.github.tavstaldev.rebus.Rebus
-version: '1.0.4'
+version: '1.0.5'
 name: Rebus
 api-version: '1.21'
 prefix: Rebus
 authors: [ Tavstal, CS0NTIX]
 website: https://tavstaldev.github.io/
 
-depend: [Citizens, Vault, ProtocolLib]
+depend: [Citizens, BanyaszLib, ProtocolLib]
 
 commands:
     rebus:
