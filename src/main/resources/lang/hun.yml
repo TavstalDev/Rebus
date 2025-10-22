@@ -1,6 +1,6 @@
 General:
   NoPermission: "%prefix% &cNincs jogosultságod ehhez."
-  NotEnoughMoney: "%prefix% &cNincs elég bányászérméd. Egyenleg: &e%balance% &6BÉ"
+  NotEnoughMoney: "%prefix% &cNincs elég pénzed. Egyenleg: &e$%balance%"
   PurchaseSuccessful: "%prefix% &aSikeres vásárlás!"
   PlayerNotFound: "%prefix% &cA játékos nem található."
   ResetCooldowns: "%prefix% &aSikeresen visszaállítottad a(z) &e%player%&a játékos összes láda nyitási idejét."
@@ -71,7 +71,7 @@ GUI:
   Page: "&7Oldal: &f%page%"
   Cancel: "&cMégse"
   Confirm: "&aMegerősítés"
-  Price: "&eÁr: &6%price% &6BÉ"
+  Price: "&eÁr: &6$%price%"
   NoPermission: "&c&lNincs jogosultságod ehhez a ládához."
   ClickToBuy: "&8» &eKattints bal egérgombbal a vásárláshoz."
   ClickToPreview: "&8» &eKattints jobb egérgombbal az előnézethez."

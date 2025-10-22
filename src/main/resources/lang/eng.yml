@@ -1,6 +1,6 @@
 General:
   NoPermission: "%prefix% &cYou don't have permission for this."
-  NotEnoughMoney: "%prefix% &cYou don't have enough miner coins. Balance: &e%balance% &6MC"
+  NotEnoughMoney: "%prefix% &cYou don't have enough money. Balance: &e$%balance%"
   PurchaseSuccessful: "%prefix% &aPurchase successful!"
   PlayerNotFound: "%prefix% &cPlayer not found."
   ResetCooldowns: "%prefix% &aSuccessfully reset all chest cooldowns for &e%player%&a."
@@ -71,7 +71,7 @@ GUI:
   Page: "&7Page: &f%page%"
   Cancel: "&cCancel"
   Confirm: "&aConfirm"
-  Price: "&ePrice: &6%price% &6MC"
+  Price: "&ePrice: &6$%price%"
   NoPermission: "&c&lYou don't have permission for this chest."
   ClickToBuy: "&8» &eLeft-click to buy."
   ClickToPreview: "&8» &eRight-click to preview."
