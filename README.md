@@ -9,6 +9,19 @@
 ## Description
 The remastered version of MesterMC's Rebus plugin.
 
+## Commands
+| Command                             | Description                                          | Permission   |
+|-------------------------------------|------------------------------------------------------|--------------|
+| `/rebus help`                       | Displays help information about Rebus                | rebus.use    |
+| `/rebus version`                    | Displays the current version of Rebus                | rebus.use    |
+| `/rebus menu`                       | Opens the Rebus main menu GUI                        | rebus.use    |
+| `/rebusadmin`                       | Main admin command.                                  | rebus.admin  |
+| `/rebusadmin help`                  | Displays help information about Rebus admin commands | rebus.help   |
+| `/rebusadmin reload`                | Reloads the Rebus configuration files                | rebus.reload | 
+| `/rebusadmin version`               | Displays the current version of Rebus                | rebus.info   |
+| `/rebusadmin npc`                   | Spawns the Rebus NPC                                 | rebus.npc    |
+| `/rebusadmin give <player> <chest>` | Gives a specific puzzle to a player                  | rebus.give   |
+
 ## Contributing
 
 I welcome contributions! If you have ideas for features, bug fixes, or improvements, please consider contributing to the project.
