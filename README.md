@@ -9,6 +9,14 @@
 ## Description
 The remastered version of MesterMC's Rebus plugin.
 
+## Dependencies
+
+To ensure the plugin functions correctly, your server must have the following plugins installed:
+
+- **[ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)**: This plugin is essential for handling custom network packets, which Rebus utilizes for its advanced features.
+- **[Citizens](https://www.spigotmc.org/resources/citizens.13811/)**: This plugin allows for the creation and management of NPCs (Non-Player Characters) within the game, which Rebus uses to enhance player interaction.
+- **[Vault](https://www.spigotmc.org/resources/vault.34315/)**: This plugin provides a unified API for various economy.
+
 ## Commands
 | Command                             | Description                                          | Permission   |
 |-------------------------------------|------------------------------------------------------|--------------|
