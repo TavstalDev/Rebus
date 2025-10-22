@@ -62,8 +62,8 @@ public class RebusConfig extends ConfigurationBase {
         if (get("chests") == null) {
             //#region Daily chest
             Map<String, Object> dailyChest = new LinkedHashMap<>();
-            dailyChest.put("name", "&aNapi láda");
-            dailyChest.put("description", Arrays.asList("&7Ingyenes napi láda mindenkinek."));
+            dailyChest.put("name", "&aDaily");
+            dailyChest.put("description", Arrays.asList("&7Free daily chest for everyone."));
             dailyChest.put("material", "CHEST");
             dailyChest.put("cost", 0);
             dailyChest.put("cooldown", 86400);
@@ -79,8 +79,8 @@ public class RebusConfig extends ConfigurationBase {
             //#endregion
             //#region Default chest
             Map<String, Object> bronzeChest = new LinkedHashMap<>();
-            bronzeChest.put("name", "&6Alap láda");
-            bronzeChest.put("description", Arrays.asList("&7Kezdő kalandozók számára.", "&7Garantált mentőrudak: &e1"));
+            bronzeChest.put("name", "&6Default");
+            bronzeChest.put("description", Arrays.asList("&7For beginner adventurers.", "&7Guaranteed save rods: &e1"));
             bronzeChest.put("material", "TRAPPED_CHEST");
             bronzeChest.put("cost", 500);
             bronzeChest.put("cooldown", 300);
@@ -96,8 +96,8 @@ public class RebusConfig extends ConfigurationBase {
             //#endregion
             //#region Pandora chest
             Map<String, Object> silverChest = new LinkedHashMap<>();
-            silverChest.put("name", "&5Pandora szelencéje");
-            silverChest.put("description", Arrays.asList("&7Tapasztalt játékosok számára.", "&7Garantált mentőrudak: &e4"));
+            silverChest.put("name", "&5Pandora");
+            silverChest.put("description", Arrays.asList("&7For experienced players.", "&7Guaranteed save rods: &e4"));
             silverChest.put("material", "ENDER_CHEST");
             silverChest.put("cost", 750);
             silverChest.put("cooldown", 300);
@@ -113,8 +113,8 @@ public class RebusConfig extends ConfigurationBase {
             //#endregion
             //#region Choosen chest
             Map<String, Object> goldChest = new LinkedHashMap<>();
-            goldChest.put("name", "&cKiválasztottak ládája");
-            goldChest.put("description", Arrays.asList("&7Veterán kalandorok számára", "&7Garantált mentőrudak: &e10"));
+            goldChest.put("name", "&cChoosen");
+            goldChest.put("description", Arrays.asList("&7For veteran adventurers.", "&7Guaranteed save rods: &e10"));
             goldChest.put("material", "BEACON");
             goldChest.put("cost", 1000);
             goldChest.put("cooldown", 300);
