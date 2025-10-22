@@ -1,0 +1,82 @@
+General:
+  NoPermission: "%prefix% &cYou don't have permission for this."
+  NotEnoughMoney: "%prefix% &cYou don't have enough mining coins. Balance: &e%balance% &6MC"
+  PurchaseSuccessful: "%prefix% &aPurchase successful!"
+  PlayerNotFound: "%prefix% &cPlayer not found."
+
+NPC:
+  Spawned: "%prefix% &aSuccessfully spawned the Rebus NPC."
+  Removed: "%prefix% &aSuccessfully removed the Rebus NPC."
+
+Chests:
+  RewardReceived: "%prefix% &aYou successfully received your reward from the &e%chest_name%&a chest."
+  NoRewards: "%prefix% &cThere are no rewards in this chest."
+  LocationOccupied": "%prefix% &cA chest is already at this spot."
+  InventoryFull: "%prefix% &cNot enough inventory space, so your items were dropped on the ground."
+  Cooldown: "%prefix% &cPlease wait &e%time% &cbefore opening this chest again."
+  AlreadyOpening: "%prefix% &cYou can't open multiple chests at once."
+  BuyCooldown: "%prefix% &cYou can't buy a new chest yet. Please wait &e%time%&c."
+  NotFound: "%prefix% &cThe '%chest%' chest wasn't found."
+
+Commands:
+  ConsoleCaller: "%prefix% &cOnly players can use this command."
+  UnknownError: "%prefix% &cAn unknown error happened. Please report this!"
+  InGame: "%prefix% &cYou can't use this command during an active game."
+  InvalidArguments: "%prefix% &cInvalid arguments."
+  Common:
+    InvalidPage: "%prefix% &cInvalid page number."
+  Help:
+    Desc: "Shows info about the commands."
+    Title: "&8&m        &r &bRebus &7Help &8&m    &r &7Page &3%current_page%&7/&3%max_page% &8&m        &r"
+    Info: |-
+        &r
+        &r  &c&l[]&r &8- &7Required,   &e&l<>&r &8- &7Optional
+        &r
+    Line: "&r  &b/%command% %subcommand%&3%syntax% &8- &7%description%"
+    Bottom: |-
+        &r
+        &8&m                       &r %previous_btn%&3%current_page%&7/&3%max_page%%next_btn% &8&m                       &r
+    PrevBtn: "&b<< "
+    NextBtn: " &b>>"
+  Version:
+    Desc: "Shows the plugin's version."
+    Current: "%prefix% &aYou're running Rebus version '&3%version%&a'."
+    UpToDate: "%prefix% &aRebus is up to date."
+    Outdated: "%prefix% &cRebus is outdated. Download it here: &e%link%"
+  Reload:
+    Desc: "Reloads the plugin config and messages."
+    Done: "%prefix% &aPlugin reloaded."
+  Menu:
+    Desc: "Opens the Rebus menu."
+    NoChests: "%prefix% &cNo chests available."
+  Npc:
+    Desc: "Spawns the Rebus NPC."
+  Give:
+    Syntax: " <player> <reward>"
+    Desc: "Gives a chest to a player."
+    Given: "%prefix% &aSuccessfully gave &e%chest% &achest to &e%player%&a."
+    Received: "%prefix% &aYou received a &e%chest% &achest."
+
+
+GUI:
+  Title: "&8Chests"
+  Close: "&cClose"
+  Back: "&cBack"
+  PreviousPage: "&7Previous Page"
+  NextPage: "&7Next Page"
+  Page: "&7Page: &f%page%"
+  Cancel: "&cCancel"
+  Confirm: "&aConfirm"
+  Price: "&ePrice: &6%price% &6MC"
+  NoPermission: "&c&lYou don't have permission for this chest."
+
+Time:
+  Seconds: "%value% seconds"
+  Minutes: "%value% minutes"
+  Hours: "%value% hours"
+  Days: "%value% days"
+  Weeks: "%value% weeks"
+  Months: "%value% months"
+  Years: "%value% years"
+
+FileVersion: 1
