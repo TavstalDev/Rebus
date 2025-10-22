@@ -3,7 +3,6 @@ package io.github.tavstaldev.rebus;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.samjakob.spigui.SpiGUI;
-import io.github.tavstaldev.banyaszLib.api.BanyaszApi;
 import io.github.tavstaldev.minecorelib.PluginBase;
 import io.github.tavstaldev.minecorelib.core.PluginLogger;
 import io.github.tavstaldev.minecorelib.core.PluginTranslator;
@@ -20,6 +19,7 @@ import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
 import io.github.tavstaldev.rebus.models.NpcTrait;
 import io.github.tavstaldev.rebus.tasks.CacheCleanTask;
+import io.github.tavstaldev.rebus.util.EconomyUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
@@ -39,7 +39,6 @@ public final class Rebus extends PluginBase {
     private SpiGUI _spiGUI;
     private ProtocolManager _protocolManager;
     private IDatabase _database;
-    private BanyaszApi _banyaszApi;
     private CacheCleanTask cacheCleanTask; // Task for cleaning player caches.
 
     /**
@@ -115,14 +114,6 @@ public final class Rebus extends PluginBase {
     }
 
     /**
-     * Provides access to the BanyaszApi instance.
-     * @return BanyaszApi instance.
-     */
-    public static BanyaszApi banyaszApi() {
-        return Instance._banyaszApi;
-    }
-
-    /**
      * Constructor for the Rebus plugin.
      * Initializes the plugin with update checking enabled and a default download URL.
      */
@@ -171,15 +162,14 @@ public final class Rebus extends PluginBase {
             return;
         }
 
-        // Check for BanyaszLib plugin
-        _logger.debug("Hooking into BanyaszLib...");
-        if (Bukkit.getPluginManager().isPluginEnabled("BanyaszLib")) {
-            _banyaszApi = BanyaszApi.getInstance();
-            _logger.info("BanyaszLib found and hooked into it.");
-        } else {
-            _logger.warn("BanyaszLib not found. Unloading...");
+        // Register economy integration
+        _logger.debug("Hooking into Vault...");
+        if (!EconomyUtils.setupEconomy()) {
+            _logger.warn("Economy plugin not found. Unloading...");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
+        } else {
+            _logger.info("Economy plugin found and hooked into Vault.");
         }
 
         // Check for Citizens plugin

@@ -11,6 +11,7 @@ import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
 import io.github.tavstaldev.rebus.models.ECooldownType;
 import io.github.tavstaldev.rebus.models.RebusChest;
+import io.github.tavstaldev.rebus.util.EconomyUtils;
 import io.github.tavstaldev.rebus.util.TimeUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -147,7 +148,7 @@ public class MainGUI {
                     }
 
                     // Check if the player has enough balance to purchase the chest.
-                    var balance = Rebus.banyaszApi().getBalance(playerId);
+                    var balance =  EconomyUtils.getBalance(player);
                     if (balance < chest.getCost()) {
                         Rebus.Instance.sendLocalizedMsg(player, "General.NotEnoughMoney", Map.of("balance", balance));
                         return;
@@ -169,7 +170,7 @@ public class MainGUI {
 
                     // Deduct the cost and give the chest to the player.
                     if (chest.getCost() > 0)
-                        Rebus.banyaszApi().decreaseBalance(playerId, (int) chest.getCost());
+                        EconomyUtils.withdraw(player, chest.getCost());
                     if (chest.getBuyCooldown() > 0)
                         Rebus.database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
                     chest.give(player, 1);
