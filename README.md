@@ -9,6 +9,12 @@
 ## Description
 The remastered version of MesterMC's Rebus plugin.
 
+## Note 
+
+> In the future I am going to rework the reward system, so players can have a better preview of the items they are going to receive and can see the chances of receiving them.
+> At the moment it is hard a little bit to be implemented, since I had to rush the plugin.
+> Also, I plan to add virtual chests to avoid duping.
+
 ## Dependencies
 
 To ensure the plugin functions correctly, your server must have the following plugins installed:
