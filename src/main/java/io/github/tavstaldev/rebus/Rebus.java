@@ -17,6 +17,7 @@ import io.github.tavstaldev.rebus.events.BlockEventListener;
 import io.github.tavstaldev.rebus.events.PlayerEventListener;
 import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
+import io.github.tavstaldev.rebus.metrics.Metrics;
 import io.github.tavstaldev.rebus.models.NpcTrait;
 import io.github.tavstaldev.rebus.tasks.CacheCleanTask;
 import io.github.tavstaldev.rebus.util.EconomyUtils;
@@ -231,6 +232,15 @@ public final class Rebus extends PluginBase {
             cacheCleanTask.cancel();
         cacheCleanTask = new CacheCleanTask(); // Runs every 5 minutes
         cacheCleanTask.runTaskTimer(this, 0, 5 * 60 * 20);
+
+        // Metrics
+        try {
+            @SuppressWarnings("unused") Metrics metrics = new Metrics(this, 27759);
+        }
+        catch (Exception ex)
+        {
+            _logger.error("Failed to start Metrics: " + ex.getMessage());
+        }
 
         _logger.ok(String.format("%s has been successfully loaded.", getProjectName()));
 
