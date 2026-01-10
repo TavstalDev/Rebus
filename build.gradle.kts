@@ -12,9 +12,8 @@ val javaVersion: String by project
 val paperApiVersion: String by project
 val mineCoreLibVersion: String by project
 val hikariCpVersion: String by project
-val caffeineVersion: String by project
-val spiGuiVersion: String by project
 val vaultApiVersion: String by project
+val banyaszLibVersion: String by project
 val citizensApiVersion: String by project
 val protocolLibVersion: String by project
 val projectPackageName = "${project.group}.rebus"
@@ -67,12 +66,9 @@ dependencies {
 
     // HikariCP for database connection pooling
     implementation("com.zaxxer:HikariCP:${hikariCpVersion}")
-    // SpiGUI for GUI creation
-    implementation("com.samjakob:SpiGUI:${spiGuiVersion}")
     // Custom library for core functionality
     implementation(files("libs/MineCoreLib-${mineCoreLibVersion}.jar"))
-    // SQL caching
-    implementation("com.github.ben-manes.caffeine:caffeine:${caffeineVersion}")
+    implementation(files("libs/BanyaszApi-${banyaszLibVersion}.jar"))
 }
 
 // Disable the default JAR task
@@ -93,8 +89,6 @@ tasks.shadowJar {
 
     // Relocate packages to avoid conflicts
     relocate("com.zaxxer.hikari", "${projectPackageName}.shadow.hikari")
-    relocate("com.samjakob.spigui", "${projectPackageName}.shadow.spigui")
-    relocate("com.github.benmanes.caffeine", "${projectPackageName}.shadow.caffeine")
 }
 
 // Ensure the Shadow JAR task runs during the build process
