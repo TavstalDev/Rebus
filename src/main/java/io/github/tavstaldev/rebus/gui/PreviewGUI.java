@@ -1,9 +1,8 @@
 package io.github.tavstaldev.rebus.gui;
 
-import com.samjakob.spigui.buttons.SGButton;
-import com.samjakob.spigui.menu.SGMenu;
 import io.github.tavstaldev.minecorelib.core.GuiDupeDetector;
 import io.github.tavstaldev.minecorelib.core.PluginLogger;
+import io.github.tavstaldev.minecorelib.models.gui.MenuBase;
 import io.github.tavstaldev.minecorelib.utils.GuiUtils;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
@@ -19,8 +18,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PreviewGUI {
-    private static final PluginLogger _logger = Rebus.logger().withModule(PreviewGUI.class);
+public class PreviewGUI extends MenuBase {
+
+
+
+
+
+
+
+
+
+
+
+
+
     private static final Integer[] SlotPlaceholders = {
             0,  1,  2,  3,  4,  5,  6,  7,  8,
             9,                              17,

@@ -1,96 +1,201 @@
 package io.github.tavstaldev.rebus.gui;
 
-import com.samjakob.spigui.buttons.SGButton;
-import com.samjakob.spigui.menu.SGMenu;
-import io.github.tavstaldev.minecorelib.core.PluginLogger;
-import io.github.tavstaldev.minecorelib.core.PluginTranslator;
+import io.github.tavstaldev.minecorelib.managers.MenuManager;
+import io.github.tavstaldev.minecorelib.models.gui.MenuBase;
+import io.github.tavstaldev.minecorelib.models.gui.MenuButton;
+import io.github.tavstaldev.minecorelib.shadow.spigui.buttons.SGButton;
+import io.github.tavstaldev.minecorelib.shadow.spigui.menu.SGMenu;
 import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.minecorelib.utils.GuiUtils;
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
+import io.github.tavstaldev.rebus.managers.economy.IEconomyManager;
 import io.github.tavstaldev.rebus.models.ECooldownType;
+import io.github.tavstaldev.rebus.models.PlayerCache;
 import io.github.tavstaldev.rebus.models.RebusChest;
-import io.github.tavstaldev.rebus.util.EconomyUtils;
 import io.github.tavstaldev.rebus.util.TimeUtil;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-/**
- * Represents the main GUI for the Rebus plugin, providing methods to create, open, close, and refresh the GUI.
- */
-public class MainGUI {
-    // Logger instance for logging errors and information related to the MainGUI.
-    private static final PluginLogger _logger = Rebus.logger().withModule(MainGUI.class);
+public class MainGUI extends MenuBase {
 
-    // Translator instance for localizing messages and GUI elements.
-    private static final PluginTranslator _translator = Rebus.Instance.getTranslator();
+    public static String ID = "main";
 
-    /**
-     * Creates the main GUI for the specified player.
-     *
-     * @param player The player for whom the GUI is being created.
-     * @return The created SGMenu object, or null if an error occurs.
-     */
-    public static SGMenu create(@NotNull Player player) {
-        try {
-            RebusConfig config = Rebus.config();
-            int rows = config.guiRows;
-            SGMenu menu = Rebus.gui().create(_translator.localize(player, "GUI.Title"), rows);
+    public MainGUI() {
+        super(Rebus.Instance, "main.yml");
+    }
 
-            // Fill empty slots with placeholders if enabled in the configuration.
-            if (config.guiFillEmptySlots) {
-                SGButton placeholderButton = new SGButton(GuiUtils.createItem(Rebus.Instance, config.guiPlaceholderMaterial, " "));
-                int slots = rows * 9;
-                for (int i = 0; i < slots; i++) {
-                    menu.setButton(0, i, placeholderButton);
-                }
+    @Override
+    protected void loadDefaults() {
+        menuTitle = resolveGet("title", "GUI.Title");
+        isMenuTitleTranslated = resolveGet("title_translated", true);
+        menuSize = resolveGet("size", 1);
+        dynamicSlots = resolveDynamicSlots(new LinkedHashMap<>() {{
+            put("chest_slots", new ArrayList<>() {{
+                add("0-7");
+            }});
+        }});
+        menuButtons = resolveButtons(new LinkedHashSet<>() {{
+            // Placeholder
+            add(new MenuButton(Material.BLACK_STAINED_GLASS_PANE, null, 1, "§r", null, null, null, null, List.of("0-8"), null));
+            // Back button
+            add(new MenuButton(Material.SPRUCE_DOOR, null, 1, null, "GUI.Close", null, null, 8, null,  List.of("[CLOSE]")));
+        }});
+    }
+
+    @Override
+    public SGMenu create(@NotNull Player player) {
+        MenuManager menuManager = plugin.getMenuManager();
+        if (menuManager == null)
+            throw new RuntimeException("Menu manager was not initialized.");
+        SGMenu menu = menuManager.getSpiGUI().create(isMenuTitleTranslated ? translator.localize(player, menuTitle) : menuTitle, menuSize);
+
+        for (MenuButton button : menuButtons) {
+            button.apply(player, translator, menu, this);
+        }
+        return menu;
+    }
+
+    @Override
+    public void refresh(@NotNull Player player, @NotNull SGMenu sgMenu) {
+        UUID playerId = player.getUniqueId();
+        PlayerCache playerCache = PlayerCacheManager.get(playerId);
+
+        // Handle dynamic slots
+        List<Integer> dynamicSlots = this.dynamicSlots.getOrDefault("chest_slots", new ArrayList<>());
+        List<RebusChest> chests = new ArrayList<>(Rebus.chestManager().getChests());
+        for (int i = 0; i < dynamicSlots.size(); i++) {
+            int slot = dynamicSlots.get(i);
+
+            if (i >= chests.size()) {
+                sgMenu.removeButton(0, slot);
+                continue;
             }
 
-            // Add a close button to the GUI.
-            SGButton closeButton = new SGButton(
-                    GuiUtils.createItem(Rebus.Instance, config.guiCloseMaterial, _translator.localize(player, "GUI.Close"))
-            ).withListener(event -> close(player));
-            menu.setButton(0, config.guiCloseBtnSlot, closeButton);
+            RebusChest chest = chests.get(i);
+            if (chest== null) {
+                logger.warn("Failed to get chest.");
+                continue;
+            }
 
-            return menu;
-        } catch (Exception ex) {
-            // Log an error if GUI creation fails.
-            _logger.error("An error occurred while creating the main GUI.");
-            _logger.error(ex);
-            return null;
+            List<Component> lore = new ArrayList<>();
+            String price = Rebus.translator().localize("GUI.Price", Map.of("price", chest.getCost()));
+            lore.add(ChatUtils.translateColors(price, true));
+            for (String line : chest.getDescription()) {
+                lore.add(ChatUtils.translateColors(line, true));
+            }
+            lore.add(Component.text(""));
+            if (!player.hasPermission(chest.getPermission())) {
+                lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.NoPermission"), true));
+            }
+            else {
+                lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.ClickToBuy"), true));
+            }
+            lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.ClickToPreview"), true));
+
+            // Create an item representing the chest and add it to the GUI.
+            ItemStack item = GuiUtils.createItem(
+                    Rebus.Instance,
+                    chest.getMaterial(),
+                    chest.getName(),
+                    lore
+            );
+
+            sgMenu.setButton(0, slot, new SGButton(item).withListener(event ->
+            {
+                if (event.isRightClick()) {
+                    MenuManager manager = plugin.getMenuManager();
+                    if (manager != null) {
+                        playerCache.setPreviewChest(chest);
+                        manager.open(player, PreviewGUI.ID);
+                    }
+                    return;
+                }
+
+                // Check if the player has the required permission.
+                if (!player.hasPermission(chest.getPermission())) {
+                    Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    return;
+                }
+
+                // Check if the player's inventory has space.
+                if (player.getInventory().firstEmpty() == -1) {
+                    Rebus.Instance.sendLocalizedMsg(player, "Chests.CannotBuy");
+                    return;
+                }
+
+                // Check if the player has enough balance to purchase the chest.
+                IEconomyManager economyManager = Rebus.economyManager();
+                double balance =  economyManager.getBalance(player);
+                if (balance < chest.getCost()) {
+                    Rebus.Instance.sendLocalizedMsg(player, "General.NotEnoughMoney", Map.of("balance", balance));
+                    return;
+                }
+
+                // Check if the chest is on cooldown for the player.
+                long remainingTime = Rebus.database().getCooldown(playerId, ECooldownType.OPEN, chest.getKey());
+                if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
+                    Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
+                    return;
+                }
+
+                // Check if the player is on a buy cooldown for the chest.
+                remainingTime = Rebus.database().getCooldown(playerId, ECooldownType.BUY, chest.getKey());
+                if (remainingTime > 0 && !player.hasPermission("rebus.bypass.buycooldown")) {
+                    Rebus.Instance.sendLocalizedMsg(player, "Chests.BuyCooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
+                    return;
+                }
+
+                // Deduct the cost and give the chest to the player.
+                if (chest.getCost() > 0)
+                    EconomyUtils.withdraw(player, chest.getCost());
+                if (chest.getBuyCooldown() > 0)
+                    Rebus.database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
+                chest.give(player, 1);
+                Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
+            }));
+        }
+        player.openInventory(sgMenu.getInventory());
+    }
+
+    @Override
+    public void executeCommand(@NotNull Player player, @NotNull String command) {
+        String[] parts = command.split("\\s+");
+        switch (parts[0].toLowerCase()) {
+            case "[close]" -> {
+                MenuManager manager = plugin.getMenuManager();
+                if (manager != null)
+                    manager.close(player, false);
+            }
         }
     }
 
-    /**
-     * Opens the main GUI for the specified player.
-     *
-     * @param player The player for whom the GUI is being opened.
-     */
-    public static void open(@NotNull Player player) {
-        var playerCache = PlayerCacheManager.get(player.getUniqueId());
-        // Mark the GUI as opened and display it to the player.
-        playerCache.setGuiOpened(true);
-        player.openInventory(playerCache.getMainMenu().getInventory());
-        refresh(player);
+    @Override
+    public void onOpen(@NotNull Player player) {
+        MenuManager manager = plugin.getMenuManager();
+        if (manager != null) {
+            SGMenu menu = manager.getMenu(player, ID);
+            if (menu != null)
+                refresh(player, menu);
+        }
     }
 
-    /**
-     * Closes the main GUI for the specified player.
-     *
-     * @param player The player for whom the GUI is being closed.
-     */
-    public static void close(@NotNull Player player) {
-        var playerCache = PlayerCacheManager.get(player.getUniqueId());
-        player.closeInventory();
-        playerCache.setGuiOpened(false);
-    }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Refreshes the main GUI for the specified player, updating its contents.
