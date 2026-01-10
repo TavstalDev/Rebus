@@ -2,10 +2,10 @@ package io.github.tavstaldev.rebus;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.samjakob.spigui.SpiGUI;
 import io.github.tavstaldev.minecorelib.PluginBase;
 import io.github.tavstaldev.minecorelib.core.PluginLogger;
 import io.github.tavstaldev.minecorelib.core.PluginTranslator;
+import io.github.tavstaldev.minecorelib.managers.MenuManager;
 import io.github.tavstaldev.minecorelib.utils.ItemMetaSerializer;
 import io.github.tavstaldev.minecorelib.utils.VersionUtils;
 import io.github.tavstaldev.rebus.commands.CommandRebus;
@@ -15,12 +15,16 @@ import io.github.tavstaldev.rebus.database.MySqlDatabase;
 import io.github.tavstaldev.rebus.database.SqlLiteDatabase;
 import io.github.tavstaldev.rebus.events.BlockEventListener;
 import io.github.tavstaldev.rebus.events.PlayerEventListener;
+import io.github.tavstaldev.rebus.gui.MainGUI;
+import io.github.tavstaldev.rebus.gui.PreviewGUI;
 import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
+import io.github.tavstaldev.rebus.managers.economy.BanyaszManager;
+import io.github.tavstaldev.rebus.managers.economy.IEconomyManager;
+import io.github.tavstaldev.rebus.managers.economy.VaultManager;
 import io.github.tavstaldev.rebus.metrics.Metrics;
 import io.github.tavstaldev.rebus.models.NpcTrait;
 import io.github.tavstaldev.rebus.tasks.CacheCleanTask;
-import io.github.tavstaldev.rebus.util.EconomyUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
@@ -37,9 +41,9 @@ public final class Rebus extends PluginBase {
     private ItemMetaSerializer _itemMetaSerializer;
     private ChestManager _chestManager;
     private NpcManager _npcManager;
-    private SpiGUI _spiGUI;
     private ProtocolManager _protocolManager;
     private IDatabase _database;
+    private IEconomyManager _economyManager;
     private CacheCleanTask cacheCleanTask; // Task for cleaning player caches.
 
     /**
@@ -91,11 +95,11 @@ public final class Rebus extends PluginBase {
     }
 
     /**
-     * Provides access to the SpiGUI instance.
-     * @return SpiGUI instance.
+     * Provides access to the EconomyManager.
+     * @return IEconomyManager instance.
      */
-    public static SpiGUI gui() {
-        return Instance._spiGUI;
+    public static IEconomyManager economyManager() {
+        return Instance._economyManager;
     }
 
     /**
@@ -137,6 +141,7 @@ public final class Rebus extends PluginBase {
      */
     @Override
     public void onEnable() {
+        super.onEnable();
         Instance = this;
         super.onEnable(); // Call parent method
         _config = new RebusConfig();
@@ -164,13 +169,17 @@ public final class Rebus extends PluginBase {
         }
 
         // Register economy integration
-        _logger.debug("Hooking into Vault...");
-        if (!EconomyUtils.setupEconomy()) {
-            _logger.warn("Economy plugin not found. Unloading...");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
+        _logger.debug("Setting up economy...");
+        if (config().useBanyaszLib) {
+            _economyManager = new BanyaszManager();
+            if (!_economyManager.enabled())
+                return; // Economy setup failed, plugin disabled in manager
+            _logger.info("Using BanyaszLib for economy.");
         } else {
-            _logger.info("Economy plugin found and hooked into Vault.");
+            _economyManager = new VaultManager();
+            if (!_economyManager.enabled())
+                return; // Economy setup failed, plugin disabled in manager
+            _logger.info("Using Vault for economy.");
         }
 
         // Check for Citizens plugin
@@ -186,7 +195,11 @@ public final class Rebus extends PluginBase {
 
         // Initialize SpiGUI
         _logger.debug("Initializing SpiGUI...");
-        _spiGUI = new SpiGUI(this);
+        MenuManager menuManager = getMenuManager();
+        if (menuManager != null) {
+            menuManager.register(MainGUI.ID, new MainGUI());
+            menuManager.register(PreviewGUI.ID, new PreviewGUI());
+        }
 
         // Register commands
         _logger.debug("Registering commands...");
@@ -266,6 +279,17 @@ public final class Rebus extends PluginBase {
     @Override
     public void onDisable() {
         super.onDisable();
+
+        // Unregister GUIs
+        MenuManager menuManager = getMenuManager();
+        if (menuManager != null) {
+            menuManager.closeAll();
+
+            menuManager.unregister(MainGUI.ID);
+            menuManager.unregister(PreviewGUI.ID);
+            menuManager.invalidateAllCache();
+        }
+
         _logger.info(String.format("%s has been successfully unloaded.", getProjectName()));
     }
 
@@ -288,5 +312,18 @@ public final class Rebus extends PluginBase {
 
         // Reload chests
         _chestManager.load();
+
+        // Re-register GUIs
+        MenuManager menuManager = getMenuManager();
+        if (menuManager != null) {
+            menuManager.closeAll();
+
+            menuManager.unregister(MainGUI.ID);
+            menuManager.unregister(PreviewGUI.ID);
+            menuManager.invalidateAllCache();
+
+            menuManager.register(MainGUI.ID, new MainGUI());
+            menuManager.register(PreviewGUI.ID, new PreviewGUI());
+        }
     }
 }

@@ -1,8 +1,6 @@
 package io.github.tavstaldev.rebus;
 
 import io.github.tavstaldev.minecorelib.config.ConfigurationBase;
-import io.github.tavstaldev.rebus.util.IconUtils;
-import org.bukkit.Material;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -14,16 +12,12 @@ public class RebusConfig extends ConfigurationBase {
     }
 
     public String prefix;
-    public boolean checkForUpdates, debug;
+    public boolean checkForUpdates, debug, useBanyaszLib;
 
     public String storageType, storageContext, storageFilename, storageHost, storageDatabase, storageUsername, storagePassword, storageTablePrefix;
     public int storagePort;
 
     public String npcName, npcSkin;
-
-    public boolean guiFillEmptySlots;
-    public Material guiPlaceholderMaterial, guiCloseMaterial;
-    public int guiRows, guiCloseBtnSlot;
 
     @Override
     protected void loadDefaults() {
@@ -33,6 +27,7 @@ public class RebusConfig extends ConfigurationBase {
         checkForUpdates = resolveGet("checkForUpdates", true);
         debug = resolveGet("debug", false);
         prefix = resolveGet("prefix", "&bRebus &8»");
+        useBanyaszLib = resolveGet("useBanyaszLib", false);
 
         // Storage
         storageType = resolveGet("storage.type", "sqlite");
@@ -48,15 +43,6 @@ public class RebusConfig extends ConfigurationBase {
         // npc
         npcName = resolveGet("npc.name", "&bRebus");
         npcSkin = resolveGet("npc.skin", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjgzOTMwZjcxYmYyNWRkMTNiMzY0ZmY3ZTBlODdlODhiODc1NmNiYmJmODIyNDEwZjQ3MDQ1ZWNmMTI3NjM5OSJ9fX0=");
-
-        // gui
-        guiFillEmptySlots = resolveGet("gui.fillEmptySlots", true);
-        String material = resolveGet("gui.placeholderMaterial", "BLACK_STAINED_GLASS_PANE");
-        guiPlaceholderMaterial = IconUtils.getMaterial(material);
-        material = resolveGet("gui.closeMaterial", "BARRIER");
-        guiCloseMaterial = IconUtils.getMaterial(material);
-        guiRows = resolveGet("gui.rows", 1);
-        guiCloseBtnSlot = resolveGet("gui.closeBtnSlot", 8);
 
         // chests
         if (get("chests") == null) {
