@@ -1,8 +1,8 @@
 package io.github.tavstaldev.rebus.database;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.tavstaldev.minecorelib.core.PluginLogger;
+import io.github.tavstaldev.minecorelib.shadow.caffeine.cache.Cache;
+import io.github.tavstaldev.minecorelib.shadow.caffeine.cache.Caffeine;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.models.Cooldown;

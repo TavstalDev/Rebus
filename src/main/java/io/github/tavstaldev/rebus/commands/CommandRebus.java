@@ -1,6 +1,7 @@
 package io.github.tavstaldev.rebus.commands;
 
 import io.github.tavstaldev.minecorelib.core.PluginLogger;
+import io.github.tavstaldev.minecorelib.managers.MenuManager;
 import io.github.tavstaldev.minecorelib.models.command.SubCommandData;
 import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.rebus.Rebus;
@@ -114,7 +115,11 @@ public class CommandRebus implements CommandExecutor {
                         return true;
                     }
 
-                    MainGUI.open(player);
+                    MenuManager manager = Rebus.Instance.getMenuManager();
+                    if (manager == null) {
+                        return true;
+                    }
+                    manager.open(player, MainGUI.ID);
                     return true;
                 }
             }

@@ -1,5 +1,6 @@
 package io.github.tavstaldev.rebus.models;
 
+import io.github.tavstaldev.minecorelib.managers.MenuManager;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.gui.MainGUI;
 import net.citizensnpcs.api.trait.Trait;
@@ -47,6 +48,10 @@ public class NpcTrait extends Trait {
             return;
         }
         // Open the main GUI for the player.
-        MainGUI.open(player);
+        MenuManager manager = Rebus.Instance.getMenuManager();
+        if (manager == null) {
+            return;
+        }
+        manager.open(player, MainGUI.ID);
     }
 }

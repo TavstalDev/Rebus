@@ -154,7 +154,7 @@ public class MainGUI extends MenuBase {
 
                 // Deduct the cost and give the chest to the player.
                 if (chest.getCost() > 0)
-                    EconomyUtils.withdraw(player, chest.getCost());
+                    economyManager.withdraw(player, chest.getCost());
                 if (chest.getBuyCooldown() > 0)
                     Rebus.database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
                 chest.give(player, 1);
@@ -183,113 +183,6 @@ public class MainGUI extends MenuBase {
             SGMenu menu = manager.getMenu(player, ID);
             if (menu != null)
                 refresh(player, menu);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Refreshes the main GUI for the specified player, updating its contents.
-     *
-     * @param player The player for whom the GUI is being refreshed.
-     */
-    public static void refresh(@NotNull Player player) {
-        try {
-            var playerId = player.getUniqueId();
-            var playerCache = PlayerCacheManager.get(playerId);
-            var menu = playerCache.getMainMenu();
-
-            // Populate the GUI with daily quests (chests).
-            var chests = Rebus.chestManager().getChests();
-            for (RebusChest chest : chests) {
-                List<Component> lore = new ArrayList<>();
-                String price = Rebus.translator().localize("GUI.Price", Map.of("price", chest.getCost()));
-                lore.add(ChatUtils.translateColors(price, true));
-                for (String line : chest.getDescription()) {
-                    lore.add(ChatUtils.translateColors(line, true));
-                }
-                lore.add(Component.text(""));
-                if (!player.hasPermission(chest.getPermission())) {
-                    lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.NoPermission"), true));
-                }
-                else {
-                    lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.ClickToBuy"), true));
-                }
-                lore.add(ChatUtils.translateColors(Rebus.translator().localize("GUI.ClickToPreview"), true));
-
-                // Create an item representing the chest and add it to the GUI.
-                ItemStack item = GuiUtils.createItem(
-                        Rebus.Instance,
-                        chest.getMaterial(),
-                        chest.getName(),
-                        lore
-                );
-
-                SGButton chestButton = new SGButton(item).withListener(event -> {
-                    if (event.isRightClick()) {
-                        PreviewGUI.open(player, chest);
-                        return;
-                    }
-
-                    // Check if the player has the required permission.
-                    if (!player.hasPermission(chest.getPermission())) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
-                        return;
-                    }
-
-                    // Check if the player's inventory has space.
-                    if (player.getInventory().firstEmpty() == -1) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.CannotBuy");
-                        return;
-                    }
-
-                    // Check if the player has enough balance to purchase the chest.
-                    var balance =  EconomyUtils.getBalance(player);
-                    if (balance < chest.getCost()) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NotEnoughMoney", Map.of("balance", balance));
-                        return;
-                    }
-
-                    // Check if the chest is on cooldown for the player.
-                    long remainingTime = Rebus.database().getCooldown(playerId, ECooldownType.OPEN, chest.getKey());
-                    if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.Cooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
-                        return;
-                    }
-
-                    // Check if the player is on a buy cooldown for the chest.
-                    remainingTime = Rebus.database().getCooldown(playerId, ECooldownType.BUY, chest.getKey());
-                    if (remainingTime > 0 && !player.hasPermission("rebus.bypass.buycooldown")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.BuyCooldown", Map.of("time", TimeUtil.formatDuration(player, remainingTime)));
-                        return;
-                    }
-
-                    // Deduct the cost and give the chest to the player.
-                    if (chest.getCost() > 0)
-                        EconomyUtils.withdraw(player, chest.getCost());
-                    if (chest.getBuyCooldown() > 0)
-                        Rebus.database().addCooldown(playerId, ECooldownType.BUY, chest.getKey(), chest.getBuyCooldown());
-                    chest.give(player, 1);
-                    Rebus.Instance.sendLocalizedMsg(player, "General.PurchaseSuccessful");
-                });
-
-                menu.setButton(0, chest.getSlot(), chestButton);
-            }
-            // Open the updated GUI for the player.
-            player.openInventory(menu.getInventory());
-        } catch (Exception ex) {
-            // Log an error if refreshing the GUI fails.
-            _logger.error("An error occurred while refreshing the main GUI.");
-            _logger.error(ex);
         }
     }
 }
