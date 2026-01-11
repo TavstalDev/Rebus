@@ -106,7 +106,8 @@ public class PreviewGUI extends MenuBase {
 
         // Handle dynamic slots
         List<Integer> dynamicSlots = this.dynamicSlots.getOrDefault("item_slots", new ArrayList<>());
-        List<ItemStack> rewards = new ArrayList<>(playerCache.getPreviewChest().getPossibleItems());
+        Map<ItemStack, Double> rewards = playerCache.getPreviewChest().getItemChances();
+        List<ItemStack> pagedRewards = new ArrayList<>(rewards.keySet());
         for (int i = 0; i < dynamicSlots.size(); i++) {
             int slot = dynamicSlots.get(i);
 
@@ -115,8 +116,15 @@ public class PreviewGUI extends MenuBase {
                 continue;
             }
 
-            ItemStack item = rewards.get(i).clone();
+            ItemStack item = pagedRewards.get(i).clone();
+            Double chance = rewards.get(item);
             ItemMeta meta = item.getItemMeta();
+            if (meta.hasLore()) {
+                var lore = new ArrayList<>(meta.lore());
+
+            } else {
+
+            }
             meta.getPersistentDataContainer().set(GuiDupeDetector.getDupeProtectedKey(), PersistentDataType.BOOLEAN, true);
             item.setItemMeta(meta);
             sgMenu.setButton(0, slot, new SGButton(item));

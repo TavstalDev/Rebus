@@ -71,6 +71,8 @@ public class RebusChest {
 
     private final Set<ItemStack> itemCache = new HashSet<>();
 
+    private final Map<ItemStack, Double> itemChancesCache = new HashMap<>();
+
     /**
      * Constructs a RebusChest instance with the specified properties.
      *
@@ -420,6 +422,27 @@ public class RebusChest {
         }
         itemCache.addAll(items);
         return items;
+    }
+
+    public Map<ItemStack, Double> getItemChances() {
+        if (!itemChancesCache.isEmpty())
+            return new HashMap<>(itemChancesCache);
+
+        Map<ItemStack, Double> chances = new HashMap<>();
+
+        double totalChance = rewards.stream()
+                .mapToDouble(Reward::getChance)
+                .sum();
+
+        for (Reward reward : rewards) {
+            double normalizedChance = reward.getChance() / totalChance;
+
+            for (ItemStack item : reward.getItemStacks()) {
+                chances.merge(item, normalizedChance, Double::sum);
+            }
+        }
+        itemChancesCache.putAll(chances);
+        return chances;
     }
 
     /**
