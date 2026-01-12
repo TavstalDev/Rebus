@@ -114,12 +114,12 @@ public class RebusConfig extends ConfigurationBase {
             goldChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
             goldChest.put("isHighTier", true);
             //#endregion
-            resolve("chests", Map.of(
-                    "daily", dailyChest,
-                    "default", bronzeChest,
-                    "pandora", silverChest,
-                    "choosen", goldChest
-            ));
+            resolve("chests", new LinkedHashMap<>() {{
+                put("daily", dailyChest);
+                put("default", bronzeChest);
+                put("pandora", silverChest);
+                put("choosen", goldChest);
+            }});
         }
     }
 }

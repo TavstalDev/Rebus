@@ -18,7 +18,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -74,12 +73,13 @@ public class MainGUI extends MenuBase {
             int slot = dynamicSlots.get(i);
 
             if (i >= chests.size()) {
-                sgMenu.removeButton(0, slot);
+                // No pagination, just skip
+                //sgMenu.removeButton(0, slot);
                 continue;
             }
 
             RebusChest chest = chests.get(i);
-            if (chest== null) {
+            if (chest == null) {
                 logger.warn("Failed to get chest.");
                 continue;
             }

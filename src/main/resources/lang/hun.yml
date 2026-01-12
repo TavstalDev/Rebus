@@ -75,6 +75,7 @@ GUI:
   NoPermission: "&c&lNincs jogosultságod ehhez a ládához."
   ClickToBuy: "&8» &eKattints bal egérgombbal a vásárláshoz."
   ClickToPreview: "&8» &eKattints jobb egérgombbal az előnézethez."
+  Chance: "&7Esély: &f%chance%%"
 
 Time:
   Seconds: "%value% másodperc"

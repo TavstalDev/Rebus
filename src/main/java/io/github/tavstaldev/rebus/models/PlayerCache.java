@@ -1,9 +1,6 @@
 package io.github.tavstaldev.rebus.models;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Set;
 
 /**
  * Represents a cache for a player, storing various states and cooldowns.
@@ -14,9 +11,6 @@ public class PlayerCache {
 
     // The preview chest associated with the player.
     private RebusChest _previewChest;
-
-    // A set of items associated with the player.
-    private Set<ItemStack> _items;
 
     // The current page of the preview menu.
     private int _previewPage;
@@ -57,15 +51,6 @@ public class PlayerCache {
      */
     public RebusChest getPreviewChest() {
         return _previewChest;
-    }
-
-    /**
-     * Retrieves the set of items associated with the player.
-     *
-     * @return A set of ItemStack objects.
-     */
-    public Set<ItemStack> getItems() {
-        return _items;
     }
 
     /**

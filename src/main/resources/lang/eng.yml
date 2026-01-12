@@ -75,6 +75,7 @@ GUI:
   NoPermission: "&c&lYou don't have permission for this chest."
   ClickToBuy: "&8» &eLeft-click to buy."
   ClickToPreview: "&8» &eRight-click to preview."
+  Chance: "&7Chance: &f%chance%%"
 
 Time:
   Seconds: "%value% seconds"

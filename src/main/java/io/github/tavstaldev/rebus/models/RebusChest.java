@@ -71,7 +71,7 @@ public class RebusChest {
 
     private final Set<ItemStack> itemCache = new HashSet<>();
 
-    private final Map<ItemStack, Double> itemChancesCache = new HashMap<>();
+    private final Map<ItemStack, Double> itemChancesCache = new LinkedHashMap<>();
 
     /**
      * Constructs a RebusChest instance with the specified properties.
@@ -426,9 +426,9 @@ public class RebusChest {
 
     public Map<ItemStack, Double> getItemChances() {
         if (!itemChancesCache.isEmpty())
-            return new HashMap<>(itemChancesCache);
+            return new LinkedHashMap<>(itemChancesCache); // Return a copy to prevent external modification
 
-        Map<ItemStack, Double> chances = new HashMap<>();
+        Map<ItemStack, Double> chances = new LinkedHashMap<>();
 
         double totalChance = rewards.stream()
                 .mapToDouble(Reward::getChance)
@@ -441,8 +441,24 @@ public class RebusChest {
                 chances.merge(item, normalizedChance, Double::sum);
             }
         }
-        itemChancesCache.putAll(chances);
-        return chances;
+
+        Map<ItemStack, Double> sorted = new LinkedHashMap<>();
+        List<Double> order = new ArrayList<>(chances.values());
+        order.sort(Comparator.reverseOrder());
+
+        // Sort the map by values in descending order
+        for (Double value : order) {
+            for (Map.Entry<ItemStack, Double> entry : chances.entrySet()) {
+                if (entry.getValue().equals(value) && !sorted.containsKey(entry.getKey())) {
+                    sorted.put(entry.getKey(), entry.getValue());
+                    break;
+                }
+            }
+        }
+
+        order = null; // Help GC
+        itemChancesCache.putAll(sorted);
+        return sorted;
     }
 
     /**

@@ -32,7 +32,7 @@ public class PreviewGUI extends MenuBase {
     protected void loadDefaults() {
         menuTitle = resolveGet("title", "GUI.PreviewTitle");
         isMenuTitleTranslated = resolveGet("title_translated", true);
-        menuSize = resolveGet("size", 1);
+        menuSize = resolveGet("size", 6);
         dynamicSlots = resolveDynamicSlots(new LinkedHashMap<>() {{
             put("item_slots", new ArrayList<>() {{
                 add("10-16");
@@ -119,12 +119,15 @@ public class PreviewGUI extends MenuBase {
             ItemStack item = pagedRewards.get(i).clone();
             Double chance = rewards.get(item);
             ItemMeta meta = item.getItemMeta();
-            if (meta.hasLore()) {
-                var lore = new ArrayList<>(meta.lore());
-
-            } else {
-
-            }
+            List<Component> lore;
+            if (meta.hasLore())
+                lore = new ArrayList<>(Objects.requireNonNull(meta.lore()));
+            else
+                lore = new ArrayList<>();
+            lore.add(Component.text(""));
+            String chanceText = translator.localize(player, "GUI.Chance", Map.of("chance", String.format("%.2f", chance * 100)));
+            lore.add(ChatUtils.translateColors(chanceText, true));
+            meta.lore(lore);
             meta.getPersistentDataContainer().set(GuiDupeDetector.getDupeProtectedKey(), PersistentDataType.BOOLEAN, true);
             item.setItemMeta(meta);
             sgMenu.setButton(0, slot, new SGButton(item));

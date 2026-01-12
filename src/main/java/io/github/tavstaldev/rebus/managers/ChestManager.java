@@ -80,7 +80,7 @@ public class ChestManager {
      */
     public void load() {
         // Initialize the set of chests.
-        chests = new HashSet<>();
+        chests = new LinkedHashSet<>();
 
         // Ensure the chests directory exists and create default chest files if necessary.
         var chestsDir = Paths.get(Rebus.Instance.getDataFolder().getPath(), "chests").toFile();
