@@ -7,10 +7,9 @@ import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.database.models.ChestUsage;
 import io.github.tavstaldev.rebus.database.models.Cooldown;
 import io.github.tavstaldev.rebus.database.models.ECooldownType;
-import io.github.tavstaldev.yggra.core.database.DatabaseHelper;
 import io.github.tavstaldev.yggra.core.database.QueryCondition;
 import io.github.tavstaldev.yggra.core.database.repositories.IRepository;
-import io.github.tavstaldev.yggra.core.database.repositories.MySqlRepository;
+import io.github.tavstaldev.yggra.core.database.repositories.SqLiteRepository;
 import io.github.tavstaldev.yggra.core.logger.YggraLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,47 +22,38 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Represents the MySQL database implementation for managing cooldowns and other data.
- * Utilizes HikariCP for efficient database connection pooling.
+ * Represents the SQLite database implementation for managing cooldowns and other data.
  */
-public class MySqlDatabase implements IRebusDatabase {
+public class SqLiteDatabase implements IRebusDatabase {
     private final Rebus _plugin;
-    private final RebusConfig _config;
     private final YggraLogger _logger;
-    private HikariDataSource _dataSource;
+    private final RebusConfig _config;
+    private SqLiteRepository<UUID, Cooldown> _cooldowns;
+    private SqLiteRepository<UUID, ChestUsage> _chestUsages;
 
-    private MySqlRepository<UUID, Cooldown> _cooldowns;
-    private MySqlRepository<UUID, ChestUsage> _chestUsages;
-
-    public MySqlDatabase(Rebus plugin) {
-
+    public SqLiteDatabase(Rebus plugin) throws ClassNotFoundException {
         _plugin = plugin;
+        _logger = _plugin.logger().withModule(SqLiteDatabase.class);
         _config = plugin.config();
-        _logger = _plugin.logger().withModule(MySqlDatabase.class);
+
+        Class.forName("org.sqlite.JDBC");
     }
 
     /**
-     * Loads the database configuration and initializes the connection pool.
+     * Loads the database configuration.
      */
     @Override
     public void load() {
         String tablePrefix = _config.storageTablePrefix;
-        _dataSource = createDataSource();
-        boolean isMariaDb = DatabaseHelper.isMariaDB(_dataSource);
-        _cooldowns = new MySqlRepository<>(_plugin,  Cooldown.class, _dataSource, isMariaDb, 60, tablePrefix);
-        _chestUsages = new MySqlRepository<>(_plugin, ChestUsage.class, _dataSource, isMariaDb, 60, tablePrefix);
+        HikariDataSource _dataSource = createDataSource();
+        _cooldowns = new SqLiteRepository<>(_plugin, Cooldown.class, _dataSource, 60, tablePrefix);
+        _chestUsages = new SqLiteRepository<>(_plugin, ChestUsage.class, _dataSource, 60, tablePrefix);
     }
-
     /**
-     * Unloads the database by closing the connection pool.
+     * Unloads the database. Currently, no specific actions are performed.
      */
     @Override
-    public void unload() {
-        if (_dataSource != null) {
-            if (!_dataSource.isClosed())
-                _dataSource.close();
-        }
-    }
+    public void unload() {}
 
     /**
      * Creates a HikariCP data source for managing database connections.
@@ -73,12 +63,13 @@ public class MySqlDatabase implements IRebusDatabase {
     public HikariDataSource createDataSource() {
         try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s", _config.storageHost, _config.storagePort, _config.storageDatabase));
-            config.setUsername(_config.storageUsername);
-            config.setPassword(_config.storagePassword);
-            config.setMaximumPoolSize(_config.storagePool);
-            config.setMaxLifetime(_config.storageMaxLifeTime);
-            config.setConnectionTimeout(_config.storageConnectionTimeout);
+            config.setJdbcUrl(String.format("jdbc:sqlite:plugins/%s/%s.db", _plugin.getName(), _plugin.getName()));
+            config.setMaximumPoolSize(4);
+
+            config.setConnectionInitSql(
+                    "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000;"
+            );
+
             return new HikariDataSource(config);
         } catch (Exception ex) {
             _logger.error("Unknown error happened during the creation of database connection..", ex);
@@ -86,9 +77,6 @@ public class MySqlDatabase implements IRebusDatabase {
         }
     }
 
-    /**
-     * Checks and creates the necessary database schema if it does not exist.
-     */
     @Override
     public void checkSchema() {
         _cooldowns.checkSchema();
@@ -154,4 +142,5 @@ public class MySqlDatabase implements IRebusDatabase {
         }
         return result;
     }
+
 }

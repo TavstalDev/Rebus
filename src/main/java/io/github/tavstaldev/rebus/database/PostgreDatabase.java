@@ -7,10 +7,9 @@ import io.github.tavstaldev.rebus.RebusConfig;
 import io.github.tavstaldev.rebus.database.models.ChestUsage;
 import io.github.tavstaldev.rebus.database.models.Cooldown;
 import io.github.tavstaldev.rebus.database.models.ECooldownType;
-import io.github.tavstaldev.yggra.core.database.DatabaseHelper;
 import io.github.tavstaldev.yggra.core.database.QueryCondition;
 import io.github.tavstaldev.yggra.core.database.repositories.IRepository;
-import io.github.tavstaldev.yggra.core.database.repositories.MySqlRepository;
+import io.github.tavstaldev.yggra.core.database.repositories.PostgreSqlRepository;
 import io.github.tavstaldev.yggra.core.logger.YggraLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,20 +21,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Represents the MySQL database implementation for managing cooldowns and other data.
- * Utilizes HikariCP for efficient database connection pooling.
- */
-public class MySqlDatabase implements IRebusDatabase {
+public class PostgreDatabase implements IRebusDatabase {
     private final Rebus _plugin;
     private final RebusConfig _config;
     private final YggraLogger _logger;
     private HikariDataSource _dataSource;
 
-    private MySqlRepository<UUID, Cooldown> _cooldowns;
-    private MySqlRepository<UUID, ChestUsage> _chestUsages;
+    private PostgreSqlRepository<UUID, Cooldown> _cooldowns;
+    private PostgreSqlRepository<UUID, ChestUsage> _chestUsages;
 
-    public MySqlDatabase(Rebus plugin) {
+    public PostgreDatabase(Rebus plugin) {
 
         _plugin = plugin;
         _config = plugin.config();
@@ -49,9 +44,8 @@ public class MySqlDatabase implements IRebusDatabase {
     public void load() {
         String tablePrefix = _config.storageTablePrefix;
         _dataSource = createDataSource();
-        boolean isMariaDb = DatabaseHelper.isMariaDB(_dataSource);
-        _cooldowns = new MySqlRepository<>(_plugin,  Cooldown.class, _dataSource, isMariaDb, 60, tablePrefix);
-        _chestUsages = new MySqlRepository<>(_plugin, ChestUsage.class, _dataSource, isMariaDb, 60, tablePrefix);
+        _cooldowns = new PostgreSqlRepository<>(_plugin, Cooldown.class, _dataSource, 60, tablePrefix);
+        _chestUsages = new PostgreSqlRepository<>(_plugin, ChestUsage.class, _dataSource, 60, tablePrefix);
     }
 
     /**
@@ -73,9 +67,10 @@ public class MySqlDatabase implements IRebusDatabase {
     public HikariDataSource createDataSource() {
         try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s", _config.storageHost, _config.storagePort, _config.storageDatabase));
+            config.setJdbcUrl(String.format("jdbc:postgresql://%s:%s/%s", _config.storageHost, _config.storagePort, _config.storageDatabase));
             config.setUsername(_config.storageUsername);
             config.setPassword(_config.storagePassword);
+            config.setDriverClassName("org.postgresql.Driver");
             config.setMaximumPoolSize(_config.storagePool);
             config.setMaxLifetime(_config.storageMaxLifeTime);
             config.setConnectionTimeout(_config.storageConnectionTimeout);
