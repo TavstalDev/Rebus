@@ -1,40 +1,67 @@
 data:
-  common_1:
-    chance: 20
-    items: [28, 3]
-  common_2:
-    chance: 20
-    items: [29, 3]
-  uncommon_1:
-    chance: 15
-    items: [30, 3]
-  uncommon_2:
-    chance: 15
-    items: [31, 3]
-  uncommon_3:
-    chance: 10
-    items: [32, 3]
-  uncommon_4:
-    chance: 10
-    items: [33, 3]
-  rare_1:
-    chance: 5
-    items: [22, 3]
-  rare_2:
-    chance: 5
-    items: [23, 3]
-  rare_3:
-    chance: 5
-    items: [24, 3]
-  epic_1:
-    chance: 5
-    items: [25, 3]
-  epic_2:
-    chance: 5
-    items: [26, 3]
-  epic_3:
-    chance: 5
-    items: [27, 3]
-  legendary_1:
-    chance: 3
-    items: [4]
+  nameKey: "chests.data.pandora.name"
+  loreKey: "chests.data.pandora.lore"
+  blockMaterial: ENDER_CHEST
+  displayItem:
+    material: ENDER_CHEST
+    amount: 1
+  cost: 500
+  cooldown: 3
+  buyCooldown: 0
+  permission: "rebus.chest.pandora"
+  slot: 4
+  particle: FIREWORK
+  particleCount: 40
+  openSound: minecraft:block.ender_chest.open
+  closeSound: minecraft:block.ender_chest.close
+  completionSound: minecraft:entity.player.levelup
+  isHighTier: true
+  spawnLightningStrike: false
+  guaranteedPrizes:
+    - key: SAVE_ROD
+      amount: 8
+  prizes:
+    - key: SAVE_ROD
+      weight: 10
+      minAmount: 7
+      maxAmount: 7
+    - key: GOLDEN_CARROT
+      weight: 25
+      minAmount: 10
+      maxAmount: 10
+    - key: THUNDER
+      weight: 25
+    - key: WALL
+      weight: 25
+    - key: SOLID_LEGGINGS
+      weight: 25
+      minAmount: 7
+      maxAmount: 7
+    - key: UNBREAKABLE_BOOTS
+      weight: 25
+      minAmount: 7
+      maxAmount: 7
+    - key: WARLORDS_HELMET
+      weight: 25
+      minAmount: 6
+      maxAmount: 6
+    - key: SOUL_STEALER_CHESTPLATE
+      weight: 25
+    - key: GLADIATORS_HELMET
+      weight: 25
+    - key: SPARKLING_BLADE
+      weight: 25
+    - key: UNBELIEVABLE_POTION_OF_STRENGTH
+      weight: 25
+      minAmount: 2
+      maxAmount: 2
+    - key: HEROS_LEGGINGS
+      weight: 25
+    - key: DESTROYER
+      weight: 25
+    - key: BLADE_OF_DESPAIR
+      weight: 25
+    - key: FLAPPY_VOUCHER
+      weight: 25
+      minAmount: 6
+      maxAmount: 6

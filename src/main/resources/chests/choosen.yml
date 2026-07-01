@@ -1,22 +1,49 @@
 data:
-  common_1:
-    chance: 25
-    items: [33, 5]
-  common_2:
-    chance: 20
-    items: [30, 5]
-  uncommon_1:
-    chance: 15
-    items: [6]
-  uncommon_2:
-    chance: 15
-    items: [22, 5]
-  rare_1:
-    chance: 10
-    items: [32, 5]
-  epic_1:
-    chance: 5
-    items: [31, 5]
-  epic_2:
-    chance: 5
-    items: [34, 5]
+  nameKey: "chests.data.choosen.name"
+  loreKey: "chests.data.choosen.lore"
+  blockMaterial: BEACON
+  displayItem:
+    material: BEACON
+    amount: 1
+  cost: 1000
+  cooldown: 3
+  buyCooldown: 0
+  permission: "rebus.chest.choosen"
+  slot: 6
+  particle: ENCHANTED_HIT
+  particleCount: 50
+  openSound: minecraft:block.beacon.activate
+  closeSound: minecraft:block.beacon.deactivate
+  completionSound: minecraft:ui.toast.challenge_complete
+  isHighTier: true
+  spawnLightningStrike: true
+  guaranteedPrizes:
+    - key: SAVE_ROD
+      amount: 18
+  prizes:
+    - key: SAVE_ROD
+      weight: 10
+      minAmount: 16
+      maxAmount: 16
+    - key: UNBELIEVABLE_POTION_OF_STRENGTH
+      weight: 25
+      minAmount: 4
+      maxAmount: 4
+    - key: SWORD_OF_SILK_TOUCH
+      weight: 25
+    - key: BOOTS_OF_LIGHTNESS
+      weight: 25
+    - key: SOUL_STEALER_CHESTPLATE
+      weight: 25
+    - key: DESTROYER
+      weight: 25
+    - key: BLADE_OF_DESPAIR
+      weight: 25
+    - key: PIRATE_TREASURE_VOUCHER
+      weight: 25
+    - key: ADRENALIN_VOUCHER
+      weight: 25
+      minAmount: 2
+      maxAmount: 2
+    - key: ANIMAL_SPEED_VOUCHER
+      weight: 25

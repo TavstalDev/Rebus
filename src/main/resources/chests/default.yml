@@ -1,52 +1,69 @@
 data:
-  common_1:
-    chance: 15
-    items: [18, 1]
-  common_2:
-    chance: 15
-    items: [19, 1]
-  common_3:
-    chance: 15
-    items: [12, 1]
-  common_4:
-    chance: 15
-    items: [21, 1]
-  uncommon_1:
-    chance: 10
-    items: [8, 1]
-  uncommon_2:
-    chance: 10
-    items: [14, 1]
-  uncommon_3:
-    chance: 5
-    items: [15, 1]
-  rare_1:
-    chance: 5
-    items: [2]
-  rare_2:
-    chance: 5
-    items: [13, 1]
-  epic_1:
-    chance: 3
-    items: [7, 1]
-  epic_2:
-    chance: 3
-    items: [10, 1]
-  legendary_1:
-    chance: 2
-    items: [9, 1]
-  legendary_2:
-    chance: 2
-    items: [11, 1]
-  legendary_3:
-    chance: 1
-    items: [16, 1]
-  legendary_4:
-    chance: 1
-    items: [17, 1]
-  legendary_5:
-    chance: 1
-    items: [20, 1]
-  legendary_6:
-    chance: 1
-    items: [22, 1]
+  nameKey: "chests.data.default.name"
+  loreKey: "chests.data.default.lore"
+  blockMaterial: CHEST
+  displayItem:
+    material: TRAPPED_CHEST
+    amount: 1
+  cost: 250
+  cooldown: 3
+  buyCooldown: 0
+  permission: "rebus.chest.default"
+  slot: 2
+  particle: HAPPY_VILLAGER
+  particleCount: 35
+  openSound: minecraft:block.chest.open
+  closeSound: minecraft:block.chest.close
+  completionSound: minecraft:entity.player.levelup
+  isHighTier: false
+  spawnLightningStrike: false
+  guaranteedPrizes:
+    - key: SAVE_ROD
+      amount: 3
+  prizes:
+    - key: ENCHANTED_BREASTPLATE
+      weight: 25
+    - key: GOLDEN_APPLE
+      weight: 25
+      minAmount: 15
+      maxAmount: 15
+    - key: STROKE_OF_FATE
+      weight: 25
+      minAmount: 2
+      maxAmount: 2
+    - key: FANG_OF_REDFOX
+      weight: 25
+      minAmount: 2
+      maxAmount: 2
+    - key: INFINITE_BLADE
+      weight: 25
+      minAmount: 2
+      maxAmount: 2
+    - key: GIANT_SLAYER
+      weight: 25
+    - key: IRON_LEGGINGS
+      weight: 25
+    - key: IRON_CHESTPLATE
+      weight: 25
+    - key: FIRE_BOW
+      weight: 25
+    - key: WRATH_OF_THE_ELVES
+      weight: 25
+    - key: GOLDEN_BOOTS
+      weight: 25
+    - key: REFLEX_BOW
+      weight: 25
+    - key: XP_BOTTLES
+      weight: 25
+      minAmount: 10
+      maxAmount: 10
+    - key: BOOTS_OF_FALLING
+      weight: 25
+    - key: SOUL_STEALER_CHESTPLATE
+      weight: 25
+    - key: GOLDEN_LEGGINGS
+      weight: 25
+    - key: SAVE_ROD
+      weight: 25
+      minAmount: 3
+      maxAmount: 3

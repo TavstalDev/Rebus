@@ -1,0 +1,249 @@
+data:
+  commands:
+    ADRENALIN_VOUCHER:
+      command: "crazyvouchers give adrenalin_ii %amount% %player%"
+      display:
+        material: NETHER_STAR
+        name: "&6Adrenaline II"
+        lore:
+          - ''
+          - '&eActivation: Right-click'
+          - '&eIf you use this before a battle,'
+          - '&eall your damage will increase'
+          - '&efor 60 seconds'
+    PIRATE_TREASURE_VOUCHER:
+      command: "crazyvouchers give pirate_treasure %amount% %player%"
+      display:
+        material: GOLD_NUGGET
+        name: "&9Pirate's Treasure"
+        lore:
+          - ''
+          - '&eActivation: Right-click'
+          - '&eYou get a random amount'
+          - '&eof money between $500-$1000.'
+    FLAPPY_VOUCHER:
+      command: "crazyvouchers give flappy %amount% %player%"
+      display:
+        material: FEATHER
+        name: "&9Flappy"
+        lore:
+          - ''
+          - '&eActivation: Right-click'
+          - '&eYou can jump higher'
+          - '&efor 30 seconds'
+    ANIMAL_SPEED_VOUCHER:
+      command: "crazyvouchers give animal_speed %amount% %player%"
+      display:
+        material: RABBIT_FOOT
+        name: "&4Animal Speed"
+        lore:
+          - ''
+          - '&eActivation: Right-click'
+          - '&eWhile this skill is active,'
+          - '&eyou can move very fast for short distances'
+          - '&efor 60 seconds'
+  items:
+    GOLDEN_CARROT:
+      material: GOLDEN_CARROT
+      name: "&7Vitamin for the Hungry"
+    STING:
+      material: STONE_SWORD
+      name: "&fSting"
+      enchantments:
+        SHARPNESS: 2
+        KNOCKBACK: 1
+        FIRE_ASPECT: 1
+    COOKED_CHICKEN:
+      material: COOKED_CHICKEN
+    COOKED_PORKCHOP:
+      material: COOKED_PORKCHOP
+    ENCHANTED_BREASTPLATE:
+      material: GOLDEN_CHESTPLATE
+      amount: 1
+      name: "&fEnchanted Breastplate"
+      enchantments:
+        FIRE_PROTECTION: 2
+        PROTECTION: 1
+    GOLDEN_APPLE:
+      material: GOLDEN_APPLE
+    STROKE_OF_FATE:
+      material: GOLDEN_SWORD
+      name: "&aStroke of Fate"
+      enchantments:
+        SHARPNESS: 1
+        KNOCKBACK: 1
+        FIRE_ASPECT: 1
+    FANG_OF_REDFOX:
+      material: STONE_SWORD
+      name: "&aRedfox's Fang"
+      enchantments:
+        SHARPNESS: 3
+        KNOCKBACK: 2
+        FIRE_ASPECT: 2
+    INFINITE_BLADE:
+      material: STONE_SWORD
+      name: "&aInfinite Blade"
+      enchantments:
+        SHARPNESS: 4
+        KNOCKBACK: 2
+        FIRE_ASPECT: 2
+    GIANT_SLAYER:
+      material: DIAMOND_SWORD
+      name: "&5Giant Slayer"
+      enchantments:
+        SHARPNESS: 1
+        KNOCKBACK: 1
+    IRON_LEGGINGS:
+      material: IRON_LEGGINGS
+      name: "&5Iron Leggings"
+      enchantments:
+        PROTECTION: 4
+        FIRE_PROTECTION: 3
+    IRON_CHESTPLATE:
+      material: IRON_CHESTPLATE
+      name: "&5Iron Chestplate"
+      enchantments:
+        PROTECTION: 3
+        FIRE_PROTECTION: 4
+    FIRE_BOW:
+      material: BOW
+      name: "&5Fire Bow"
+      enchantments:
+        FLAME: 1
+    WRATH_OF_THE_ELVES:
+      material: BOW
+      name: "&5Wrath of the Elves"
+      enchantments:
+        POWER: 2
+    GOLDEN_BOOTS:
+      material: GOLDEN_BOOTS
+      name: "&9Golden Boots"
+      enchantments:
+        PROTECTION: 1
+        FIRE_PROTECTION: 2
+    REFLEX_BOW:
+      material: BOW
+      name: "&aReflex Bow"
+      enchantments:
+        PUNCH: 1
+    XP_BOTTLES:
+      material: EXPERIENCE_BOTTLE
+    BOOTS_OF_FALLING:
+      material: IRON_BOOTS
+      name: "&5Boots of Falling"
+      enchantments:
+        PROTECTION: 2
+        FIRE_PROTECTION: 2
+        FEATHER_FALLING: 4
+        PROJECTILE_PROTECTION: 4
+    SOUL_STEALER_CHESTPLATE:
+      material: DIAMOND_CHESTPLATE
+      name: "&5Soul Stealer Armor"
+      enchantments:
+        PROTECTION: 4
+        FIRE_PROTECTION: 4
+        THORNS: 2
+    GOLDEN_LEGGINGS:
+      material: GOLDEN_LEGGINGS
+      name: "&9Golden Leggings"
+      enchantments:
+        PROTECTION: 1
+        FIRE_PROTECTION: 2
+    SAVE_ROD:
+      material: BLAZE_ROD
+      name: "&5Save Rod"
+      lore:
+        - '&eIf you have this item in your inventory,'
+        - '&eyou will not lose your items upon death!'
+      persistent-data:
+        airborn:items/save_rod:
+          type: BOOLEAN
+          value: true
+    THUNDER:
+      material: IRON_SWORD
+      name: "&fThunder"
+      enchantments:
+        SHARPNESS: 4
+        UNBREAKING: 3
+    WALL:
+      material: IRON_CHESTPLATE
+      name: "&fWall"
+      enchantments:
+        PROTECTION: 4
+    SOLID_LEGGINGS:
+      material: IRON_LEGGINGS
+      name: "&aSolid Leggings"
+      enchantments:
+        PROTECTION: 4
+        FIRE_PROTECTION: 1
+    UNBREAKABLE_BOOTS:
+      material: IRON_BOOTS
+      name: "&9Unbreakable Boots"
+      enchantments:
+        PROTECTION: 3
+        UNBREAKING: 3
+    WARLORDS_HELMET:
+      material: IRON_HELMET
+      name: "&9Warlord's Helmet"
+      enchantments:
+        PROTECTION: 4
+        FIRE_PROTECTION: 2
+        PROJECTILE_PROTECTION: 2
+    GLADIATORS_HELMET:
+      material: DIAMOND_HELMET
+      name: "&5Gladiator Helmet"
+      enchantments:
+        PROTECTION: 2
+        FIRE_PROTECTION: 2
+    SPARKLING_BLADE:
+      material: DIAMOND_SWORD
+      name: "&5Sparkling Blade"
+      enchantments:
+        SHARPNESS: 1
+        FIRE_ASPET: 2
+    UNBELIEVABLE_POTION_OF_STRENGTH:
+      material: POTION
+      name: "&5Unbelievable Potion of Strength"
+      basePotionType: STRONG_STRENGTH
+    HEROS_LEGGINGS:
+      material: DIAMOND_LEGGINGS
+      name: "&5Hero's Leggings"
+      enchantments:
+        PROTECTION: 4
+        FIRE_PROTECTION: 2
+    DESTROYER:
+      material: BOW
+      name: "&6Destroyer"
+      lore:
+        - '&eThe wrath of long-forgotten gods'
+        - '&egathers inside this bow,'
+        - '&ejust waiting to break free'
+      enchantments:
+        POWER: 4
+        PUNCH: 2
+    BLADE_OF_DESPAIR:
+      material: DIAMOND_SWORD
+      name: "&6Blade of Despair"
+      lore:
+        - '&eWhoever carries this blade'
+        - '&ewill leave no living person behind.'
+        - '&eBy sacrificing their own soul,'
+        - '&ethey will never find peace again.'
+      enchantments:
+        SHARPNESS: 5
+        UNBREAKING: 3
+        KNOCKBACK: 2
+        FIRE_ASPET: 2
+    SWORD_OF_SILK_TOUCH:
+      material: DIAMOND_SWORD
+      name: "&5Sword of Silk Touch"
+      enchantments:
+        SHARPNESS: 3
+        FIRE_ASPET: 2
+    BOOTS_OF_LIGHTNESS:
+      material: DIAMOND_BOOTS
+      name: "&9Boots of Lightness"
+      enchantments:
+        PROTECTION: 4
+        PROJECTILE_PROTECTION: 4
+        FEATHER_FALLING: 4
