@@ -1,125 +1,61 @@
 package io.github.tavstaldev.rebus;
 
-import io.github.tavstaldev.minecorelib.config.ConfigurationBase;
+import io.github.tavstaldev.yggra.core.configuration.YggraConfiguration;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-public class RebusConfig extends ConfigurationBase {
-    public RebusConfig() {
-        super(Rebus.Instance, "config.yml", null);
+public class RebusConfig extends YggraConfiguration {
+    public RebusConfig(Rebus plugin) {
+        super(plugin, "config.yml", null);
     }
 
     public String prefix;
-    public boolean checkForUpdates, debug, useBanyaszLib;
+    public boolean checkForUpdates, debug;
 
     public String storageType, storageContext, storageFilename, storageHost, storageDatabase, storageUsername, storagePassword, storageTablePrefix;
-    public int storagePort;
+    public int storagePort, storageAutoClean, storagePool, storageMaxLifeTime, storageConnectionTimeout;
 
-    public String npcName, npcSkin;
+    public boolean storageRedisEnabled;
+    public int storageRedisPort;
+    public String storageRedisHost, storageRedisUsername, storageRedisPassword;
+
+    public String npcName, npcSkin, npcSignature;
 
     @Override
     protected void loadDefaults() {
         // General
-        resolve("locale", "eng");
-        resolve("usePlayerLocale", true);
-        checkForUpdates = resolveGet("checkForUpdates", true);
-        debug = resolveGet("debug", false);
-        prefix = resolveGet("prefix", "&bRebus &8»");
-        useBanyaszLib = resolveGet("useBanyaszLib", false);
+        resolve("general.locale", "eng");
+        resolve("general.use-player-locale", true);
+        checkForUpdates = resolveGet("general.check-updates", true);
+        debug = resolveGet("general.debug-mode", false);
+        prefix = resolveGet("general.prefix", "&bRebus &8»");
 
-        // Storage
-        storageType = resolveGet("storage.type", "sqlite");
-        storageContext = resolveGet("storage.context", "skypvp");
-        storageFilename = resolveGet("storage.filename", "database");
-        storageHost = resolveGet("storage.host", "localhost");
-        storagePort = resolveGet("storage.port", 3306);
-        storageDatabase = resolveGet("storage.database", "minecraft");
-        storageUsername = resolveGet("storage.username", "root");
-        storagePassword = resolveGet("storage.password", "ascent");
-        storageTablePrefix = resolveGet("storage.tablePrefix", "rebus");
+        // Storage - Database
+        storageType = resolveGet("storage.db.type", "sqlite");
+        storageContext = resolveGet("storage.db.context", "skypvp");
+        storageHost = resolveGet("storage.db.host", "localhost");
+        storagePort = resolveGet("storage.db.port", 3306);
+        storageDatabase = resolveGet("storage.db.database", "minecraft");
+        storageUsername = resolveGet("storage.db.username", "root");
+        storagePassword = resolveGet("storage.db.password", "ascent");
+        storageTablePrefix = resolveGet("storage.db.table-prefix", "rebus_");
+        storageAutoClean = resolveGet("storage.db.auto-clean-interval", 3600);
+        storagePool = resolveGet("storage.db.pool-settings.maximum-pool-size", 10);
+        storageMaxLifeTime = resolveGet("storage.db.pool-settings.maximum-lifetime", 1800000);
+        storageConnectionTimeout = resolveGet("storage.db.pool-settings.connection-timeout", 5000);
 
-        // npc
-        npcName = resolveGet("npc.name", "&bRebus");
-        npcSkin = resolveGet("npc.skin", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjgzOTMwZjcxYmYyNWRkMTNiMzY0ZmY3ZTBlODdlODhiODc1NmNiYmJmODIyNDEwZjQ3MDQ1ZWNmMTI3NjM5OSJ9fX0=");
+        // Storage - Redis
+        storageRedisEnabled = resolveGet("storage.redis.enable", false);
+        storageRedisHost = resolveGet("storage.redis.host", "localhost");
+        storageRedisPort = resolveGet("storage.redis.port", 6379);
+        storageRedisUsername = resolveGet("storage.redis.username", "root");
+        storageRedisPassword = resolveGet("storage.redis.password", "ascent");
 
-        // chests
-        if (get("chests") == null) {
-            //#region Daily chest
-            Map<String, Object> dailyChest = new LinkedHashMap<>();
-            dailyChest.put("name", "&aDaily");
-            dailyChest.put("description", Arrays.asList("&7Free daily chest for everyone."));
-            dailyChest.put("material", "CHEST");
-            dailyChest.put("cost", 0);
-            dailyChest.put("cooldown", 86400);
-            dailyChest.put("buyCooldown", 86400);
-            dailyChest.put("permission", "rebus.chest.daily");
-            dailyChest.put("slot", 0);
-            dailyChest.put("particle", "ENCHANT");
-            dailyChest.put("particleCount", 30);
-            dailyChest.put("openSound", "BLOCK_CHEST_OPEN");
-            dailyChest.put("closeSound", "BLOCK_CHEST_CLOSE");
-            dailyChest.put("completionSound", "ENTITY_PLAYER_LEVELUP");
-            dailyChest.put("isHighTier", false);
-            //#endregion
-            //#region Default chest
-            Map<String, Object> bronzeChest = new LinkedHashMap<>();
-            bronzeChest.put("name", "&6Default");
-            bronzeChest.put("description", Arrays.asList("&7For beginner adventurers.", "&7Guaranteed save rods: &e1"));
-            bronzeChest.put("material", "TRAPPED_CHEST");
-            bronzeChest.put("cost", 500);
-            bronzeChest.put("cooldown", 300);
-            bronzeChest.put("buyCooldown", 300);
-            bronzeChest.put("permission", "rebus.chest.default");
-            bronzeChest.put("slot", 2);
-            bronzeChest.put("particle", "HAPPY_VILLAGER");
-            bronzeChest.put("particleCount", 35);
-            bronzeChest.put("openSound", "BLOCK_CHEST_OPEN");
-            bronzeChest.put("closeSound", "BLOCK_CHEST_CLOSE");
-            bronzeChest.put("completionSound", "ENTITY_PLAYER_LEVELUP");
-            bronzeChest.put("isHighTier", false);
-            //#endregion
-            //#region Pandora chest
-            Map<String, Object> silverChest = new LinkedHashMap<>();
-            silverChest.put("name", "&5Pandora");
-            silverChest.put("description", Arrays.asList("&7For experienced players.", "&7Guaranteed save rods: &e4"));
-            silverChest.put("material", "ENDER_CHEST");
-            silverChest.put("cost", 750);
-            silverChest.put("cooldown", 300);
-            silverChest.put("buyCooldown", 300);
-            silverChest.put("permission", "rebus.chest.pandora");
-            silverChest.put("slot", 4);
-            silverChest.put("particle", "FIREWORK");
-            silverChest.put("particleCount", 40);
-            silverChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
-            silverChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
-            silverChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
-            silverChest.put("isHighTier", true);
-            //#endregion
-            //#region Choosen chest
-            Map<String, Object> goldChest = new LinkedHashMap<>();
-            goldChest.put("name", "&cChoosen");
-            goldChest.put("description", Arrays.asList("&7For veteran adventurers.", "&7Guaranteed save rods: &e10"));
-            goldChest.put("material", "BEACON");
-            goldChest.put("cost", 1000);
-            goldChest.put("cooldown", 300);
-            goldChest.put("buyCooldown", 300);
-            goldChest.put("permission", "rebus.chest.choosen");
-            goldChest.put("slot", 6);
-            goldChest.put("particle", "ENCHANTED_HIT");
-            goldChest.put("particleCount", 50);
-            goldChest.put("openSound", "BLOCK_ENDER_CHEST_OPEN");
-            goldChest.put("closeSound", "BLOCK_ENDER_CHEST_CLOSE");
-            goldChest.put("completionSound", "ENTITY_EXPERIENCE_ORB_PICKUP");
-            goldChest.put("isHighTier", true);
-            //#endregion
-            resolve("chests", new LinkedHashMap<>() {{
-                put("daily", dailyChest);
-                put("default", bronzeChest);
-                put("pandora", silverChest);
-                put("choosen", goldChest);
-            }});
-        }
+
+        // NPC
+        npcName = resolveGet("npc.name", "&f_Rébusz_");
+        npcSkin = resolveGet("npc.skin", "ewogICJ0aW1lc3RhbXAiIDogMTc0MDU4MzQxMzMyMiwKICAicHJvZmlsZUlkIiA6ICJiZDNhNWRmY2ZkZjg0NDczOTViZDJiZmUwNGY0YzAzMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJwcmVja3Jhc25vIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2Y4MzkzMGY3MWJmMjVkZDEzYjM2NGZmN2UwZTg3ZTg4Yjg3NTZjYmJiZjgyMjQxMGY0NzA0NWVjZjEyNzYzOTkiCiAgICB9CiAgfQp9");
+        npcSignature = resolveGet("npc.signature", "s0iYOKakbeeLI3bIxokioac+R4yNiyYYkaubIfe5pBXJgUbFpxbVV40M/G7huGPMwbi6gHI6PgD4Q8n4BiGqWYcxwQ227n0MEnvQIerJgvB1gm/49BrgQ565ldixYWNQwHh0jkxErAVRqyd7Kb5vGup1Ba4QB7E2c4+kQnyDyBDHZ8RKc11EWIevdB5NZcrGLUON34mVy9D7wZihyUOOAvcAC8KrGX6wmvizZqcNtRTcymmNF1t7Zl+rxQxsBou3qMSze3RmDuhSKKy7oIjYc3pbag2uHAdhjWqEMI3qUkN2wADzr11vNYhqhs+uOKegHJMuWkMeeThEje20iMdpnz7Ut9VOZe+imPhHOX07Yi5mQblptBtYJkfhIOeRoh65Zv9w1aspks/KkSiRud0mpdr7ky8TmUWTy+YZgernKIWwuYk5YoxIXMcojmXsMUzWDV719ctbqncxfiaa3fvF2/IoI3AUn6w1Fc04sbcu54XiNOTR2WrdS8accwyX9zEzSqdvYKFl3bPshH6qKtf57d7V0VsGIwGfUU5wtfWjH6G1ylZFmi8ji1o1O/X5LV1R1bw1WsuAyN5GhyXWq8A+PhUEsG+/lH+qJ4WDvFSqmb/f7fEMAZG2kUW/ye823RSjchqXMy78i5pneS98DBGoO5MjG2T1yo9Rp6NWsVHHO0o=");
+
+        // Chests
+        // TODO: Add chest configuration
     }
 }
