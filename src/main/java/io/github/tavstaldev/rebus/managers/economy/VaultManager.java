@@ -1,25 +1,34 @@
 package io.github.tavstaldev.rebus.managers.economy;
 
-import io.github.tavstaldev.minecorelib.core.PluginLogger;
 import io.github.tavstaldev.rebus.Rebus;
+import io.github.tavstaldev.yggra.core.logger.YggraLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Economy manager implementation using Vault.
+ */
 public class VaultManager implements IEconomyManager {
-    private final PluginLogger logger = Rebus.Instance.getCustomLogger().withModule(this.getClass());
     private final Economy economy;
 
-    public VaultManager() {
+    /**
+     * Creates a new Vault economy manager and attempts to find an economy provider.
+     * Disables the plugin if no provider is found.
+     *
+     * @param plugin The plugin instance.
+     */
+    public VaultManager(Rebus plugin) {
+        YggraLogger logger = plugin.logger().withModule(this.getClass());
         logger.debug("Setting up economy...");
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         logger.debug("Economy provider: " + economyProvider);
         if (economyProvider == null) {
             logger.error("No economy provider found! Unloading...");
             economy = null;
-            Bukkit.getPluginManager().disablePlugin(Rebus.Instance);
+            Bukkit.getPluginManager().disablePlugin(plugin);
             return;
         }
         logger.debug("Economy provider found.");
