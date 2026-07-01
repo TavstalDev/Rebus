@@ -10,10 +10,10 @@ plugins {
 // Define project properties for versions and package name
 val javaVersion: String by project
 val paperApiVersion: String by project
-val mineCoreLibVersion: String by project
+val lombokVersion: String by project
 val hikariCpVersion: String by project
+val postgreSqlVersion: String by project
 val vaultApiVersion: String by project
-val banyaszLibVersion: String by project
 val citizensApiVersion: String by project
 val protocolLibVersion: String by project
 val projectPackageName = "${project.group}.rebus"
@@ -31,6 +31,9 @@ java {
 repositories {
     //mavenLocal()
     mavenCentral() // Central Maven repository
+    flatDir {
+        dir(file("libs"))
+    }
     maven {
         name = "papermc"
         url = uri("https://repo.papermc.io/repository/maven-public/")
@@ -65,10 +68,15 @@ dependencies {
     compileOnly("net.dmulloy2:ProtocolLib:${protocolLibVersion}")
 
     // HikariCP for database connection pooling
-    implementation("com.zaxxer:HikariCP:${hikariCpVersion}")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    compileOnly("com.zaxxer:HikariCP:${hikariCpVersion}")
+    compileOnly("org.postgresql:postgresql:${postgreSqlVersion}")
     // Custom library for core functionality
-    implementation(files("libs/MineCoreLib-${mineCoreLibVersion}.jar"))
-    implementation(files("libs/BanyaszApi-${banyaszLibVersion}.jar"))
+    implementation(":yggra-core-1.0.0") {
+        isChanging = true
+    }
+
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 }
 
 // Disable the default JAR task
@@ -86,9 +94,6 @@ tasks.shadowJar {
     exclude("com/google/**")
     exclude("org/jspecify/**")
     exclude("org/slf4j/**")
-
-    // Relocate packages to avoid conflicts
-    relocate("com.zaxxer.hikari", "${projectPackageName}.shadow.hikari")
 }
 
 // Ensure the Shadow JAR task runs during the build process
@@ -100,7 +105,7 @@ tasks.build {
 tasks {
     // Configure the RunServer task for running a Paper server
     named<xyz.jpenilla.runpaper.task.RunServer>("runServer") {
-        minecraftVersion("1.21") // Specify the Minecraft version
+        minecraftVersion("1.20.4") // Specify the Minecraft version
     }
 
     // Configure Java compilation settings
