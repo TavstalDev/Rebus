@@ -1,8 +1,8 @@
 package io.github.tavstaldev.rebus.models;
 
-import io.github.tavstaldev.minecorelib.managers.MenuManager;
 import io.github.tavstaldev.rebus.Rebus;
 import io.github.tavstaldev.rebus.gui.MainGUI;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
 import org.bukkit.event.EventHandler;
@@ -13,7 +13,6 @@ import org.bukkit.event.EventHandler;
  */
 @TraitName("rebus")
 public class NpcTrait extends Trait {
-
     /**
      * Constructor for the NpcTrait class.
      * Initializes the trait with the name "rebus".
@@ -34,7 +33,7 @@ public class NpcTrait extends Trait {
      * @param event The NPCRightClickEvent triggered when a player right-clicks an NPC.
      */
     @EventHandler
-    public void click(net.citizensnpcs.api.event.NPCRightClickEvent event) {
+    public void click(NPCRightClickEvent event) {
         // Check if the clicked NPC is the one associated with this trait.
         if (event.getNPC() != this.getNPC()) {
             return;
@@ -44,14 +43,13 @@ public class NpcTrait extends Trait {
         // Check if the player has the required permission.
         if (!player.hasPermission("rebus.use")) {
             // Send a localized "no permission" message to the player.
-            Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+            Rebus.instance.chat().sendLocalizedMsg(player, "general.error.no-permission");
             return;
         }
         // Open the main GUI for the player.
-        MenuManager manager = Rebus.Instance.getMenuManager();
-        if (manager == null) {
+        var manager = Rebus.instance.gui();
+        if (manager == null)
             return;
-        }
         manager.open(player, MainGUI.ID);
     }
 }
