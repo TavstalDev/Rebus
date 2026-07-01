@@ -16,6 +16,7 @@ val postgreSqlVersion: String by project
 val vaultApiVersion: String by project
 val citizensApiVersion: String by project
 val protocolLibVersion: String by project
+val playerPointsVersion: String by project
 val projectPackageName = "${project.group}.rebus"
 
 // Configure Java toolchain and compatibility settings
@@ -53,6 +54,10 @@ repositories {
         name = "citizens"
         url = uri("https://maven.citizensnpcs.co/repo")
     }
+    maven {
+        name = "playerpoints"
+        url = uri("https://repo.rosewooddev.io/repository/public/")
+    }
 }
 
 // Define project dependencies
@@ -71,6 +76,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:${lombokVersion}")
     compileOnly("com.zaxxer:HikariCP:${hikariCpVersion}")
     compileOnly("org.postgresql:postgresql:${postgreSqlVersion}")
+    compileOnly("org.black_ixx:playerpoints:${playerPointsVersion}")
     // Custom library for core functionality
     implementation(":yggra-core-1.0.0") {
         isChanging = true
