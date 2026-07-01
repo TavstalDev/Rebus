@@ -1,48 +1,40 @@
 package io.github.tavstaldev.rebus.events;
 
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
-import io.github.tavstaldev.rebus.models.PlayerCache;
+import io.github.tavstaldev.rebus.managers.ChestManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * Handles player-related events such as joining, quitting, and interacting with blocks.
  */
 public class PlayerEventListener implements Listener {
+    private final Rebus plugin;
+    private final ChestManager chestManager;
 
     /**
-     * Initializes the event listener by registering it with the Bukkit plugin manager.
+     * Creates the player event listener and registers it with the server.
+     *
+     * @param plugin       The plugin instance.
+     * @param chestManager The chest manager for checking unlocking states.
      */
-    public static void init() {
-        Bukkit.getServer().getPluginManager().registerEvents(new PlayerEventListener(), Rebus.Instance);
+    public PlayerEventListener(Rebus plugin, ChestManager chestManager) {
+        this.plugin = plugin;
+        this.chestManager = chestManager;
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**
-     * Handles the PlayerJoinEvent, creating and adding a PlayerCache for the joining player.
+     * Cleans up the player's lock when they quit.
      *
-     * @param event The PlayerJoinEvent triggered when a player joins the server.
+     * @param event The quit event.
      */
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        PlayerCache playerCache = new PlayerCache(player);
-        PlayerCacheManager.add(player.getUniqueId(), playerCache);
-    }
-
-    /**
-     * Handles the PlayerQuitEvent, removing the PlayerCache for the quitting player.
-     *
-     * @param event The PlayerQuitEvent triggered when a player leaves the server.
-     */
-    @EventHandler
-    public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        PlayerCacheManager.remove(player.getUniqueId());
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.removePlayerLock(event.getPlayer().getUniqueId());
     }
 
     /**
@@ -53,12 +45,10 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         var clickedBlock = event.getClickedBlock();
-        if (clickedBlock == null) {
+        if (clickedBlock == null)
             return;
-        }
 
-        if (Rebus.chestManager().chestsUnderUnlocking.contains(clickedBlock.getLocation())) {
+        if (chestManager.chestsUnderUnlocking.contains(clickedBlock.getLocation()))
             event.setCancelled(true);
-        }
     }
 }
