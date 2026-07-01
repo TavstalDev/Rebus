@@ -1,18 +1,21 @@
 package io.github.tavstaldev.rebus.gui;
 
-import io.github.tavstaldev.minecorelib.core.GuiDupeDetector;
-import io.github.tavstaldev.minecorelib.managers.MenuManager;
-import io.github.tavstaldev.minecorelib.models.gui.MenuBase;
-import io.github.tavstaldev.minecorelib.models.gui.MenuButton;
-import io.github.tavstaldev.minecorelib.shadow.spigui.buttons.SGButton;
-import io.github.tavstaldev.minecorelib.shadow.spigui.menu.SGMenu;
-import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.PlayerCacheManager;
-import io.github.tavstaldev.rebus.models.PlayerCache;
+import io.github.tavstaldev.rebus.managers.ChestManager;
+import io.github.tavstaldev.rebus.managers.PrizeManager;
+import io.github.tavstaldev.rebus.models.Chest;
+import io.github.tavstaldev.yggra.core.gui.GuiBase;
+import io.github.tavstaldev.yggra.core.gui.GuiButton;
+import io.github.tavstaldev.yggra.core.gui.GuiDupeDetector;
+import io.github.tavstaldev.yggra.core.gui.GuiManager;
+import io.github.tavstaldev.yggra.core.services.TranslationService;
+import io.github.tavstaldev.yggra.items.api.utils.AdventureUtils;
+import io.github.tavstaldev.yggra.shadow.triumpGui.guis.BaseGui;
+import io.github.tavstaldev.yggra.shadow.triumpGui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -20,104 +23,129 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PreviewGUI extends MenuBase {
-
+/**
+ * GUI that displays a paginated preview of a chest's prizes with drop chances.
+ */
+public class PreviewGUI extends GuiBase {
+    private final TranslationService translator;
+    private final GuiManager gui;
+    private final ChestManager chestManager;
+    private final PrizeManager prizeManager;
     public static String ID = "preview";
 
-    public PreviewGUI() {
-        super(Rebus.Instance, "preview.yml");
+    private static final HashMap<UUID, Chest> playerChests = new HashMap<>();
+    private static final HashMap<UUID, Integer> playerPages = new HashMap<>();
+
+    /**
+     * Creates the preview GUI.
+     *
+     * @param plugin       The plugin instance.
+     * @param prizeManager The prize manager for looking up prize data.
+     * @param chestManager The chest manager for looking up chests.
+     */
+    public PreviewGUI(Rebus plugin, PrizeManager prizeManager, ChestManager chestManager) {
+        super(ID, plugin, "preview.yml",
+                "gui.preview.title",
+                true,
+                6,
+                new LinkedHashMap<>() {{
+                    put("item_slots", new ArrayList<>() {{
+                        add("10-16");
+                        add("19-25");
+                        add("28-34");
+                        add("37-43");
+                    }});
+                }},
+                new LinkedHashSet<>() {{
+                    // Placeholder
+                    add(new GuiButton(null,"§r", false, null, false,
+                            List.of("0-9", "17-18", "26-27", "35-36", "44", "46-47", "51-53"),
+                            new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
+                    // Back button
+                    add(new GuiButton("BACK", "gui.common.back", true, null, false, List.of("45"),
+                            new ItemStack(Material.SPRUCE_DOOR)));
+                    // Previous button
+                    add(new GuiButton("PREVIOUS_PAGE","gui.common.previous-page",
+                            true, null, false, List.of("48"),
+                            new ItemStack(Material.ARROW)));
+                    // Current Page button
+                    add(new GuiButton("CURRENT_PAGE","gui.common.current-page",
+                            true, null, false, List.of("49"),
+                            new ItemStack(Material.PAPER)));
+                    // Next Page button
+                    add(new GuiButton("NEXT_PAGE", "gui.common.next-page",
+                            true, null, false, List.of("50"),
+                            new ItemStack(Material.ARROW)));
+                }});
+        this.translator = plugin.translator();
+        this.gui = plugin.gui();
+        this.prizeManager = prizeManager;
+        this.chestManager = chestManager;
     }
 
+    /**
+     * Refreshes the GUI with the current page's prizes and their drop chances.
+     */
     @Override
-    protected void loadDefaults() {
-        menuTitle = resolveGet("title", "GUI.PreviewTitle");
-        isMenuTitleTranslated = resolveGet("title_translated", true);
-        menuSize = resolveGet("size", 6);
-        dynamicSlots = resolveDynamicSlots(new LinkedHashMap<>() {{
-            put("item_slots", new ArrayList<>() {{
-                add("10-16");
-                add("19-25");
-                add("28-34");
-                add("37-43");
-            }});
-        }});
-        menuButtons = resolveButtons(new LinkedHashSet<>() {{
-            // Placeholder
-            add(new MenuButton(Material.BLACK_STAINED_GLASS_PANE, null, 1, "§r", null, null, null, null, List.of("0-9", "17-18", "26-27", "35-36", "44", "46-47", "51-53"), null));
-            // Back button
-            add(new MenuButton(Material.SPRUCE_DOOR, null, 1, null, "GUI.Back", null, null, 45, null,  List.of("[OPEN] " + MainGUI.ID)));
-            // Previous button
-            add(new MenuButton(Material.ARROW, null, 1, null, "GUI.PreviousPage", null, null, 48, null, List.of("[PREV_PAGE]")));
-            // Page button, NOTE: should be updated on refresh
-            add(new MenuButton(Material.PAPER, null, 1, "{PAGE}", null, null, null, 49, null, null));
-            // Next button
-            add(new MenuButton(Material.ARROW, null, 1, null, "GUI.NextPage", null, null, 50, null, List.of("[NEXT_PAGE]")));
-        }});
-    }
-
-    @Override
-    public SGMenu create(@NotNull Player player) {
-        MenuManager menuManager = plugin.getMenuManager();
-        if (menuManager == null)
-            throw new RuntimeException("Menu manager was not initialized.");
-        SGMenu menu = menuManager.getSpiGUI().create(isMenuTitleTranslated ? translator.localize(player, menuTitle) : menuTitle, menuSize);
-
-        for (MenuButton button : menuButtons) {
-            button.apply(player, translator, menu, this);
-        }
-        return menu;
-    }
-
-    @Override
-    public void refresh(@NotNull Player player, @NotNull SGMenu sgMenu) {
+    public void refresh(@NotNull Player player, @NotNull BaseGui baseGui) {
         UUID playerId = player.getUniqueId();
-        PlayerCache playerCache = PlayerCacheManager.get(playerId);
+        var chest = playerChests.get(playerId);
+        if (chest == null)
+            return;
 
         // 1. Find page button
-        MenuButton pageButton = null;
-        for (MenuButton btn : menuButtons) {
-            if (btn.getTitle() != null && btn.getTitle().equalsIgnoreCase("{PAGE}")) {
-                pageButton = btn;
-                break;
-            }
-        }
-
-        // 2. Update page button
-        if (pageButton != null) {
-            String pageText = translator.localize(player,  "GUI.Page", Map.of(
-                    "page", String.valueOf(playerCache.getPreviewPage()) // Localize the page number
-            ));
-            Component pageComp = ChatUtils.translateColors(pageText, true);
-
-            for (Integer slot : pageButton.getSlots()) {
-                SGButton btn = sgMenu.getButton(0, slot);
-                if (btn == null)
+        int currentPage = playerPages.getOrDefault(playerId, 1);
+        for (var btn : buttons) {
+            if (Objects.equals(btn.getAction(), "CURRENT_PAGE")) {
+                if (btn.getTitle() == null)
                     continue;
 
-                ItemStack icon = btn.getIcon();
-                ItemMeta meta = icon.getItemMeta();
-                if (meta != null) {
-                    meta.displayName(pageComp);
-                    icon.setItemMeta(meta);
+                String pageText = btn.shouldTranslateTitle() ? translator.localize(player, btn.getTitle(), Map.of(
+                        "page", String.valueOf(currentPage)
+                )) : btn.getTitle();
+                if (pageText == null)
+                    continue;
+                Component pageComp = AdventureUtils.parse(pageText, true);
+
+                for (Integer slot : btn.getSlots()) {
+                    var sgBtn = baseGui.getGuiItem(slot);
+                    if (sgBtn == null)
+                        continue;
+
+                    ItemStack icon = sgBtn.getItemStack();
+                    icon.editMeta(x -> {
+                       x.displayName(pageComp);
+                    });
                 }
-                btn.setIcon(icon);
             }
         }
 
         // Handle dynamic slots
         List<Integer> dynamicSlots = this.dynamicSlots.getOrDefault("item_slots", new ArrayList<>());
-        Map<ItemStack, Double> rewards = playerCache.getPreviewChest().getItemChances();
-        List<ItemStack> pagedRewards = new ArrayList<>(rewards.keySet());
+        var prizes = chest.getPrizes().stream().toList();
+        int prizesSize = prizes.size();
+        double totalWeight = chest.getTotalWeight();
+
         for (int i = 0; i < dynamicSlots.size(); i++) {
             int slot = dynamicSlots.get(i);
 
-            if (i >= rewards.size()) {
-                sgMenu.removeButton(0, slot);
+            if (i >= prizesSize) {
+                baseGui.removeItem(slot);
                 continue;
             }
 
-            ItemStack item = pagedRewards.get(i).clone();
-            Double chance = rewards.get(item);
+            var prize = prizes.get(i);
+            var prizeData = prizeManager.get(prize.getKey());
+            if (prizeData == null) { // configuration error
+                logger.error("Failed to get prizeData for: " + prize.getKey());
+                baseGui.removeItem(slot);
+                continue;
+            }
+
+            ItemStack item = prizeData.getItem();
+            item.setAmount(prize.getMinAmount());
+            double chance = (double)prize.getWeight() / totalWeight;
+
             ItemMeta meta = item.getItemMeta();
             List<Component> lore;
             if (meta.hasLore())
@@ -125,78 +153,97 @@ public class PreviewGUI extends MenuBase {
             else
                 lore = new ArrayList<>();
             lore.add(Component.text(""));
-            String chanceText = translator.localize(player, "GUI.Chance", Map.of("chance", String.format("%.2f", chance * 100)));
-            lore.add(ChatUtils.translateColors(chanceText, true));
+            String chanceText = translator.localize(player, "gui.preview.chance", Map.of("chance", String.format("%.2f", chance * 100)));
+            lore.add(AdventureUtils.parse(chanceText, true));
             meta.lore(lore);
             meta.getPersistentDataContainer().set(GuiDupeDetector.getDupeProtectedKey(), PersistentDataType.BOOLEAN, true);
             item.setItemMeta(meta);
-            sgMenu.setButton(0, slot, new SGButton(item));
+            baseGui.setItem(slot, new GuiItem(item));
         }
-        player.openInventory(sgMenu.getInventory());
+        baseGui.open(player);
     }
 
+    /**
+     * Handles button actions for navigation (next page, previous page, back, close).
+     */
     @Override
-    public void executeCommand(@NotNull Player player, @NotNull String command) {
-        String[] parts = command.split("\\s+");
-        switch (parts[0].toLowerCase()) {
-            case "[next_page]" -> {
-                PlayerCache playerData = PlayerCacheManager.get(player.getUniqueId());
-                int maxPage = 1 + (playerData.getPreviewChest().getPossibleItems().size() / dynamicSlots.getOrDefault("category_slots", new ArrayList<>()).size());
-                if (playerData.getPreviewPage() + 1 > maxPage)
+    public void executeCommand(Player player, String action, InventoryClickEvent event) {
+        var playerId = player.getUniqueId();
+        switch (action.toUpperCase()) {
+            case "NEXT_PAGE" -> {
+                var chest = playerChests.get(playerId);
+                int arraySize = dynamicSlots.getOrDefault("item_slots", new ArrayList<>()).size();
+                if (arraySize == 0) // prevent divide with zero
+                    arraySize = 1;
+                int maxPage = 1 + (chest.getPrizes().size() / arraySize);
+                int page = playerPages.getOrDefault(playerId, 1) + 1;
+                if (page > maxPage)
                     return;
-                playerData.setPreviewPage(playerData.getPreviewPage() + 1);
+                playerPages.put(playerId, page);
 
-                MenuManager manager = plugin.getMenuManager();
-                if (manager == null)
-                    break;
-                SGMenu menu = manager.getMenu(player, ID);
+                BaseGui menu = gui.getMenu(player, ID);
                 if (menu == null)
                     break;
                 refresh(player, menu);
             }
-            case "[prev_page]" -> {
-                PlayerCache playerData = PlayerCacheManager.get(player.getUniqueId());
-                if (playerData.getPreviewPage() - 1 <= 0)
+            case "PREVIOUS_PAGE" -> {
+                int page = playerPages.getOrDefault(playerId, 1) - 1;
+                if (page <= 0)
                     return;
-                playerData.setPreviewPage(playerData.getPreviewPage() - 1);
+                playerPages.put(playerId, page);
 
-                MenuManager manager = plugin.getMenuManager();
-                if (manager == null)
-                    break;
-                SGMenu menu = manager.getMenu(player, ID);
+                BaseGui menu = gui.getMenu(player, ID);
                 if (menu == null)
                     break;
                 refresh(player, menu);
             }
-            case "[close]" -> {
-                MenuManager manager = plugin.getMenuManager();
-                if (manager != null)
-                    manager.close(player, false);
+            case "CLOSE" -> {
+                gui.close(player, false);
             }
-            case "[open]" -> {
-                if (parts.length < 2)
-                    return;
-                String menuId = parts[1];
-                MenuManager manager = plugin.getMenuManager();
-                if (manager != null)
-                    manager.open(player, menuId);
+            case "BACK" -> {
+                gui.close(player, true);
+                gui.open(player, MainGUI.ID);
             }
         }
     }
 
+    /**
+     * Opens the preview GUI for a specific chest.
+     *
+     * @param args Expects the chest ID as the first argument.
+     */
     @Override
-    public void onOpen(@NotNull Player player) {
-        PlayerCache cache = PlayerCacheManager.get(player.getUniqueId());
-        cache.setPreviewPage(1);
-        MenuManager manager = plugin.getMenuManager();
-        if (manager != null) {
-            SGMenu menu = manager.getMenu(player, ID);
-            if (menu != null) {
-                if (isMenuTitleTranslated) {
-                    menu.setName(translator.localize(player, menuTitle, Map.of("chest", cache.getPreviewChest().getName())));
-                }
-                refresh(player, menu);
-            }
+    public void onOpen(@NotNull Player player, Object... args) {
+        if (args.length == 0)
+            return;
+
+        String chestId = (String) args[0];
+        var chest = chestManager.getChest(chestId);
+        if (chest == null)
+            return;
+
+        BaseGui menu = gui.getMenu(player, ID);
+        if (menu == null)
+            return;
+
+        playerChests.put(player.getUniqueId(), chest);
+        playerPages.put(player.getUniqueId(), 1);
+
+        if (isTitleTranslated) {
+            menu.updateTitle(AdventureUtils.parse(translator.localize(
+                    player, menuTitle,
+                    Map.of("chest", translator.localize(player, chest.getNameKey()))
+            ), true));
         }
+        refresh(player, menu);
+    }
+
+    /**
+     * Cleans up cached data when the player closes the GUI.
+     */
+    @Override
+    public void onClose(@NotNull Player player) {
+        playerPages.remove(player.getUniqueId());
+        playerChests.remove(player.getUniqueId());
     }
 }
