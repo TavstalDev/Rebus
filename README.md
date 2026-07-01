@@ -7,13 +7,10 @@
 ![Issues](https://img.shields.io/github/issues/TavstalDev/Rebus?style=plastic-square)
 
 ## Description
-The remastered version of MesterMC's Rebus plugin.
+The remastered version of MesterMC's Rébusz plugin. 
+Rebus is a lootbox plugin that allows players to open lootboxes and receive random rewards.
 
-## Note 
-
-> In the future I am going to rework the reward system, so players can have a better preview of the items they are going to receive and can see the chances of receiving them.
-> At the moment it is hard a little bit to be implemented, since I had to rush the plugin.
-> Also, I plan to add virtual chests to avoid duping.
+> **NOTE:** Currently, under mayor revisions.
 
 ## Dependencies
 
@@ -21,20 +18,24 @@ To ensure the plugin functions correctly, your server must have the following pl
 
 - **[ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)**: This plugin is essential for handling custom network packets, which Rebus utilizes for its advanced features.
 - **[Citizens](https://www.spigotmc.org/resources/citizens.13811/)**: This plugin allows for the creation and management of NPCs (Non-Player Characters) within the game, which Rebus uses to enhance player interaction.
-- **[Vault](https://www.spigotmc.org/resources/vault.34315/)**: This plugin provides a unified API for various economy.
+- A plugin that integrates one of the following economy apis:
+- - **[Vault](https://www.spigotmc.org/resources/vault.34315/)**: This plugin provides a unified API for various economy.
+- - **[PlayerPoints](https://www.spigotmc.org/resources/playerpoints.80745/)**: This plugin allows for a point-based economy system, which Rebus can utilize for its lootbox transactions.
 
 ## Commands
-| Command                             | Description                                          | Permission   |
-|-------------------------------------|------------------------------------------------------|--------------|
-| `/rebus help`                       | Displays help information about Rebus                | rebus.use    |
-| `/rebus version`                    | Displays the current version of Rebus                | rebus.use    |
-| `/rebus menu`                       | Opens the Rebus main menu GUI                        | rebus.use    |
-| `/rebusadmin`                       | Main admin command.                                  | rebus.admin  |
-| `/rebusadmin help`                  | Displays help information about Rebus admin commands | rebus.help   |
-| `/rebusadmin reload`                | Reloads the Rebus configuration files                | rebus.reload | 
-| `/rebusadmin version`               | Displays the current version of Rebus                | rebus.info   |
-| `/rebusadmin npc`                   | Spawns the Rebus NPC                                 | rebus.npc    |
-| `/rebusadmin give <player> <chest>` | Gives a specific puzzle to a player                  | rebus.give   |
+| Command                             | Description                                          | Permission                       |
+|-------------------------------------|------------------------------------------------------|----------------------------------|
+| `/rebus help`                       | Displays help information about the plugin           | rebus.commands.rebus             |
+| `/rebus version`                    | Displays the current version of the plugin           | rebus.commands.rebus             |
+| `/rebus menu`                       | Opens the Rebus main menu GUI                        | rebus.commands.rebus.menu        |
+| `/rebusadmin`                       | Main admin command.                                  | rebus.commands.rebusadmin        |
+| `/rebusadmin help`                  | Displays help information about Rebus admin commands | rebus.commands.rebusadmin        |
+| `/rebusadmin reload`                | Reloads the configuration files                      | rebus.commands.rebusadmin.reload | 
+| `/rebusadmin version`               | Displays the current version of the plugin           | rebus.commands.rebusadmin.info   |
+| `/rebusadmin npc`                   | Spawns the Rebus NPC                                 | rebus.commands.rebusadmin.npc    |
+| `/rebusadmin give <player> <chest>` | Gives a specific chest to a player                   | rebus.commands.rebusadmin.give   |
+
+`rebus.use` is the permission that allows players to interact with the npc and open the menu without having the `rebus.commands.rebus.menu` permission.
 
 ## Contributing
 
