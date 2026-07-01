@@ -2,128 +2,98 @@ package io.github.tavstaldev.rebus;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import io.github.tavstaldev.minecorelib.PluginBase;
-import io.github.tavstaldev.minecorelib.core.PluginLogger;
-import io.github.tavstaldev.minecorelib.core.PluginTranslator;
-import io.github.tavstaldev.minecorelib.managers.MenuManager;
-import io.github.tavstaldev.minecorelib.utils.ItemMetaSerializer;
-import io.github.tavstaldev.minecorelib.utils.VersionUtils;
 import io.github.tavstaldev.rebus.commands.CommandRebus;
 import io.github.tavstaldev.rebus.commands.CommandRebusAdmin;
-import io.github.tavstaldev.rebus.database.IDatabase;
+import io.github.tavstaldev.rebus.database.IRebusDatabase;
 import io.github.tavstaldev.rebus.database.MySqlDatabase;
-import io.github.tavstaldev.rebus.database.SqlLiteDatabase;
+import io.github.tavstaldev.rebus.database.PostgreDatabase;
+import io.github.tavstaldev.rebus.database.SqLiteDatabase;
 import io.github.tavstaldev.rebus.events.BlockEventListener;
+import io.github.tavstaldev.rebus.events.EntityEventListener;
 import io.github.tavstaldev.rebus.events.PlayerEventListener;
 import io.github.tavstaldev.rebus.gui.MainGUI;
 import io.github.tavstaldev.rebus.gui.PreviewGUI;
 import io.github.tavstaldev.rebus.managers.ChestManager;
 import io.github.tavstaldev.rebus.managers.NpcManager;
-import io.github.tavstaldev.rebus.managers.economy.BanyaszManager;
+import io.github.tavstaldev.rebus.managers.PrizeManager;
 import io.github.tavstaldev.rebus.managers.economy.IEconomyManager;
+import io.github.tavstaldev.rebus.managers.economy.PlayerPointsManager;
 import io.github.tavstaldev.rebus.managers.economy.VaultManager;
-import io.github.tavstaldev.rebus.metrics.Metrics;
 import io.github.tavstaldev.rebus.models.NpcTrait;
-import io.github.tavstaldev.rebus.tasks.CacheCleanTask;
+import io.github.tavstaldev.yggra.core.YggraPlugin;
+import io.github.tavstaldev.yggra.core.cache.MemoryCache;
+import io.github.tavstaldev.yggra.core.cache.RedisCache;
+import io.github.tavstaldev.yggra.core.database.QueryCondition;
+import io.github.tavstaldev.yggra.core.gui.GuiManager;
+import io.github.tavstaldev.yggra.core.scheduler.ITask;
+import io.github.tavstaldev.yggra.core.scheduler.YggraTask;
+import io.github.tavstaldev.yggra.core.utils.VersionUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Main class for the Rebus plugin.
  * Extends PluginBase to provide core plugin functionality.
  */
-public final class Rebus extends PluginBase {
-    // Singleton instance of the plugin
-    public static Rebus Instance;
-
-    // Various plugin components and managers
-    private ItemMetaSerializer _itemMetaSerializer;
+public final class Rebus extends YggraPlugin<RebusConfig> {
+    public static Rebus instance;
+    private PrizeManager _prizeManager;
     private ChestManager _chestManager;
     private NpcManager _npcManager;
     private ProtocolManager _protocolManager;
-    private IDatabase _database;
     private IEconomyManager _economyManager;
-    private CacheCleanTask cacheCleanTask; // Task for cleaning player caches.
+    private ITask autoCleanTask;
+    private final Map<UUID, Object> playerLocks = new ConcurrentHashMap<>();
 
     /**
-     * Provides access to the plugin's logger.
-     * @return PluginLogger instance.
+     * Gets the database instance.
+     * @return The database implementation.
      */
-    public static PluginLogger logger() {
-        return Instance.getCustomLogger();
-    }
+    public IRebusDatabase database() {return (IRebusDatabase)_database;}
 
     /**
-     * Provides access to the plugin's translator.
-     * @return PluginTranslator instance.
+     * Gets the prize manager instance.
+     * @return The prize manager.
      */
-    public static PluginTranslator translator() {
-        return Instance.getTranslator();
-    }
+    public PrizeManager prizeManager() {return _prizeManager;}
 
     /**
-     * Provides access to the plugin's configuration.
-     * @return RebusConfig instance.
+     * Gets the chest manager instance.
+     * @return The chest manager.
      */
-    public static RebusConfig config(){
-        return (RebusConfig) Instance._config;
-    }
+    public ChestManager chestManager() {return _chestManager;}
 
     /**
-     * Provides access to the ItemMetaSerializer.
-     * @return ItemMetaSerializer instance.
+     * Gets the NPC manager instance.
+     * @return The NPC manager.
      */
-    public static ItemMetaSerializer itemSerializer() {
-        return Instance._itemMetaSerializer;
-    }
+    public NpcManager npcManager() {return _npcManager;}
 
     /**
-     * Provides access to the ChestManager.
-     * @return ChestManager instance.
+     * Gets the economy manager instance.
+     * @return The economy manager.
      */
-    public static ChestManager chestManager() {
-        return Instance._chestManager;
-    }
+    public IEconomyManager economyManager() {return _economyManager;}
 
     /**
-     * Provides access to the NpcManager.
-     * @return NpcManager instance.
+     * Gets the ProtocolLib protocol manager instance.
+     * @return The protocol manager.
      */
-    public static NpcManager npcManager() {
-        return Instance._npcManager;
-    }
-
-    /**
-     * Provides access to the EconomyManager.
-     * @return IEconomyManager instance.
-     */
-    public static IEconomyManager economyManager() {
-        return Instance._economyManager;
-    }
-
-    /**
-     * Provides access to the ProtocolManager.
-     * @return ProtocolManager instance.
-     */
-    public static ProtocolManager protocols() {
-        return Instance._protocolManager;
-    }
-
-    /**
-     * Provides access to the database instance.
-     * @return IDatabase instance.
-     */
-    public static IDatabase database() {
-        return Instance._database;
+    public ProtocolManager protocols() {
+        return _protocolManager;
     }
 
     /**
      * Constructor for the Rebus plugin.
-     * Initializes the plugin with update checking enabled and a default download URL.
      */
     public Rebus() {
-        super(true, "https://github.com/TavstalDev/Rebus/releases/latest");
+        super(27759);
     }
 
     /**
@@ -135,31 +105,25 @@ public final class Rebus extends PluginBase {
         _protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
+
     /**
      * Called when the plugin is enabled.
      * Initializes various components, checks dependencies, and sets up the plugin.
      */
     @Override
-    public void onEnable() {
-        super.onEnable();
-        Instance = this;
-        super.onEnable(); // Call parent method
-        _config = new RebusConfig();
+    public void onPluginEnable() {
+        instance = this;
+        _logger.info(String.format("Loading %s...", getName()));
+
+        _config = new RebusConfig(this);
         _config.load(); // Ensure configuration is loaded before usage
-        _translator = new PluginTranslator(this, new String[]{"eng", "hun"});
-        _itemMetaSerializer = new ItemMetaSerializer(this);
-        _logger.info(String.format("Loading %s...", getProjectName()));
 
         // Check for compatibility with Minecraft versions
-        if (VersionUtils.isLegacy()) {
-            _logger.error("The plugin is not compatible with legacy versions of Minecraft. Please use a newer version of the game.");
+        if (!VersionUtils.isAtLeast(1, 20, 4)) {
+            _logger.error("The plugin is not compatible with minecraft versions below 1.20.4. Please use a newer version of the game.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-
-        // Register event listeners
-        PlayerEventListener.init();
-        BlockEventListener.init();
 
         // Load localizations
         if (!_translator.load()) {
@@ -170,17 +134,14 @@ public final class Rebus extends PluginBase {
 
         // Register economy integration
         _logger.debug("Setting up economy...");
-        if (config().useBanyaszLib) {
-            _economyManager = new BanyaszManager();
-            if (!_economyManager.enabled())
-                return; // Economy setup failed, plugin disabled in manager
-            _logger.info("Using BanyaszLib for economy.");
-        } else {
-            _economyManager = new VaultManager();
-            if (!_economyManager.enabled())
-                return; // Economy setup failed, plugin disabled in manager
-            _logger.info("Using Vault for economy.");
+        if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
+            _economyManager = new PlayerPointsManager(this);
         }
+        else {
+            _economyManager = new VaultManager(this);
+        }
+        if (!_economyManager.enabled())
+            return;
 
         // Check for Citizens plugin
         _logger.debug("Hooking into Citizens...");
@@ -193,72 +154,106 @@ public final class Rebus extends PluginBase {
             _logger.info("Citizens found and hooked into it.");
         }
 
-        // Initialize SpiGUI
-        _logger.debug("Initializing SpiGUI...");
-        MenuManager menuManager = getMenuManager();
-        if (menuManager != null) {
-            menuManager.register(MainGUI.ID, new MainGUI());
-            menuManager.register(PreviewGUI.ID, new PreviewGUI());
-        }
+        boolean enableRedis = config().storageRedisEnabled;
+        if (enableRedis)
+            _cache = new RedisCache(config().storageRedisHost, config().storageRedisPort, config().storageRedisUsername, config().storageRedisPassword);
+        else
+            _cache = new MemoryCache(logger());
 
-        // Register commands
-        _logger.debug("Registering commands...");
-        var command = getCommand("rebus");
-        if (command != null) {
-            command.setExecutor(new CommandRebus());
-        }
-        command = getCommand("rebusadmin");
-        if (command != null) {
-            command.setExecutor(new CommandRebusAdmin());
-        }
+        // Initialize PrizeManager
+        _logger.debug("Initializing Prize Manager...");
+        _prizeManager = new PrizeManager(this);
+        _prizeManager.load();
 
         // Initialize ChestManager
         _logger.debug("Initializing Chest Manager...");
-        _chestManager = new ChestManager();
+        _chestManager = new ChestManager(this, _prizeManager);
         _chestManager.load();
 
         // Initialize NpcManager
         _logger.debug("Initializing NPC Manager...");
-        _npcManager = new NpcManager();
+        _npcManager = new NpcManager(this);
 
         // Initialize database based on configuration
         String databaseType = config().storageType;
-        if (databaseType == null) {
+        if (databaseType == null)
             databaseType = "sqlite";
-        }
         switch (databaseType.toLowerCase()) {
-            case "mysql": {
-                _database = new MySqlDatabase();
+            case "mysql":
+            case "mariadb": {
+                try
+                {
+                    _database = new MySqlDatabase(this);
+                }
+                catch (Exception ex) {
+                    _logger.error("Failed to construct mysql/mariadb database. Unloading...", ex);
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
+                break;
+            }
+            case "postgre":
+            case "postgres":
+            case "postgresql": {
+                try {
+                    _database = new PostgreDatabase(this);
+                }
+                catch (Exception ex) {
+                    _logger.error("Failed to construct postgres database. Unloading...", ex);
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
                 break;
             }
             case "sqlite":
             default: {
-                _database = new SqlLiteDatabase();
+                try {
+                    _database = new SqLiteDatabase(this);
+                }
+                catch (Exception ex) {
+                    _logger.error("Failed to construct sqlite database. Unloading...", ex);
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
                 break;
             }
         }
         _database.load();
         _database.checkSchema();
 
-        // Register cache cleanup task.
-        if (cacheCleanTask != null && !cacheCleanTask.isCancelled())
-            cacheCleanTask.cancel();
-        cacheCleanTask = new CacheCleanTask(); // Runs every 5 minutes
-        cacheCleanTask.runTaskTimer(this, 0, 5 * 60 * 20);
+        // Register event listeners
+        new PlayerEventListener(this, chestManager());
+        new BlockEventListener(this, database(), chestManager());
+        new EntityEventListener(this, chestManager());
 
-        // Metrics
+        // Initialize SpiGUI
+        _logger.debug("Initializing gui...");
+        _gui = new GuiManager(this);
+        _gui.register(new MainGUI(this, database(), chestManager(), economyManager()));
+        _gui.register(new PreviewGUI(this, prizeManager(), chestManager()));
+
+        // Register commands
+        _logger.debug("Registering commands...");
         try {
-            @SuppressWarnings("unused") Metrics metrics = new Metrics(this, 27759);
+            var command = getCommand("rebus");
+            if (command != null) {
+                command.setExecutor(new CommandRebus(this));
+            }
+            command = getCommand("rebusadmin");
+            if (command != null) {
+                command.setExecutor(new CommandRebusAdmin(this));
+            }
         }
-        catch (Exception ex)
-        {
-            _logger.error("Failed to start Metrics: " + ex.getMessage());
+        catch (Exception ex) {
+            _logger.error("Failed to register commands.", ex);
         }
 
-        _logger.ok(String.format("%s has been successfully loaded.", getProjectName()));
+        autoCleanTask = scheduler().runRepeatingAsync(getCleanTask(), 60L, _config.storageAutoClean);
+
+        _logger.ok(String.format("%s has been successfully loaded.", getName()));
 
         // Check for updates if enabled in configuration
-        if (config().checkForUpdates) {
+        /*if (config().checkForUpdates) {
             isUpToDate().thenAccept(upToDate -> {
                 if (upToDate) {
                     _logger.ok("Plugin is up to date!");
@@ -266,10 +261,10 @@ public final class Rebus extends PluginBase {
                     _logger.warn("A new version of the plugin is available: " + getDownloadUrl());
                 }
             }).exceptionally(e -> {
-                _logger.error("Failed to determine update status: " + e.getMessage());
+                _logger.error("Failed to determine update status: ", e);
                 return null;
             });
-        }
+        }*/
     }
 
     /**
@@ -277,20 +272,21 @@ public final class Rebus extends PluginBase {
      * Cleans up resources and shuts down managers.
      */
     @Override
-    public void onDisable() {
-        super.onDisable();
+    public void onPluginDisable() {
 
         // Unregister GUIs
-        MenuManager menuManager = getMenuManager();
-        if (menuManager != null) {
-            menuManager.closeAll();
+        if (_gui != null) {
+            _gui.closeAll();
 
-            menuManager.unregister(MainGUI.ID);
-            menuManager.unregister(PreviewGUI.ID);
-            menuManager.invalidateAllCache();
+            _gui.unregister(MainGUI.ID);
+            _gui.unregister(PreviewGUI.ID);
+            _gui.invalidateAllCaches();
         }
 
-        _logger.info(String.format("%s has been successfully unloaded.", getProjectName()));
+        if (!autoCleanTask.isCancelled())
+            autoCleanTask.cancel();
+
+        _logger.info(String.format("%s has been successfully unloaded.", getName()));
     }
 
     /**
@@ -298,7 +294,7 @@ public final class Rebus extends PluginBase {
      * Also reloads the ChestManager.
      */
     public void reload() {
-        _logger.info(String.format("Reloading %s...", getProjectName()));
+        _logger.info(String.format("Reloading %s...", getName()));
         _logger.debug("Reloading localizations...");
         _translator.load();
         _logger.debug("Localizations reloaded.");
@@ -306,24 +302,75 @@ public final class Rebus extends PluginBase {
         this._config.load();
         _logger.debug("Configuration reloaded.");
 
+        if (!autoCleanTask.isCancelled())
+            autoCleanTask.cancel();
+
+        assert _database != null;
         _database.unload();
         _database.load();
         _database.checkSchema();
+
+        // Reload prizes
+        _prizeManager.load();
 
         // Reload chests
         _chestManager.load();
 
         // Re-register GUIs
-        MenuManager menuManager = getMenuManager();
-        if (menuManager != null) {
-            menuManager.closeAll();
+        if (_gui != null) {
+            _gui.closeAll();
 
-            menuManager.unregister(MainGUI.ID);
-            menuManager.unregister(PreviewGUI.ID);
-            menuManager.invalidateAllCache();
+            _gui.unregister(MainGUI.ID);
+            _gui.unregister(PreviewGUI.ID);
+            _gui.invalidateAllCaches();
 
-            menuManager.register(MainGUI.ID, new MainGUI());
-            menuManager.register(PreviewGUI.ID, new PreviewGUI());
+            _gui.register(new MainGUI(this, database(), chestManager(), economyManager()));
+            _gui.register(new PreviewGUI(this, prizeManager(), chestManager()));
         }
+
+        autoCleanTask = scheduler().runRepeatingAsync(getCleanTask(), 60L, _config.storageAutoClean);
+    }
+
+    /**
+     * Creates a recurring task that deletes expired cooldowns from the database.
+     * Cancels the task if the database is unavailable or an error occurs.
+     */
+    private YggraTask getCleanTask() {
+        return new YggraTask() {
+            @Override
+            public void run() {
+                try {
+                    if (database() == null)
+                    {
+                        autoCleanTask.cancel();
+                        return;
+                    }
+                    database().cooldowns().deleteByCriteria(QueryCondition.lt("expiresAt", LocalDateTime.now()));
+                }
+                catch (Exception ex) {
+                    _logger.error("Failed to auto clean database.", ex);
+                    autoCleanTask.cancel();
+                }
+            }
+        };
+    }
+
+    /**
+     * Retrieves or creates a lock object for the given player, used for synchronization.
+     *
+     * @param playerId The UUID of the player.
+     * @return The lock object associated with the player.
+     */
+    public Object getPlayerLock(UUID playerId) {
+        return playerLocks.computeIfAbsent(playerId, k -> new Object());
+    }
+
+    /**
+     * Removes the lock object associated with the given player.
+     *
+     * @param playerId The UUID of the player.
+     */
+    public void removePlayerLock(UUID playerId) {
+        playerLocks.remove(playerId);
     }
 }

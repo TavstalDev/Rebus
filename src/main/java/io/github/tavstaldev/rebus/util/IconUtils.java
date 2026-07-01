@@ -6,7 +6,7 @@ import org.bukkit.Material;
  * Utility class for handling icon-related operations, such as retrieving
  * materials by name or from configuration.
  */
-public class IconUtils {
+public final class IconUtils {
 
     /**
      * Retrieves a Material based on its name. If the name is null, empty, or
