@@ -7,7 +7,7 @@ prefix: Rebus
 authors: [ Tavstal ]
 website: https://tavstaldev.github.io/
 
-depend: [Citizens, Vault, ProtocolLib]
+softdepend: [Citizens, Vault, ProtocolLib, PlayerPoints]
 
 libraries:
   - com.zaxxer:HikariCP:6.3.0
