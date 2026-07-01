@@ -1,61 +1,79 @@
 package io.github.tavstaldev.rebus.commands;
 
-import io.github.tavstaldev.minecorelib.core.PluginLogger;
-import io.github.tavstaldev.minecorelib.models.command.SubCommandData;
-import io.github.tavstaldev.minecorelib.utils.ChatUtils;
 import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.models.RebusChest;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
+import io.github.tavstaldev.rebus.database.IRebusDatabase;
+import io.github.tavstaldev.rebus.managers.ChestManager;
+import io.github.tavstaldev.rebus.managers.NpcManager;
+import io.github.tavstaldev.rebus.models.Chest;
+import io.github.tavstaldev.yggra.core.commands.CommandBase;
+import io.github.tavstaldev.yggra.core.commands.SubCommand;
+import io.github.tavstaldev.yggra.core.database.QueryCondition;
+import io.github.tavstaldev.yggra.core.logger.YggraLogger;
+import io.github.tavstaldev.yggra.core.scheduler.YggraTask;
+import io.github.tavstaldev.yggra.core.services.ChatService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * CommandRebusAdmin is the command handler for the "rebusadmin" command.
  * It implements the CommandExecutor interface to process admin-level commands
  * and their subcommands.
  */
-public class CommandRebusAdmin implements CommandExecutor {
-    // Logger instance for logging messages related to this command.
-    private final PluginLogger _logger = Rebus.logger().withModule(CommandRebusAdmin.class);
+public class CommandRebusAdmin extends CommandBase {
+    private final Rebus plugin;
+    private final YggraLogger logger;
+    private final ChatService chat;
+    private final ChestManager chestManager;
+    private final NpcManager npcManager;
+    private final IRebusDatabase database;
 
-    // List of subcommands available for the "rebusadmin" command.
-    private final List<SubCommandData> _subCommands = new ArrayList<>() {
-        {
-            // HELP subcommand
-            add(new SubCommandData("help", "rebus.admin", Map.of(
-                    "syntax", "",
-                    "description", "Commands.Help.Desc"
-            )));
-            // VERSION subcommand
-            add(new SubCommandData("version", "rebus.info", Map.of(
-                    "syntax", "",
-                    "description", "Commands.Version.Desc"
-            )));
-            // RELOAD subcommand
-            add(new SubCommandData("reload", "rebus.reload", Map.of(
-                    "syntax", "",
-                    "description", "Commands.Reload.Desc"
-            )));
-            // NPC subcommand
-            add(new SubCommandData("npc", "rebus.npc", Map.of(
-                    "syntax", "",
-                    "description", "Commands.Npc.Desc"
-            )));
-            // GIVE subcommand
-            add(new SubCommandData("give", "rebus.give", Map.of(
-                    "syntax", "Commands.Give.Syntax",
-                    "description", "Commands.Give.Desc"
-            )));
-        }
-    };
+    public CommandRebusAdmin(Rebus plugin) throws IllegalAccessException {
+        super(plugin, "rebusadmin", "rebus.commands.rebusadmin", new ArrayList<>() {
+            {
+                // HELP subcommand
+                add(new SubCommand("help", "rebus.commands.rebusadmin", Map.of(
+                        "syntax", "",
+                        "description", "commands.help.desc"
+                )));
+                // RELOAD subcommand
+                add(new SubCommand("reload", "rebus.commands.rebusadmin.reload", Map.of(
+                        "syntax", "",
+                        "description", "commands.reload.desc"
+                )));
+                // NPC subcommand
+                add(new SubCommand("npc", "rebus.commands.rebusadmin.npc", Map.of(
+                        "syntax", "",
+                        "description", "commands.npc.desc"
+                )));
+                // GIVE subcommand
+                add(new SubCommand("give", "rebus.commands.rebusadmin.give", Map.of(
+                        "syntax", "commands.give.syntax",
+                        "description", "commands.give.desc"
+                )));
+                // RESET subcommand
+                add(new SubCommand("reset", "rebus.commands.rebusadmin.reset", Map.of(
+                        "syntax", "commands.reset.syntax",
+                        "description", "commands.reset.desc"
+                )));
+            }
+        });
+
+        this.plugin = plugin;
+        this.logger = plugin.logger().withModule(CommandRebus.class);
+        this.chat = plugin.chat();
+        this.chestManager = plugin.chestManager();
+        this.npcManager = plugin.npcManager();
+        this.database = plugin.database();
+    }
 
     /**
      * Handles the execution of the "rebusadmin" command.
@@ -70,14 +88,14 @@ public class CommandRebusAdmin implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
         // Handle console sender
         if (sender instanceof ConsoleCommandSender) {
-            _logger.info(ChatUtils.translateColors("Commands.ConsoleCaller", true).toString());
+            chat.sendCommandReply(sender, "commands.error.console-caller");
             return true;
         }
 
         // Handle player sender
         Player player = (Player) sender;
-        if (!player.hasPermission("rebus.admin")) {
-            Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+        if (!player.hasPermission("rebus.commands.rebusadmin")) {
+            chat.sendLocalizedMsg(player, "general.error.no-permission");
             return true;
         }
 
@@ -91,196 +109,136 @@ public class CommandRebusAdmin implements CommandExecutor {
                         try {
                             page = Integer.parseInt(args[1]);
                         } catch (Exception ex) {
-                            Rebus.Instance.sendLocalizedMsg(player, "Commands.Common.InvalidPage");
+                            chat.sendLocalizedMsg(player, "commands.error.invalid-page");
                             return true;
                         }
                     }
 
-                    help(player, page);
-                    return true;
-                }
-                case "version": {
-                    Map<String, Object> parameters = new HashMap<>();
-                    parameters.put("version", Rebus.Instance.getVersion());
-                    Rebus.Instance.sendLocalizedMsg(player, "Commands.Version.Current", parameters);
-
-                    Rebus.Instance.isUpToDate().thenAccept(upToDate -> {
-                        if (upToDate) {
-                            Rebus.Instance.sendLocalizedMsg(player, "Commands.Version.UpToDate");
-                        } else {
-                            Rebus.Instance.sendLocalizedMsg(player, "Commands.Version.Outdated", Map.of("link", Rebus.Instance.getDownloadUrl()));
-                        }
-                    }).exceptionally(e -> {
-                        _logger.error("Failed to determine update status: " + e.getMessage());
-                        return null;
-                    });
+                    sendHelp(player, page);
                     return true;
                 }
                 case "reload": {
-                    if (!player.hasPermission("rebus.reload")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    if (!player.hasPermission("rebus.commands.rebusadmin.reload")) {
+                        chat.sendLocalizedMsg(player, "general.error.no-permission");
                         return true;
                     }
 
-                    Rebus.Instance.reload();
-                    Rebus.Instance.sendLocalizedMsg(player, "Commands.Reload.Done");
+                    plugin.reload();
+                    chat.sendLocalizedMsg(player, "commands.reload.done");
                     return true;
                 }
                 case "npc": {
-                    if (!player.hasPermission("rebus.npc")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    if (!player.hasPermission("rebus.commands.rebusadmin.npc")) {
+                        chat.sendLocalizedMsg(player, "general.error.no-permission");
                         return true;
                     }
 
-                    Rebus.npcManager().spawnNPC(player);
+                    npcManager.spawnNPC(player);
                     return true;
                 }
+                case "remove-npcs":
                 case "removenpcs": {
-                    if (!player.hasPermission("rebus.npc")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    if (!player.hasPermission("rebus.commands.rebusadmin.npc")) {
+                        chat.sendLocalizedMsg(player, "general.error.no-permission");
                         return true;
                     }
-                    Rebus.npcManager().removeAllNpcs();
+                   npcManager.removeAllNPCs();
                     return true;
                 }
                 case "give": {
-                    if (!player.hasPermission("rebus.give")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    if (!player.hasPermission("rebus.commands.rebusadmin.give")) {
+                        chat.sendLocalizedMsg(player, "general.error.no-permission");
                         return true;
                     }
 
                     if (args.length != 3) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
+                        chat.sendLocalizedMsg(player, "commands.error.invalid-arguments");
                         return true;
                     }
 
                     Player target = Bukkit.getPlayer(args[1]);
                     if (target == null) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.PlayerNotFound");
+                        chat.sendLocalizedMsg(player, "general.error.player-not-found");
                         return true;
                     }
 
-                    RebusChest chest = null;
-                    for (RebusChest c : Rebus.chestManager().getChests()) {
-                        if (Objects.equals(c.getKey(), args[2])) {
-                            chest = c;
-                            break;
-                        }
-                    }
-
+                    Chest chest = chestManager.getChest(args[2]);
                     if (chest == null) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Chests.NotFound", Map.of("chest", args[2]));
+                        chat.sendLocalizedMsg(player, "chests.error.not-found", Map.of("chest", args[2]));
                         return true;
                     }
 
-                    chest.give(target, 1);
-                    Rebus.Instance.sendLocalizedMsg(player, "Commands.Give.Given", Map.of(
-                            "chest", chest.getName(),
+                    chestManager.giveChest(target, chest, 1);
+                    chat.sendLocalizedMsg(player, "commands.give.given", Map.of(
+                            "chest", plugin.translator().localize(player, chest.getNameKey()),
                             "player", target.getName()
                     ));
-                    Rebus.Instance.sendLocalizedMsg(target, "Commands.Give.Received", Map.of(
-                            "chest", chest.getName(),
+                    chat.sendLocalizedMsg(target, "commands.give.received", Map.of(
+                            "chest", plugin.translator().localize(target, chest.getNameKey()),
                             "player", player.getName()
                     ));
                     return true;
                 }
                 case "reset": {
-                    if (!player.hasPermission("rebus.reset")) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.NoPermission");
+                    if (!player.hasPermission("rebus.commands.rebusadmin.reset")) {
+                        chat.sendLocalizedMsg(player, "general.error.no-permission");
                         return true;
                     }
 
                     if (args.length != 2) {
-                        Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
+                        chat.sendLocalizedMsg(player, "commands.erorr.invalid-arguments");
                         return true;
                     }
 
                     Player target = Bukkit.getPlayer(args[1]);
                     if (target == null) {
-                        Rebus.Instance.sendLocalizedMsg(player, "General.PlayerNotFound");
+                        chat.sendLocalizedMsg(player, "general.error.player-not-found");
                         return true;
                     }
 
-                    Rebus.database().removeAllCooldowns(target.getUniqueId());
-                    Rebus.Instance.sendLocalizedMsg(player, "General.ResetCooldowns", Map.of("player", target.getName()));
-                    Rebus.Instance.sendLocalizedMsg(target, "General.YourCooldownsReset");
+                    plugin.scheduler().runAsync(new YggraTask() {
+                        @Override
+                        public void run() {
+                            database.cooldowns().deleteByCriteria(QueryCondition.eq("playerId", target.getUniqueId()));
+                            chat.sendLocalizedMsg(player, "commands.reset.reset-cooldowns-for", Map.of("player", target.getName()));
+                            chat.sendLocalizedMsg(target, "commands.reset.reseted-by-admin");
+                        }
+                    });
                     return true;
                 }
             }
 
             // Invalid arguments
-            Rebus.Instance.sendLocalizedMsg(player, "Commands.InvalidArguments");
+            chat.sendLocalizedMsg(player, "Commands.InvalidArguments");
             return true;
         }
 
         // Default to help command
-        help(player, 1);
+        sendHelp(player, 1);
         return true;
     }
-
-    /**
-     * Displays the help menu for the "rebusadmin" command.
-     *
-     * @param player The player requesting help.
-     * @param page   The page number of the help menu to display.
-     */
-    private void help(Player player, int page) {
-        int maxPage = 1 + (_subCommands.size() / 15);
-
-        // Ensure the page number is within valid bounds
-        if (page > maxPage)
-            page = maxPage;
-        if (page < 1)
-            page = 1;
-        int finalPage = page;
-
-        // Send help title and info
-        Rebus.Instance.sendLocalizedMsg(player, "Commands.Help.Title", Map.of(
-                        "current_page", finalPage,
-                        "max_page", maxPage
-                )
-        );
-        Rebus.Instance.sendLocalizedMsg(player, "Commands.Help.Info");
-
-        // Display subcommands
-        boolean reachedEnd = false;
-        int itemIndex = 0;
-        for (int i = 0; i < 15; i++) {
-            int index = itemIndex + (page - 1) * 15;
-            if (index >= _subCommands.size()) {
-                reachedEnd = true;
-                break;
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
+        switch (args.length){
+            case 0:
+            case 1: {
+                return List.of("help", "reload", "npc", "remove-npcs", "give", "reset");
             }
-            itemIndex++;
-
-            SubCommandData subCommand = _subCommands.get(index);
-            if (!subCommand.hasPermission(player)) {
-                i--;
-                continue;
+            case 2: {
+                String arg = args[0].toLowerCase();
+                if (arg.equalsIgnoreCase("give") || arg.equalsIgnoreCase("reset"))
+                    return null;
+                return List.of();
             }
-
-            subCommand.send(Rebus.Instance, player, "rebusadmin");
+            case 3: {
+                String arg = args[0].toLowerCase();
+                if (arg.equalsIgnoreCase("give"))
+                    return chestManager.getChests().values().stream().map(Chest::getKey).toList();
+                return List.of();
+            }
+            default: {
+                return List.of();
+            }
         }
-
-        // Display navigation buttons
-        String previousBtn = Rebus.Instance.localize(player, "Commands.Help.PrevBtn");
-        String nextBtn = Rebus.Instance.localize(player, "Commands.Help.NextBtn");
-        String bottomMsg = Rebus.Instance.localize(player, "Commands.Help.Bottom")
-                .replace("%current_page%", String.valueOf(page))
-                .replace("%max_page%", String.valueOf(maxPage));
-
-        Map<String, Component> bottomParams = new HashMap<>();
-        if (page > 1)
-            bottomParams.put("previous_btn", ChatUtils.translateColors(previousBtn, true).clickEvent(ClickEvent.runCommand("/rebusadmin help " + (page - 1))));
-        else
-            bottomParams.put("previous_btn", ChatUtils.translateColors(previousBtn, true));
-
-        if (!reachedEnd && maxPage >= page + 1)
-            bottomParams.put("next_btn", ChatUtils.translateColors(nextBtn, true).clickEvent(ClickEvent.runCommand("/rebusadmin help " + (page + 1))));
-        else
-            bottomParams.put("next_btn", ChatUtils.translateColors(nextBtn, true));
-
-        Component bottomComp = ChatUtils.buildWithButtons(bottomMsg, bottomParams);
-        player.sendMessage(bottomComp);
     }
 }
