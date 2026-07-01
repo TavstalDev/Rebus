@@ -1,4 +1,4 @@
-package io.github.tavstaldev.rebus.models;
+package io.github.tavstaldev.rebus.database.models;
 
 /**
  * Enum representing different types of cooldowns in the application.
