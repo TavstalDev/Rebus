@@ -1,0 +1,26 @@
+version: 2
+updates:
+  # 1. Keep Gradle dependencies up to date
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    labels:
+      - "type: github-actions"
+      - "priority: high"
+      - "status: needs review"
+    groups:
+      gradle-dependencies:
+        patterns:
+          - "*"
+
+  # 2. Keep GitHub Actions workflows up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
