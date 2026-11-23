@@ -1,0 +1,139 @@
+# Purpose: This GitHub Actions workflow builds the Paper plugin and creates a pre-release on the stable branch securely.
+name: Build and Pre-release Paper Plugin
+
+on:
+  push:
+    branches:
+      - stable
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Plugin
+    runs-on: ubuntu-latest
+    outputs:
+      plugin_version: ${{ steps.extract_version.outputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Fetch all history for proper tag/changelog handling
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: 8
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: 25
+
+      - name: Grant Gradle wrapper permission
+        run: chmod +x ./gradlew
+
+      - name: Build plugin
+        run: ./gradlew build
+
+      - name: Extract version from JAR file name
+        id: extract_version
+        run: |
+          # Locate the built JAR file inside build/libs/
+          jar_file=$(find build/libs -name "*.jar" ! -name "*-sources.jar" ! -name "*-javadoc.jar" ! -name "*-all.jar" ! -name "*-shaded.jar" | head -n 1)
+          
+          if [ -z "$jar_file" ]; then
+            echo "Error: No JAR file found in build/libs!"
+            exit 1
+          fi
+          
+          # Get filename without path and without extension (.jar)
+          filename=$(basename "$jar_file" .jar)
+          
+          # Extract version (assumes format like plugin-name-1.0.0.jar -> grabs 1.0.0)
+          version="${filename##*-}"
+          
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Extracted version: $version from $(basename "$jar_file")"
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-jar
+          path: build/libs/*.jar
+
+  release:
+    name: Create GitHub Pre-release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (for changelog generation)
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download built JAR
+        uses: actions/download-artifact@v8
+        with:
+          name: plugin-jar
+
+      - name: Determine changelog range
+        id: range
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          if [ -z "$PREV_TAG" ]; then
+          # No tags yet: start from the first commit
+          PREV_TAG=$(git rev-list --max-parents=0 HEAD | tail -n 1)
+          fi
+          echo "from=$PREV_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Generate Changelog safely
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v6
+        continue-on-error: true
+        with:
+          mode: COMMIT
+          fromTag: ${{ steps.range.outputs.from }}
+          toTag: ${{ github.sha }}
+          configurationJson: |
+            {
+              "template": "#{{CHANGELOG}}\n\n## Other\n\n#{{UNCATEGORIZED}}",
+              "commit_template": "- #{{TITLE}}",
+              "categories": [
+                { "title": "## Features", "rules": [{ "pattern": "^feat(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Bug Fixes", "rules": [{ "pattern": "^fix(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Performance", "rules": [{ "pattern": "^perf(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Refactoring", "rules": [{ "pattern": "^refactor(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Documentation", "rules": [{ "pattern": "^docs(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Style", "rules": [{ "pattern": "^style(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Tests", "rules": [{ "pattern": "^test(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Build System", "rules": [{ "pattern": "^build(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## CI", "rules": [{ "pattern": "^ci(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Chores", "rules": [{ "pattern": "^chore(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Reverts", "rules": [{ "pattern": "^revert(\\(.+\\))?!?:.*", "on_property": "title" }] },
+                { "title": "## Merges", "rules": [{ "pattern": "^Merge(\\(.+\\))?!?:.*", "on_property": "title" }] }
+              ]
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Pre-release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ needs.build.outputs.plugin_version }}
+          name: "Pre-release v${{ needs.build.outputs.plugin_version }}"
+          prerelease: true
+          body: |
+            ## 📜 Changelog
+            Changes pushed to `${{ github.ref_name }}`
+
+             ${{ steps.changelog.outputs.changelog || 'Initial release.' }}
+          files: |
+            *.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
