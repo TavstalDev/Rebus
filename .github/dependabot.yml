@@ -18,6 +18,10 @@ updates:
       gradle-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "org.spigotmc:spigot-api"
+      - dependency-name: "com.destroystokyo.paper:paper-api"
+      - dependency-name: "io.papermc.paper:paper-api"
 
   # 2. Keep GitHub Actions workflows up to date
   - package-ecosystem: "github-actions"
