@@ -10,11 +10,21 @@ data:
   buyCooldown: 0
   permission: "rebus.chest.default"
   slot: 2
-  particle: HAPPY_VILLAGER
+  particle: SMOKE
   particleCount: 35
-  openSound: minecraft:block.chest.open
-  closeSound: minecraft:block.chest.close
-  completionSound: minecraft:entity.player.levelup
+  sounds:
+    open:
+      name: block.chest.open
+      volume: 1.0
+      pitch: 1.0
+    close:
+      name: block.chest.close
+      volume: 1.0
+      pitch: 1.0
+    completion:
+      name: entity.player.levelup
+      volume: 1.0
+      pitch: 1.0
   isHighTier: false
   spawnLightningStrike: false
   guaranteedPrizes:

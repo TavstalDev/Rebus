@@ -10,11 +10,21 @@ data:
   buyCooldown: 0
   permission: "rebus.chest.pandora"
   slot: 4
-  particle: FIREWORK
+  particle: WITCH_MAGIC
   particleCount: 40
-  openSound: minecraft:block.ender_chest.open
-  closeSound: minecraft:block.ender_chest.close
-  completionSound: minecraft:entity.player.levelup
+  sounds:
+    open:
+      name: block.chest.open
+      volume: 1.0
+      pitch: 1.0
+    close:
+      name: block.chest.close
+      volume: 1.0
+      pitch: 1.0
+    completion:
+      name: entity.wither.death
+      volume: 0.5
+      pitch: 1.0
   isHighTier: true
   spawnLightningStrike: false
   guaranteedPrizes:

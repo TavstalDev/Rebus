@@ -10,11 +10,21 @@ data:
   buyCooldown: 0
   permission: "rebus.chest.choosen"
   slot: 6
-  particle: ENCHANTED_HIT
+  particle: MAGIC_CRIT
   particleCount: 50
-  openSound: minecraft:block.beacon.activate
-  closeSound: minecraft:block.beacon.deactivate
-  completionSound: minecraft:ui.toast.challenge_complete
+  sounds:
+    open:
+      name: block.chest.open
+      volume: 1.0
+      pitch: 1.0
+    close:
+      name: block.chest.close
+      volume: 1.0
+      pitch: 1.0
+    completion:
+      name: entity.enderdragon.growl
+      volume: 0.5
+      pitch: 1.0
   isHighTier: true
   spawnLightningStrike: true
   guaranteedPrizes:
