@@ -86,8 +86,7 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-plain:${adventureApiVersion}")
     compileOnly("net.kyori:adventure-text-serializer-gson:${adventureApiVersion}")
 
-    //implementation("com.github.TavstalDev:yggraLib:v$yggraLibVersion")
-    implementation("com.github.TavstalDev:yggraLib:master-SNAPSHOT")
+    implementation("com.github.TavstalDev:yggraLib:v$yggraLibVersion")
 }
 
 // Disable the default JAR task
