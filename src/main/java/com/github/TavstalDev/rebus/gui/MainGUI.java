@@ -1,23 +1,28 @@
-package io.github.tavstaldev.rebus.gui;
+package com.github.TavstalDev.rebus.gui;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.RebusConfig;
-import io.github.tavstaldev.rebus.database.IRebusDatabase;
-import io.github.tavstaldev.rebus.managers.ChestManager;
-import io.github.tavstaldev.rebus.managers.economy.IEconomyManager;
-import io.github.tavstaldev.rebus.models.Chest;
-import io.github.tavstaldev.rebus.database.models.Cooldown;
-import io.github.tavstaldev.rebus.database.models.ECooldownType;
-import io.github.tavstaldev.rebus.util.TimeUtil;
-import io.github.tavstaldev.yggra.core.gui.GuiBase;
-import io.github.tavstaldev.yggra.core.gui.GuiButton;
-import io.github.tavstaldev.yggra.core.gui.GuiManager;
-import io.github.tavstaldev.yggra.core.scheduler.YggraTask;
-import io.github.tavstaldev.yggra.core.services.ChatService;
-import io.github.tavstaldev.yggra.core.services.TranslationService;
-import io.github.tavstaldev.yggra.shadow.triumpGui.guis.BaseGui;
-import io.github.tavstaldev.yggra.shadow.triumpGui.guis.GuiItem;
-import org.bukkit.Material;
+import com.cryptomorin.xseries.XMaterial;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.config.RebusConfig;
+import com.github.TavstalDev.rebus.database.IRebusDatabase;
+import com.github.TavstalDev.rebus.database.models.Cooldown;
+import com.github.TavstalDev.rebus.database.models.ECooldownType;
+import com.github.TavstalDev.rebus.models.Chest;
+import com.github.TavstalDev.rebus.services.box.IBoxService;
+import com.github.TavstalDev.rebus.services.economy.IEconomyService;
+import com.github.TavstalDev.rebus.util.TimeUtil;
+import com.github.TavstalDev.yggraLib.api.localization.ITranslationService;
+import com.github.TavstalDev.yggraLib.api.scheduler.IScheduler;
+import com.github.TavstalDev.yggraLib.api.scheduler.YggraTask;
+import com.github.TavstalDev.yggraLib.api.utils.ListUtil;
+import com.github.TavstalDev.yggraLib.api.utils.MapUtil;
+import com.github.TavstalDev.yggraLib.bukkit.gui.GuiBase;
+import com.github.TavstalDev.yggraLib.bukkit.gui.GuiButton;
+import com.github.TavstalDev.yggraLib.bukkit.gui.IGuiService;
+import com.github.TavstalDev.yggraLib.bukkit.items.IItemStackAccessor;
+import com.github.TavstalDev.yggraLib.bukkit.items.INbtAccessor;
+import com.github.TavstalDev.yggraLib.bukkit.services.IChatService;
+import dev.triumphteam.gui.guis.BaseGui;
+import dev.triumphteam.gui.guis.GuiItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -31,67 +36,65 @@ import java.util.*;
  */
 public class MainGUI extends GuiBase {
     private final RebusConfig config;
-    private final TranslationService translator;
-    private final ChatService chat;
-    private final GuiManager gui;
-    private final IEconomyManager economyManager;
+    private final ITranslationService translator;
+    private final IChatService chat;
+    private final IScheduler scheduler;
+    private final IItemStackAccessor itemStackAccessor;
+    private final INbtAccessor nbtAccessor;
+    private final IGuiService gui;
+    private final IEconomyService economyManager;
     private final IRebusDatabase database;
-    private final ChestManager chestManager;
+    private final IBoxService boxService;
     public final static String ID = "main";
     private final HashSet<UUID> ongoingTransactions = new HashSet<>();
 
-    /**
-     * Creates the main GUI.
-     *
-     * @param plugin         The plugin instance.
-     * @param database       The database for cooldown and usage checks.
-     * @param chestManager   The chest manager for available chests.
-     * @param economyManager The economy manager for purchases.
-     */
-    public MainGUI(Rebus plugin, IRebusDatabase database, ChestManager chestManager, IEconomyManager economyManager) {
+    public MainGUI(Rebus plugin, ITranslationService translator, IChatService chatService, IScheduler scheduler,
+                   IItemStackAccessor itemStackAccessor, INbtAccessor nbtAccessor, IGuiService guiService,
+                   IEconomyService economyService, IRebusDatabase database, IBoxService boxService) {
         super(ID, plugin, "main.yml",
                 "gui.main.title",
                 true,
                 1,
-                new LinkedHashMap<>() {{
-                    put("chest_slots", new ArrayList<>() {{
+                new LinkedHashMap<String, List<String>>() {{
+                    put("chest_slots", new ArrayList<String>() {{
                         add("0-7");
                     }});
                 }},
-                new LinkedHashSet<>() {{
+                new LinkedHashSet<GuiButton>() {{
                     // Placeholder
-                    add(new GuiButton(null, "§r", false, null, false, List.of("0-8"),
-                            new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
+                    add(new GuiButton(null, "§r ", false, null, false, ListUtil.of("0-8"),
+                            XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()));
                     // Back button
                     add(new GuiButton("CLOSE","gui.common.close",
-                            true, null, false, List.of("8"),
-                            new ItemStack(Material.BARRIER)));
+                            true, null, false, ListUtil.of("8"),
+                            XMaterial.BARRIER.parseItem()));
                 }});
         this.config = plugin.config();
-        this.translator = plugin.translator();
-        this.chat = plugin.chat();
-        this.gui = plugin.gui();
+        this.translator = translator;
+        this.chat = chatService;
+        this.scheduler = scheduler;
+        this.itemStackAccessor = itemStackAccessor;
+        this.nbtAccessor = nbtAccessor;
+        this.gui = guiService;
         this.database = database;
-        this.chestManager = chestManager;
-        this.economyManager = economyManager;
+        this.boxService = boxService;
+        this.economyManager = economyService;
     }
 
     /**
      * Refreshes the GUI with the available chests and their purchase/preview actions.
      */
     @Override
-    public void refresh(@NotNull Player player, @NotNull BaseGui sgMenu) {
+    public void refresh(@NotNull Player player, @NotNull BaseGui menu) {
         UUID playerId = player.getUniqueId();
 
         // Handle dynamic slots
         List<Integer> dynamicSlots = this.dynamicSlots.getOrDefault("chest_slots", new ArrayList<>());
-        List<Chest> chests = chestManager.getChests().values().stream().toList();
+        List<Chest> chests = new ArrayList<>(boxService.getChests().values());
         for (int i = 0; i < dynamicSlots.size(); i++) {
             int slot = dynamicSlots.get(i);
 
             if (i >= chests.size()) {
-                // No pagination, just skip
-                //sgMenu.removeButton(0, slot);
                 continue;
             }
 
@@ -101,9 +104,9 @@ public class MainGUI extends GuiBase {
                 continue;
             }
 
-           var item = chest.getTranslatedDisplayItem(player, translator, true);
+           ItemStack item = chest.getTranslatedDisplayItem(player, translator, itemStackAccessor, nbtAccessor, true);
 
-            sgMenu.setItem(slot, new GuiItem(item, event ->
+            menu.setItem(slot, new GuiItem(item, event ->
             {
                 if (event.isRightClick()) {
                     gui.open(player, PreviewGUI.ID, chest.getKey());
@@ -121,7 +124,7 @@ public class MainGUI extends GuiBase {
                     chat.sendLocalizedMsg(player, "chests.error.transaction-ongoing");
                     return;
                 }
-                if (chestManager.playersUnlocking.contains(playerId)) {
+                if (boxService.playersUnlocking().contains(playerId)) {
                     chat.sendLocalizedMsg(player, "chests.error.buy-while-opening");
                     return;
                 }
@@ -135,11 +138,11 @@ public class MainGUI extends GuiBase {
                 // Check if the player has enough balance to purchase the chest.
                 double balance =  economyManager.getBalance(player);
                 if (balance < chest.getCost()) {
-                    chat.sendLocalizedMsg(player, "general.error.not-enough-money", Map.of("balance", balance));
+                    chat.sendLocalizedMsg(player, "general.error.not-enough-money", MapUtil.of("balance", balance));
                     return;
                 }
 
-                plugin.scheduler().runAsync(new YggraTask() {
+                scheduler.runAsync(new YggraTask() {
                     @Override
                     public void run() {
                         if (!ongoingTransactions.add(playerId)) {
@@ -150,15 +153,15 @@ public class MainGUI extends GuiBase {
                         try {
                             // Check if the player is on a buy cooldown for the chest.
                             if (!player.hasPermission("rebus.bypass.buycooldown")) {
-                                long remainingTime = database.getCooldown(playerId, config.storageContext, ECooldownType.BUY, chest.getKey());
+                                long remainingTime = database.getCooldown(playerId, config.storage.getContext(), ECooldownType.BUY, chest.getKey());
                                 if (remainingTime > 0) {
-                                    chat.sendLocalizedMsg(player, "chests.error.buy-cooldown", Map.of("time", TimeUtil.formatDuration(translator, player, remainingTime)));
+                                    chat.sendLocalizedMsg(player, "chests.error.buy-cooldown", MapUtil.of("time", TimeUtil.formatDuration(translator, player, remainingTime)));
                                     return;
                                 }
 
                                 if (chest.getBuyCooldown() > 0) {
                                     LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(chest.getBuyCooldown());
-                                    database.cooldowns().add(new Cooldown(UUID.randomUUID(), playerId, config.storageContext, ECooldownType.BUY, chest.getKey(), expiresAt));
+                                    database.cooldowns().add(new Cooldown(UUID.randomUUID(), playerId, config.storage.getContext(), ECooldownType.BUY, chest.getKey(), expiresAt));
                                 }
                             }
 
@@ -166,13 +169,13 @@ public class MainGUI extends GuiBase {
                             if (chest.getCost() > 0)
                                 economyManager.withdraw(player, chest.getCost());
 
-                            plugin.scheduler().run(new YggraTask() {
+                            scheduler.run(new YggraTask() {
                                 @Override
                                 public void run() {
-                                    chestManager.giveChest(player, chest, 1);
-                                    chat.sendLocalizedMsg(player, "chests.purchase-successful", Map.of(
+                                    boxService.giveChest(player, chest, 1);
+                                    chat.sendLocalizedMsg(player, "chests.purchase-successful", MapUtil.of(
                                                     "amount", "1",
-                                                    "chest", translator.localize(player, chest.getNameKey())
+                                                    "chest", translator.localize(playerId, chest.getNameKey())
                                             )
                                     );
                                 }
@@ -185,7 +188,7 @@ public class MainGUI extends GuiBase {
                 });
             }));
         }
-        sgMenu.open(player);
+        menu.open(player);
     }
 
     /**
