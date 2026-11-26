@@ -1,10 +1,13 @@
-package io.github.tavstaldev.rebus.models;
+package com.github.TavstalDev.rebus.models;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.gui.MainGUI;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.gui.MainGUI;
+import com.github.TavstalDev.yggraLib.bukkit.gui.IGuiService;
+import com.github.TavstalDev.yggraLib.bukkit.services.IChatService;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitName;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 /**
@@ -38,16 +41,17 @@ public class NpcTrait extends Trait {
         if (event.getNPC() != this.getNPC()) {
             return;
         }
-        var player = event.getClicker();
+        Player player = event.getClicker();
 
         // Check if the player has the required permission.
         if (!player.hasPermission("rebus.use")) {
-            // Send a localized "no permission" message to the player.
-            Rebus.instance.chat().sendLocalizedMsg(player, "general.error.no-permission");
+            IChatService chatService = Rebus.instance.getService(IChatService.class);
+            if (chatService != null)
+                chatService.sendLocalizedMsg(player, "general.error.no-permission");
             return;
         }
         // Open the main GUI for the player.
-        var manager = Rebus.instance.gui();
+        IGuiService manager = Rebus.instance.getService(IGuiService.class);
         if (manager == null)
             return;
         manager.open(player, MainGUI.ID);

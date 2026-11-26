@@ -1,4 +1,4 @@
-package io.github.tavstaldev.rebus.models;
+package com.github.TavstalDev.rebus.models;
 
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;

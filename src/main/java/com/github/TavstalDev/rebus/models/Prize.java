@@ -1,6 +1,6 @@
-package io.github.tavstaldev.rebus.models;
+package com.github.TavstalDev.rebus.models;
 
-import io.github.tavstaldev.yggra.core.logger.YggraLogger;
+import com.github.TavstalDev.yggraLib.api.logger.YggraLogger;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 

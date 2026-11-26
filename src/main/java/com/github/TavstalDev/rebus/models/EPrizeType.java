@@ -1,4 +1,4 @@
-package io.github.tavstaldev.rebus.models;
+package com.github.TavstalDev.rebus.models;
 
 /**
  * Represents the type of prize reward.
