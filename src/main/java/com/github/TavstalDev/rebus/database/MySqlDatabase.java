@@ -1,20 +1,20 @@
-package io.github.tavstaldev.rebus.database;
+package com.github.TavstalDev.rebus.database;
 
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.config.RebusConfig;
+import com.github.TavstalDev.rebus.config.models.StorageConfig;
+import com.github.TavstalDev.rebus.database.models.ChestUsage;
+import com.github.TavstalDev.rebus.database.models.Cooldown;
+import com.github.TavstalDev.rebus.database.models.ECooldownType;
+import com.github.TavstalDev.yggraLib.api.database.DatabaseHelper;
+import com.github.TavstalDev.yggraLib.api.database.QueryCondition;
+import com.github.TavstalDev.yggraLib.api.database.repositories.IRepository;
+import com.github.TavstalDev.yggraLib.api.database.repositories.impl.MySqlRepository;
+import com.github.TavstalDev.yggraLib.api.logger.YggraLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.RebusConfig;
-import io.github.tavstaldev.rebus.database.models.ChestUsage;
-import io.github.tavstaldev.rebus.database.models.Cooldown;
-import io.github.tavstaldev.rebus.database.models.ECooldownType;
-import io.github.tavstaldev.yggra.core.database.DatabaseHelper;
-import io.github.tavstaldev.yggra.core.database.QueryCondition;
-import io.github.tavstaldev.yggra.core.database.repositories.IRepository;
-import io.github.tavstaldev.yggra.core.database.repositories.MySqlRepository;
-import io.github.tavstaldev.yggra.core.logger.YggraLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -27,19 +27,19 @@ import java.util.UUID;
  * Utilizes HikariCP for efficient database connection pooling.
  */
 public class MySqlDatabase implements IRebusDatabase {
-    private final Rebus _plugin;
-    private final RebusConfig _config;
-    private final YggraLogger _logger;
-    private HikariDataSource _dataSource;
+    private final Rebus plugin;
+    private final RebusConfig config;
+    private final YggraLogger logger;
+    private HikariDataSource dataSource;
 
-    private MySqlRepository<UUID, Cooldown> _cooldowns;
-    private MySqlRepository<UUID, ChestUsage> _chestUsages;
+    private MySqlRepository<UUID, Cooldown> cooldowns;
+    private MySqlRepository<UUID, ChestUsage> chestUsages;
 
     public MySqlDatabase(Rebus plugin) {
 
-        _plugin = plugin;
-        _config = plugin.config();
-        _logger = _plugin.logger().withModule(MySqlDatabase.class);
+        this.plugin = plugin;
+        config = plugin.config();
+        logger = this.plugin.logger().withModule(MySqlDatabase.class);
     }
 
     /**
@@ -47,11 +47,11 @@ public class MySqlDatabase implements IRebusDatabase {
      */
     @Override
     public void load() {
-        String tablePrefix = _config.storageTablePrefix;
-        _dataSource = createDataSource();
-        boolean isMariaDb = DatabaseHelper.isMariaDB(_dataSource);
-        _cooldowns = new MySqlRepository<>(_plugin,  Cooldown.class, _dataSource, isMariaDb, 60, tablePrefix);
-        _chestUsages = new MySqlRepository<>(_plugin, ChestUsage.class, _dataSource, isMariaDb, 60, tablePrefix);
+        String tablePrefix = config.storage.getTablePrefix();
+        dataSource = createDataSource();
+        boolean isMariaDb = DatabaseHelper.isMariaDB(dataSource);
+        cooldowns = new MySqlRepository<>(plugin,  Cooldown.class, dataSource, isMariaDb, 60, tablePrefix);
+        chestUsages = new MySqlRepository<>(plugin, ChestUsage.class, dataSource, isMariaDb, 60, tablePrefix);
     }
 
     /**
@@ -59,9 +59,9 @@ public class MySqlDatabase implements IRebusDatabase {
      */
     @Override
     public void unload() {
-        if (_dataSource != null) {
-            if (!_dataSource.isClosed())
-                _dataSource.close();
+        if (dataSource != null) {
+            if (!dataSource.isClosed())
+                dataSource.close();
         }
     }
 
@@ -73,15 +73,16 @@ public class MySqlDatabase implements IRebusDatabase {
     public HikariDataSource createDataSource() {
         try {
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s", _config.storageHost, _config.storagePort, _config.storageDatabase));
-            config.setUsername(_config.storageUsername);
-            config.setPassword(_config.storagePassword);
-            config.setMaximumPoolSize(_config.storagePool);
-            config.setMaxLifetime(_config.storageMaxLifeTime);
-            config.setConnectionTimeout(_config.storageConnectionTimeout);
+            StorageConfig sc = this.config.storage;
+            config.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s", config, sc.getPort(), sc.getDatabase()));
+            config.setUsername(sc.getUsername());
+            config.setPassword(sc.getPassword());
+            config.setMaximumPoolSize(sc.getPool());
+            config.setMaxLifetime(sc.getMaxLifeTime());
+            config.setConnectionTimeout(sc.getConnectionTimeout());
             return new HikariDataSource(config);
         } catch (Exception ex) {
-            _logger.error("Unknown error happened during the creation of database connection..", ex);
+            logger.error("Unknown error happened during the creation of database connection..", ex);
             return null;
         }
     }
@@ -91,36 +92,36 @@ public class MySqlDatabase implements IRebusDatabase {
      */
     @Override
     public void checkSchema() {
-        _cooldowns.checkSchema();
-        _chestUsages.checkSchema();
+        cooldowns.checkSchema();
+        chestUsages.checkSchema();
     }
 
     @Override
-    public @NonNull IRepository<UUID, Cooldown> cooldowns() {
-        return _cooldowns;
+    public @NotNull IRepository<UUID, Cooldown> cooldowns() {
+        return cooldowns;
     }
 
     @Override
     public @NotNull IRepository<UUID, ChestUsage> chestUsages() {
-        return _chestUsages;
+        return chestUsages;
     }
 
     @Override
     public List<Cooldown> getCooldowns(UUID playerId) {
-        return _cooldowns.findByCriteria(playerId + ":all", QueryCondition.eq("playerId", playerId));
+        return cooldowns.findByCriteria(playerId + ":all", QueryCondition.eq("playerId", playerId));
     }
 
     @Override
     public List<ChestUsage> getChestUsages(UUID playerId) {
-        return _chestUsages.findByCriteria(playerId + ":all", QueryCondition.eq("playerId", playerId));
+        return chestUsages.findByCriteria(playerId + ":all", QueryCondition.eq("playerId", playerId));
     }
 
     @Override
     public long getCooldown(UUID playerId, String context, ECooldownType type, String chestKey) {
         List<Cooldown> cooldowns = getCooldowns(playerId);
-        final var now = LocalDateTime.now();
+        final LocalDateTime now = LocalDateTime.now();
         long result = 0;
-        for (var cooldown : cooldowns) {
+        for (Cooldown cooldown : cooldowns) {
             if (cooldown.getType() != type)
                 continue;
 
@@ -142,7 +143,7 @@ public class MySqlDatabase implements IRebusDatabase {
     public @Nullable ChestUsage getUsage(UUID playerId, String context, String chestKey) {
         List<ChestUsage> usages = getChestUsages(playerId);
         ChestUsage result = null;
-        for (var usage : usages) {
+        for (ChestUsage usage : usages) {
             if (!Objects.equals(usage.getContext(), context))
                 continue;
 

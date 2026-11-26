@@ -1,8 +1,8 @@
-package io.github.tavstaldev.rebus.database.models;
+package com.github.TavstalDev.rebus.database.models;
 
-import io.github.tavstaldev.yggra.core.database.annotations.Column;
-import io.github.tavstaldev.yggra.core.database.annotations.Table;
-import io.github.tavstaldev.yggra.core.database.enums.EColumnKind;
+import com.github.TavstalDev.yggraLib.api.database.annotations.Column;
+import com.github.TavstalDev.yggraLib.api.database.annotations.Table;
+import com.github.TavstalDev.yggraLib.api.database.enums.EColumnKind;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
