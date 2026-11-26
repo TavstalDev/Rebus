@@ -113,14 +113,14 @@ public class CommandRebus extends CommandBase {
                                     MapUtil.of("link", plugin.downloadUrl()));
                         }
                     }).exceptionally(e -> {
-                        chat.sendLocalizedMsg(player, "commands.version.exception");
+                        chat.sendLocalizedMsg(player, "commands.error.unknown-error");
                         return null;
                     });
                     return true;
                 }
                 case "menu": {
                     if (!player.hasPermission("rebus.commands.rebus.menu")) {
-                        chat.sendLocalizedMsg(player, "general.no-permission");
+                        chat.sendLocalizedMsg(player, "general.error.no-permission");
                         return true;
                     }
 

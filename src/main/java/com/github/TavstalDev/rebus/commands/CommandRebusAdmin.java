@@ -192,7 +192,7 @@ public class CommandRebusAdmin extends CommandBase {
                     }
 
                     if (args.length != 2) {
-                        chat.sendLocalizedMsg(player, "commands.erorr.invalid-arguments");
+                        chat.sendLocalizedMsg(player, "commands.error.invalid-arguments");
                         return true;
                     }
 
@@ -215,7 +215,7 @@ public class CommandRebusAdmin extends CommandBase {
             }
 
             // Invalid arguments
-            chat.sendLocalizedMsg(player, "Commands.InvalidArguments");
+            chat.sendLocalizedMsg(player, "commands.error.invalid-arguments");
             return true;
         }
 

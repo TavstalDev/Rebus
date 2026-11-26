@@ -86,7 +86,7 @@ public class BlockEventListener implements Listener {
 
         // Check if the block location is already occupied by an unlocking chest.
         if (boxService.occupiedLocations().contains(event.getBlock().getLocation())) {
-            chat.sendLocalizedMsg(player, "chest.error.location-occupied");
+            chat.sendLocalizedMsg(player, "chests.error.location-occupied");
             return;
         }
 
@@ -121,7 +121,7 @@ public class BlockEventListener implements Listener {
                         // Check if the chest is on cooldown for the player.
                         long remainingTime = database.getCooldown(playerId, config.storage.getContext(), ECooldownType.OPEN, key);
                         if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
-                            chat.sendLocalizedMsg(player, "chests.open-cooldown", MapUtil.of("time", TimeUtil.formatDuration(translator, player, remainingTime)));
+                            chat.sendLocalizedMsg(player, "chests.error.use-cooldown", MapUtil.of("time", TimeUtil.formatDuration(translator, player, remainingTime)));
                             scheduler.run(() -> handlingPlaceEvent.remove(playerId));
                             return;
                         }

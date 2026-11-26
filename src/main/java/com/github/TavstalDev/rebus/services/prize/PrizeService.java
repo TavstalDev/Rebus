@@ -148,14 +148,14 @@ public class PrizeService implements IPrizeService {
         UUID playerId = player.getUniqueId();
         Optional<Prize> prizeOpt = chest.getRandomPrize();
         if (!prizeOpt.isPresent()) {
-            chatService.sendLocalizedMsg(player, "chests.no-prizes-set", MapUtil.of("chest", chest.getKey()));
+            chatService.sendLocalizedMsg(player, "chests.error.no-rewards");
             return false;
         }
 
         Prize prize = prizeOpt.get();
         final PrizeData prizeData = get(prize.getKey());
         if (prizeData == null) {
-            chatService.sendLocalizedMsg(player, "chests.no-prize-found", MapUtil.of("prize", prize.getKey()));
+            chatService.sendLocalizedMsg(player, "chests.error.no-rewards");
             return false;
         }
 
@@ -208,7 +208,7 @@ public class PrizeService implements IPrizeService {
                 continue;
 
             if (!inventoryFullMessageSent) {
-                chatService.sendLocalizedMsg(player, "chests.inventory-full");
+                chatService.sendLocalizedMsg(player, "chests.error.inventory-full");
                 inventoryFullMessageSent = true;
             }
 
