@@ -1,9 +1,10 @@
-package io.github.tavstaldev.rebus.util;
+package com.github.TavstalDev.rebus.util;
 
-import io.github.tavstaldev.yggra.core.services.TranslationService;
+import com.github.TavstalDev.yggraLib.api.localization.ITranslationService;
+import com.github.TavstalDev.yggraLib.api.utils.MapUtil;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
+import java.util.UUID;
 
 /**
  * Utility class for time-related operations.
@@ -21,28 +22,33 @@ public final class TimeUtil
      * @param seconds The duration in seconds to be formatted.
      * @return A localized string representing the formatted duration.
      */
-    public static String formatDuration(final TranslationService translator, Player player, long seconds) {
+    public static String formatDuration(final ITranslationService translator, Player player, long seconds) {
         long days = seconds / 86400; // Calculate the number of days
         long hours = (seconds % 86400) / 3600; // Calculate the number of hours
         long minutes = (seconds % 3600) / 60; // Calculate the number of minutes
         long secs = seconds % 60; // Calculate the remaining seconds
 
+        UUID playerId = player.getUniqueId();
         StringBuilder sb = new StringBuilder();
         if (days > 0) {
             // Append localized days string if days are greater than 0
-            sb.append(translator.localize(player, "time.days", Map.of("%value%", String.valueOf(days)))).append(" ");
+            sb.append(translator.localize(playerId, "time.days",
+                    MapUtil.of("%value%", String.valueOf(days)))).append(" ");
         }
         if (hours > 0 || days > 0) {
             // Append localized hours string if hours or days are greater than 0
-            sb.append(translator.localize(player, "time.hours", Map.of("%value%", String.valueOf(hours)))).append(" ");
+            sb.append(translator.localize(playerId, "time.hours",
+                    MapUtil.of("%value%", String.valueOf(hours)))).append(" ");
         }
         if (minutes > 0 || hours > 0 || days > 0) {
             // Append localized minutes string if minutes, hours, or days are greater than 0
-            sb.append(translator.localize(player, "time.minutes", Map.of("%value%", String.valueOf(minutes)))).append(" ");
+            sb.append(translator.localize(playerId, "time.minutes",
+                    MapUtil.of("%value%", String.valueOf(minutes)))).append(" ");
         }
         if (secs > 0) {
             // Append localized seconds string if seconds are greater than 0
-            sb.append(translator.localize(player, "time.seconds", Map.of("%value%", String.valueOf(secs)))).append(" ");
+            sb.append(translator.localize(playerId, "time.seconds",
+                    MapUtil.of("%value%", String.valueOf(secs)))).append(" ");
         }
 
         // Return the formatted string, trimmed of any trailing spaces
