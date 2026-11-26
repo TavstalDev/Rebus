@@ -1,17 +1,20 @@
-package io.github.tavstaldev.rebus.events;
+package com.github.TavstalDev.rebus.events;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.RebusConfig;
-import io.github.tavstaldev.rebus.database.IRebusDatabase;
-import io.github.tavstaldev.rebus.database.models.ChestUsage;
-import io.github.tavstaldev.rebus.database.models.ECooldownType;
-import io.github.tavstaldev.rebus.managers.ChestManager;
-import io.github.tavstaldev.rebus.models.Chest;
-import io.github.tavstaldev.rebus.util.TimeUtil;
-import io.github.tavstaldev.yggra.core.scheduler.IScheduler;
-import io.github.tavstaldev.yggra.core.scheduler.YggraTask;
-import io.github.tavstaldev.yggra.core.services.ChatService;
-import io.github.tavstaldev.yggra.core.services.TranslationService;
+import com.cryptomorin.xseries.XMaterial;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.config.RebusConfig;
+import com.github.TavstalDev.rebus.database.IRebusDatabase;
+import com.github.TavstalDev.rebus.database.models.ChestUsage;
+import com.github.TavstalDev.rebus.database.models.ECooldownType;
+import com.github.TavstalDev.rebus.models.Chest;
+import com.github.TavstalDev.rebus.services.box.IBoxService;
+import com.github.TavstalDev.rebus.util.TimeUtil;
+import com.github.TavstalDev.yggraLib.api.localization.ITranslationService;
+import com.github.TavstalDev.yggraLib.api.scheduler.IScheduler;
+import com.github.TavstalDev.yggraLib.api.scheduler.YggraTask;
+import com.github.TavstalDev.yggraLib.api.utils.MapUtil;
+import com.github.TavstalDev.yggraLib.bukkit.items.INbtAccessor;
+import com.github.TavstalDev.yggraLib.bukkit.services.IChatService;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,10 +23,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -32,28 +33,26 @@ import java.util.UUID;
 public class BlockEventListener implements Listener {
     private final Rebus plugin;
     private final RebusConfig config;
-    private final TranslationService translator;
-    private final ChatService chat;
+    private final ITranslationService translator;
+    private final IChatService chat;
     private final IScheduler scheduler;
     private final IRebusDatabase database;
-    private final ChestManager chestManager;
+    private final IBoxService boxService;
+    private final INbtAccessor nbtAccessor;
     private final HashSet<UUID> handlingPlaceEvent = new HashSet<>();
 
-    /**
-     * Creates the block event listener and registers it with the server.
-     *
-     * @param plugin       The plugin instance.
-     * @param database     The database for usage and cooldown checks.
-     * @param chestManager The chest manager for checking unlocking states.
-     */
-    public BlockEventListener(Rebus plugin, IRebusDatabase database, ChestManager chestManager) {
+    public BlockEventListener(Rebus plugin, ITranslationService translator,
+                              IChatService chatService, IScheduler scheduler,
+                              IRebusDatabase database, IBoxService boxService,
+                              INbtAccessor nbtAccessor) {
         this.plugin = plugin;
         this.config = plugin.config();
-        this.translator = plugin.translator();
-        this.chat = plugin.chat();
-        this.scheduler = plugin.scheduler();
+        this.translator = translator;
+        this.chat = chatService;
+        this.scheduler = scheduler;
         this.database = database;
-        this.chestManager = chestManager;
+        this.boxService = boxService;
+        this.nbtAccessor = nbtAccessor;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -69,37 +68,30 @@ public class BlockEventListener implements Listener {
         UUID playerId = player.getUniqueId();
         ItemStack itemInHand = event.getItemInHand();
 
-        // Check if the item in hand is valid and has metadata.
-        if (itemInHand.getType().isAir() || !itemInHand.hasItemMeta()) {
+        if (XMaterial.AIR.isSimilar(itemInHand))
             return;
-        }
-
-        var meta = itemInHand.getItemMeta();
 
         // Check if the item has the custom chest key.
-        var chestKey = chestManager.getChestKey();
-        if (!meta.getPersistentDataContainer().has(chestKey)) {
+        String chestKey = boxService.getChestKey();
+        String key = nbtAccessor.getOrDefault(itemInHand, chestKey, "");
+        if (key == null || key.isEmpty())
             return;
-        }
 
-        // Retrieve the chest key and corresponding chest object.
-        String key = meta.getPersistentDataContainer().get(chestKey, PersistentDataType.STRING);
-        Chest chest = chestManager.getChest(key);
-        if (chest == null) {
+        Chest chest = boxService.getChest(key);
+        if (chest == null)
             return;
-        }
 
         // Cancel the event to prevent the block from being placed normally.
         event.setCancelled(true);
 
         // Check if the block location is already occupied by an unlocking chest.
-        if (chestManager.chestsUnderUnlocking.contains(event.getBlock().getLocation())) {
+        if (boxService.occupiedLocations().contains(event.getBlock().getLocation())) {
             chat.sendLocalizedMsg(player, "chest.error.location-occupied");
             return;
         }
 
         // Check if the player is already unlocking a chest.
-        if (chestManager.playersUnlocking.contains(playerId)) {
+        if (boxService.playersUnlocking().contains(playerId)) {
             chat.sendLocalizedMsg(player, "chests.error.already-opening");
             return;
         }
@@ -119,7 +111,7 @@ public class BlockEventListener implements Listener {
             public void run() {
                 synchronized (plugin.getPlayerLock(playerId)) {
                     try {
-                        ChestUsage usage = database.getUsage(playerId, config.storageContext, key);
+                        ChestUsage usage = database.getUsage(playerId, config.storage.getContext(), key);
                         if (usage == null || usage.getUsages() < 1) {
                             chat.sendLocalizedMsg(player, "chests.error.no-usages-left");
                             scheduler.run(() -> handlingPlaceEvent.remove(playerId));
@@ -127,9 +119,9 @@ public class BlockEventListener implements Listener {
                         }
 
                         // Check if the chest is on cooldown for the player.
-                        long remainingTime = database.getCooldown(playerId, config.storageContext, ECooldownType.OPEN, key);
+                        long remainingTime = database.getCooldown(playerId, config.storage.getContext(), ECooldownType.OPEN, key);
                         if (remainingTime > 0 && !player.hasPermission("rebus.bypass.cooldown")) {
-                            chat.sendLocalizedMsg(player, "chests.open-cooldown", Map.of("time", TimeUtil.formatDuration(translator, player, remainingTime)));
+                            chat.sendLocalizedMsg(player, "chests.open-cooldown", MapUtil.of("time", TimeUtil.formatDuration(translator, player, remainingTime)));
                             scheduler.run(() -> handlingPlaceEvent.remove(playerId));
                             return;
                         }
@@ -139,7 +131,7 @@ public class BlockEventListener implements Listener {
                             @Override
                             public void run() {
                                 try {
-                                    chestManager.handlePlaceChest(player, chest, itemInHand, event.getBlock());
+                                    boxService.handlePlaceChest(player, chest, itemInHand, event.getBlock());
                                 } finally {
                                     handlingPlaceEvent.remove(playerId);
                                 }
@@ -164,7 +156,7 @@ public class BlockEventListener implements Listener {
             return;
 
         // Cancel the event if the block is under unlocking.
-        if (chestManager.chestsUnderUnlocking.contains(event.getBlock().getLocation()))
+        if (boxService.occupiedLocations().contains(event.getBlock().getLocation()))
             event.setCancelled(true);
     }
 
@@ -176,7 +168,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
-            if (chestManager.chestsUnderUnlocking.contains(block.getLocation())) {
+            if (boxService.occupiedLocations().contains(block.getLocation())) {
                 event.setCancelled(true);
                 return;
             }
@@ -191,7 +183,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onPistonRetract(BlockPistonRetractEvent event) {
         for (Block block : event.getBlocks()) {
-            if (chestManager.chestsUnderUnlocking.contains(block.getLocation())) {
+            if (boxService.occupiedLocations().contains(block.getLocation())) {
                 event.setCancelled(true);
                 return;
             }
@@ -206,7 +198,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
         event.blockList().removeIf(block ->
-                chestManager.chestsUnderUnlocking.contains(block.getLocation())
+                boxService.occupiedLocations().contains(block.getLocation())
         );
     }
 }

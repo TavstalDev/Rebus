@@ -1,29 +1,27 @@
-package io.github.tavstaldev.rebus.events;
+package com.github.TavstalDev.rebus.events;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.ChestManager;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.services.box.IBoxService;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Set;
 
 /**
  * Handles player-related events such as joining, quitting, and interacting with blocks.
  */
 public class PlayerEventListener implements Listener {
     private final Rebus plugin;
-    private final ChestManager chestManager;
+    private final IBoxService boxService;
 
-    /**
-     * Creates the player event listener and registers it with the server.
-     *
-     * @param plugin       The plugin instance.
-     * @param chestManager The chest manager for checking unlocking states.
-     */
-    public PlayerEventListener(Rebus plugin, ChestManager chestManager) {
+    public PlayerEventListener(Rebus plugin, IBoxService boxService) {
         this.plugin = plugin;
-        this.chestManager = chestManager;
+        this.boxService = boxService;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -44,11 +42,13 @@ public class PlayerEventListener implements Listener {
      */
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        var clickedBlock = event.getClickedBlock();
+        Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null)
             return;
 
-        if (chestManager.chestsUnderUnlocking.contains(clickedBlock.getLocation()))
-            event.setCancelled(true);
+        Set<Location> occupiedLocations = boxService.occupiedLocations();
+        if (!occupiedLocations.contains(clickedBlock.getLocation()))
+            return;
+        event.setCancelled(true);
     }
 }

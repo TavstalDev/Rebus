@@ -1,7 +1,7 @@
-package io.github.tavstaldev.rebus.events;
+package com.github.TavstalDev.rebus.events;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.managers.ChestManager;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.services.box.IBoxService;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,16 +11,10 @@ import org.bukkit.event.entity.EntityExplodeEvent;
  * Handles entity-related events to protect chests during the unlocking process.
  */
 public class EntityEventListener implements Listener {
-    private final ChestManager chestManager;
+    private final IBoxService boxService;
 
-    /**
-     * Creates the entity event listener and registers it with the server.
-     *
-     * @param plugin       The plugin instance.
-     * @param chestManager The chest manager for checking unlocking states.
-     */
-    public EntityEventListener(Rebus plugin, ChestManager chestManager) {
-        this.chestManager = chestManager;
+    public EntityEventListener(Rebus plugin, IBoxService boxService) {
+        this.boxService = boxService;
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -32,7 +26,7 @@ public class EntityEventListener implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         event.blockList().removeIf(block ->
-                chestManager.chestsUnderUnlocking.contains(block.getLocation())
+                boxService.occupiedLocations().contains(block.getLocation())
         );
     }
 }
