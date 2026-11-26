@@ -22,7 +22,7 @@ updates:
       - dependency-name: "org.spigotmc:spigot-api"
       - dependency-name: "com.destroystokyo.paper:paper-api"
       - dependency-name: "io.papermc.paper:paper-api"
-      - dependency-name: "org.gradle"
+      - dependency-name: "gradle-wrapper"
       - dependency-name: "com.gradleup.shadow"
 
   # 2. Keep GitHub Actions workflows up to date
