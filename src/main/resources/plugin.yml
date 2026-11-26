@@ -1,20 +1,13 @@
-main: io.github.tavstaldev.rebus.Rebus
+main: com.github.TavstalDev.rebus.Rebus
 version: '1.2.0'
-api-version: '1.20.4'
+api-version: '1.13'
 
 name: Rebus
 prefix: Rebus
 authors: [ Tavstal ]
-website: https://tavstaldev.github.io/
-
-softdepend: [Citizens, Vault, ProtocolLib, PlayerPoints]
-
-libraries:
-  - com.zaxxer:HikariCP:6.3.0
-  - org.postgresql:postgresql:42.7.11
-  - com.github.ben-manes.caffeine:caffeine:3.2.2
-  - redis.clients:jedis:7.5.2
-  - fr.mrmicky:fastboard:2.2.0
+description: Rebus is a lootbox plugin that allows players to open lootboxes and receive random rewards.
+website: https://tavstal.eu/
+softdepend: [Citizens, Vault, ProtocolLib, PlayerPoints, NBTAPI]
 
 commands:
     rebus:
