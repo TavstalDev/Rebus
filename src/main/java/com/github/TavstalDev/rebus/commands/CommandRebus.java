@@ -1,11 +1,13 @@
-package io.github.tavstaldev.rebus.commands;
+package com.github.TavstalDev.rebus.commands;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.gui.MainGUI;
-import io.github.tavstaldev.yggra.core.commands.CommandBase;
-import io.github.tavstaldev.yggra.core.commands.SubCommand;
-import io.github.tavstaldev.yggra.core.gui.GuiManager;
-import io.github.tavstaldev.yggra.core.services.ChatService;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.gui.MainGUI;
+import com.github.TavstalDev.yggraLib.api.utils.ListUtil;
+import com.github.TavstalDev.yggraLib.api.utils.MapUtil;
+import com.github.TavstalDev.yggraLib.bukkit.commands.CommandBase;
+import com.github.TavstalDev.yggraLib.bukkit.commands.SubCommand;
+import com.github.TavstalDev.yggraLib.bukkit.gui.IGuiService;
+import com.github.TavstalDev.yggraLib.bukkit.services.IChatService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,24 +27,24 @@ import java.util.Map;
  */
 public class CommandRebus extends CommandBase {
     private final Rebus plugin;
-    private final ChatService chat;
-    private final GuiManager gui;
+    private final IChatService chat;
+    private final IGuiService gui;
 
     public CommandRebus(Rebus plugin) throws IllegalAccessException {
-        super(plugin, "rebus", "rebus.commands.rebus", new ArrayList<>() {
+        super(plugin, "rebus", "rebus.commands.rebus", new ArrayList<SubCommand>() {
             {
                 // HELP subcommand
-                add(new SubCommand("help", "rebus.commands.rebus", Map.of(
+                add(new SubCommand("help", "rebus.commands.rebus", MapUtil.of(
                         "syntax", "",
                         "description", "commands.help.desc"
                 )));
                 // VERSION subcommand
-                add(new SubCommand("version", "rebus.commands.rebus.version", Map.of(
+                add(new SubCommand("version", "rebus.commands.rebus.version", MapUtil.of(
                         "syntax", "",
                         "description", "commands.version.desc"
                 )));
                 // MENU subcommand
-                add(new SubCommand("menu", "rebus.commands.rebus.menu", Map.of(
+                add(new SubCommand("menu", "rebus.commands.rebus.menu", MapUtil.of(
                         "syntax", "",
                         "description", "commands.menu.desc"
                 )));
@@ -49,8 +52,8 @@ public class CommandRebus extends CommandBase {
         });
 
         this.plugin = plugin;
-        this.chat = plugin.chat();
-        this.gui = plugin.gui();
+        this.chat = plugin.getService(IChatService.class);
+        this.gui = plugin.getService(IGuiService.class);
     }
 
     /**
@@ -63,7 +66,8 @@ public class CommandRebus extends CommandBase {
      * @return true if the command was successfully executed, false otherwise.
      */
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
+                             String @NotNull [] args) {
         // Handle console sender
         if (sender instanceof ConsoleCommandSender) {
             chat.sendCommandReply(sender, "commands.error.console-caller");
@@ -96,21 +100,22 @@ public class CommandRebus extends CommandBase {
                     return true;
                 }
                 case "version": {
-                    chat.sendLocalizedMsg(player, "commands.version.header");
-                    //noinspection UnstableApiUsage
-                    chat.sendLocalizedMsg(player, "commands.version.current", Map.of("version", plugin.getPluginMeta().getVersion()));
-                    chat.sendLocalizedMsg(player, "commands.version.bottom");
+                    Map<String, Object> parameters = new HashMap<>();
 
-                    /*chat.isUpToDate().thenAccept(upToDate -> {
-                        if (upToDate) {
-                            chat.sendLocalizedMsg(player, "Commands.Version.UpToDate");
+                    parameters.put("version", plugin.version());
+                    chat.sendLocalizedMsg(player, "commands.version.current", parameters);
+
+                    Rebus.instance.isUpToDate().thenAccept(upToDate -> {
+                        if (upToDate == null || upToDate) {
+                            chat.sendLocalizedMsg(player, "commands.version.up-to-date");
                         } else {
-                            chat.sendLocalizedMsg(player, "Commands.Version.Outdated", Map.of("link", chat.getDownloadUrl()));
+                            chat.sendLocalizedMsg(player, "commands.version.outdated",
+                                    MapUtil.of("link", plugin.downloadUrl()));
                         }
                     }).exceptionally(e -> {
-                        logger.error("Failed to determine update status.", e);
+                        chat.sendLocalizedMsg(player, "commands.version.exception");
                         return null;
-                    });*/
+                    });
                     return true;
                 }
                 case "menu": {
@@ -137,20 +142,21 @@ public class CommandRebus extends CommandBase {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
+                                                @NotNull String label, @NotNull String @NotNull [] args) {
         switch (args.length) {
             case 0:
             case 1: {
-                return List.of("help", "version", "menu");
+                return ListUtil.of("help", "version", "menu");
             }
             case 2: {
                 String rawSubcommand = args[0].toLowerCase();
                 if (rawSubcommand.equalsIgnoreCase("help") || rawSubcommand.equalsIgnoreCase("?"))
-                    return List.of("1", "5", "10");
-                return List.of();
+                    return ListUtil.of("1", "5", "10");
+                return ListUtil.of();
             }
             default:
-                return List.of();
+                return ListUtil.of();
         }
     }
 }

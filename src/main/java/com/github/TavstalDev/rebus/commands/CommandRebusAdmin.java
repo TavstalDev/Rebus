@@ -1,16 +1,19 @@
-package io.github.tavstaldev.rebus.commands;
+package com.github.TavstalDev.rebus.commands;
 
-import io.github.tavstaldev.rebus.Rebus;
-import io.github.tavstaldev.rebus.database.IRebusDatabase;
-import io.github.tavstaldev.rebus.managers.ChestManager;
-import io.github.tavstaldev.rebus.managers.NpcManager;
-import io.github.tavstaldev.rebus.models.Chest;
-import io.github.tavstaldev.yggra.core.commands.CommandBase;
-import io.github.tavstaldev.yggra.core.commands.SubCommand;
-import io.github.tavstaldev.yggra.core.database.QueryCondition;
-import io.github.tavstaldev.yggra.core.logger.YggraLogger;
-import io.github.tavstaldev.yggra.core.scheduler.YggraTask;
-import io.github.tavstaldev.yggra.core.services.ChatService;
+import com.github.TavstalDev.rebus.Rebus;
+import com.github.TavstalDev.rebus.database.IRebusDatabase;
+import com.github.TavstalDev.rebus.models.Chest;
+import com.github.TavstalDev.rebus.services.box.IBoxService;
+import com.github.TavstalDev.rebus.services.npc.INpcService;
+import com.github.TavstalDev.yggraLib.api.database.QueryCondition;
+import com.github.TavstalDev.yggraLib.api.localization.ITranslationService;
+import com.github.TavstalDev.yggraLib.api.scheduler.IScheduler;
+import com.github.TavstalDev.yggraLib.api.scheduler.YggraTask;
+import com.github.TavstalDev.yggraLib.api.utils.ListUtil;
+import com.github.TavstalDev.yggraLib.api.utils.MapUtil;
+import com.github.TavstalDev.yggraLib.bukkit.commands.CommandBase;
+import com.github.TavstalDev.yggraLib.bukkit.commands.SubCommand;
+import com.github.TavstalDev.yggraLib.bukkit.services.IChatService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * CommandRebusAdmin is the command handler for the "rebusadmin" command.
@@ -30,37 +33,38 @@ import java.util.Map;
  */
 public class CommandRebusAdmin extends CommandBase {
     private final Rebus plugin;
-    private final YggraLogger logger;
-    private final ChatService chat;
-    private final ChestManager chestManager;
-    private final NpcManager npcManager;
+    private final IChatService chat;
+    private final ITranslationService translator;
+    private final IBoxService chestManager;
+    private final INpcService npcManager;
     private final IRebusDatabase database;
+    private final IScheduler scheduler;
 
     public CommandRebusAdmin(Rebus plugin) throws IllegalAccessException {
-        super(plugin, "rebusadmin", "rebus.commands.rebusadmin", new ArrayList<>() {
+        super(plugin, "rebusadmin", "rebus.commands.rebusadmin", new ArrayList<SubCommand>() {
             {
                 // HELP subcommand
-                add(new SubCommand("help", "rebus.commands.rebusadmin", Map.of(
+                add(new SubCommand("help", "rebus.commands.rebusadmin", MapUtil.of(
                         "syntax", "",
                         "description", "commands.help.desc"
                 )));
                 // RELOAD subcommand
-                add(new SubCommand("reload", "rebus.commands.rebusadmin.reload", Map.of(
+                add(new SubCommand("reload", "rebus.commands.rebusadmin.reload", MapUtil.of(
                         "syntax", "",
                         "description", "commands.reload.desc"
                 )));
                 // NPC subcommand
-                add(new SubCommand("npc", "rebus.commands.rebusadmin.npc", Map.of(
+                add(new SubCommand("npc", "rebus.commands.rebusadmin.npc", MapUtil.of(
                         "syntax", "",
                         "description", "commands.npc.desc"
                 )));
                 // GIVE subcommand
-                add(new SubCommand("give", "rebus.commands.rebusadmin.give", Map.of(
+                add(new SubCommand("give", "rebus.commands.rebusadmin.give", MapUtil.of(
                         "syntax", "commands.give.syntax",
                         "description", "commands.give.desc"
                 )));
                 // RESET subcommand
-                add(new SubCommand("reset", "rebus.commands.rebusadmin.reset", Map.of(
+                add(new SubCommand("reset", "rebus.commands.rebusadmin.reset", MapUtil.of(
                         "syntax", "commands.reset.syntax",
                         "description", "commands.reset.desc"
                 )));
@@ -68,11 +72,12 @@ public class CommandRebusAdmin extends CommandBase {
         });
 
         this.plugin = plugin;
-        this.logger = plugin.logger().withModule(CommandRebus.class);
-        this.chat = plugin.chat();
-        this.chestManager = plugin.chestManager();
-        this.npcManager = plugin.npcManager();
-        this.database = plugin.database();
+        this.chat = plugin.getService(IChatService.class);
+        this.translator = plugin.getService(ITranslationService.class);
+        this.chestManager = plugin.getService(IBoxService.class);
+        this.npcManager = plugin.getService(INpcService.class);
+        this.database = plugin.getService(IRebusDatabase.class);
+        this.scheduler = plugin.getService(IScheduler.class);
     }
 
     /**
@@ -85,7 +90,8 @@ public class CommandRebusAdmin extends CommandBase {
      * @return true if the command was successfully executed, false otherwise.
      */
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
+                             String @NotNull [] args) {
         // Handle console sender
         if (sender instanceof ConsoleCommandSender) {
             chat.sendCommandReply(sender, "commands.error.console-caller");
@@ -164,17 +170,17 @@ public class CommandRebusAdmin extends CommandBase {
 
                     Chest chest = chestManager.getChest(args[2]);
                     if (chest == null) {
-                        chat.sendLocalizedMsg(player, "chests.error.not-found", Map.of("chest", args[2]));
+                        chat.sendLocalizedMsg(player, "chests.error.not-found", MapUtil.of("chest", args[2]));
                         return true;
                     }
 
                     chestManager.giveChest(target, chest, 1);
-                    chat.sendLocalizedMsg(player, "commands.give.given", Map.of(
-                            "chest", plugin.translator().localize(player, chest.getNameKey()),
+                    chat.sendLocalizedMsg(player, "commands.give.given", MapUtil.of(
+                            "chest", translator.localize(player.getUniqueId(), chest.getNameKey()),
                             "player", target.getName()
                     ));
-                    chat.sendLocalizedMsg(target, "commands.give.received", Map.of(
-                            "chest", plugin.translator().localize(target, chest.getNameKey()),
+                    chat.sendLocalizedMsg(target, "commands.give.received", MapUtil.of(
+                            "chest", translator.localize(target.getUniqueId(), chest.getNameKey()),
                             "player", player.getName()
                     ));
                     return true;
@@ -196,11 +202,11 @@ public class CommandRebusAdmin extends CommandBase {
                         return true;
                     }
 
-                    plugin.scheduler().runAsync(new YggraTask() {
+                    scheduler.runAsync(new YggraTask() {
                         @Override
                         public void run() {
                             database.cooldowns().deleteByCriteria(QueryCondition.eq("playerId", target.getUniqueId()));
-                            chat.sendLocalizedMsg(player, "commands.reset.reset-cooldowns-for", Map.of("player", target.getName()));
+                            chat.sendLocalizedMsg(player, "commands.reset.reset-cooldowns-for", MapUtil.of("player", target.getName()));
                             chat.sendLocalizedMsg(target, "commands.reset.reseted-by-admin");
                         }
                     });
@@ -218,26 +224,27 @@ public class CommandRebusAdmin extends CommandBase {
         return true;
     }
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
+                                                @NotNull String label, @NotNull String @NotNull [] args) {
         switch (args.length){
             case 0:
             case 1: {
-                return List.of("help", "reload", "npc", "remove-npcs", "give", "reset");
+                return ListUtil.of("help", "reload", "npc", "remove-npcs", "give", "reset");
             }
             case 2: {
                 String arg = args[0].toLowerCase();
                 if (arg.equalsIgnoreCase("give") || arg.equalsIgnoreCase("reset"))
                     return null;
-                return List.of();
+                return ListUtil.of();
             }
             case 3: {
                 String arg = args[0].toLowerCase();
                 if (arg.equalsIgnoreCase("give"))
-                    return chestManager.getChests().values().stream().map(Chest::getKey).toList();
-                return List.of();
+                    return chestManager.getChests().values().stream().map(Chest::getKey).collect(Collectors.toList());
+                return ListUtil.of();
             }
             default: {
-                return List.of();
+                return ListUtil.of();
             }
         }
     }
