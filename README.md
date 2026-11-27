@@ -1,16 +1,14 @@
 # Rebus
 
-![Release (latest by date)](https://img.shields.io/github/v/release/TavstalDev/Rebus?style=plastic-square)
-![Workflow Status](https://img.shields.io/github/actions/workflow/status/TavstalDev/Rebus/release.yml?branch=stable&label=build&style=plastic-square)
-![License](https://img.shields.io/github/license/TavstalDev/Rebus)
-![Downloads](https://img.shields.io/github/downloads/TavstalDev/Rebus/total?style=plastic-square)
-![Issues](https://img.shields.io/github/issues/TavstalDev/Rebus?style=plastic-square)
+![Release (latest by date)](https://img.shields.io/github/v/release/TavstalDev/rebus?style=plastic-square)
+![Workflow Status](https://img.shields.io/github/actions/workflow/status/TavstalDev/rebus/release.yml?branch=stable&label=build&style=plastic-square)
+![License](https://img.shields.io/github/license/TavstalDev/rebus)
+![Downloads](https://img.shields.io/github/downloads/TavstalDev/rebus/total?style=plastic-square)
+![Issues](https://img.shields.io/github/issues/TavstalDev/rebus?style=plastic-square)
 
 ## Description
 The remastered version of MesterMC's Rébusz plugin. 
 Rebus is a lootbox plugin that allows players to open lootboxes and receive random rewards.
-
-> **NOTE:** Currently, under mayor revisions.
 
 ## Dependencies
 
@@ -53,4 +51,4 @@ This project is licensed under the **GNU General Public License v3.0**. You can 
 
 ## Contact
 
-For any questions, bug reports, or feature requests, please use the [GitHub issue tracker](https://github.com/TavstalDev/Rebus/issues).
+For any questions, bug reports, or feature requests, please use the [GitHub issue tracker](https://github.com/TavstalDev/rebus/issues).
